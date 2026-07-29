@@ -1,0 +1,334 @@
+/* ============================================================
+   APROVAQUEST — DESIGN SISTEMA DE EXERCÍCIOS & SIMULADOS INDEPENDENTE
+   Background Dinâmico Suave, Mesh Gradients, Glassmorphism & Paleta Indigo/Ciano
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Paleta da Marca AprovaQuest */
+    --brand-primary: #4f46e5;
+    --brand-primary-hover: #4338ca;
+    --brand-primary-soft: #eef2ff;
+    --brand-primary-border: #c7d2fe;
+
+    --brand-accent: #06b6d4;
+    --brand-accent-soft: #ecfeff;
+
+    --brand-gold: #f59e0b;
+    --brand-gold-soft: #fffbeb;
+
+    --brand-green: #10b981;
+    --brand-red: #ef4444;
+
+    /* Neutros Modernos */
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+
+    --bs-font-sans-serif: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --bs-body-bg: var(--bg-main);
+    --bs-body-color: var(--text-primary);
+}
+
+body {
+    font-family: var(--bs-font-sans-serif);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+/* BACKGROUND DINÂMICO & MESH GRADIENT (DEIXA O FUNDO RICO E MODERNO) */
+.bg-mesh-gradient {
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 10% 10%, rgba(79, 70, 229, 0.07) 0px, transparent 50%),
+        radial-gradient(at 90% 15%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 80%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
+        radial-gradient(at 80% 90%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
+    position: relative;
+}
+
+/* PADRÃO DE GRID DECORATIVO DE FUNDO */
+.bg-grid-pattern {
+    background-size: 32px 32px;
+    background-image: 
+        linear-gradient(to right, rgba(226, 232, 240, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.4) 1px, transparent 1px);
+}
+
+/* NAVBAR INDEPENDENTE E GLASSMORPHIC */
+.navbar-aprova {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 14px 0;
+}
+
+.brand-logo-aprova {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.brand-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #6366f1 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.brand-badge-aprova {
+    background-color: var(--brand-primary-soft);
+    color: var(--brand-primary);
+    border: 1px solid var(--brand-primary-border);
+    font-weight: 700;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* CARDS GLASSMORPHISM & SOFT SHADOWS */
+.card-aprova {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-aprova:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
+}
+
+/* BOTÕES ESTILIZADOS E HARMONIZADOS (SEM CONFLITO DE CORES) */
+.btn-aprova-primary {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #4338ca 100%);
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+    transition: all 0.15s ease;
+}
+
+.btn-aprova-primary:hover, .btn-aprova-primary:focus {
+    background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-aprova-soft {
+    background-color: var(--brand-primary-soft);
+    color: var(--brand-primary);
+    border: 1px solid var(--brand-primary-border);
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+
+.btn-aprova-soft:hover {
+    background-color: #e0e7ff;
+    color: var(--brand-primary-hover);
+}
+
+.btn-aprova-light {
+    background-color: #ffffff;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+
+.btn-aprova-light:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* INPUTS DE FORMULÁRIO LIMPOS */
+.form-control-aprova {
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background-color: #ffffff;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control-aprova:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* PILLS DE ESTATÍSTICA */
+.stat-pill-aprova {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* ABAS DE MATÉRIAS SUAVES */
+.subject-pill-aprova {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.subject-pill-aprova:hover {
+    color: var(--text-primary);
+    border-color: #cbd5e1;
+}
+
+.subject-pill-aprova.active {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    border-color: var(--brand-primary);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+/* LISTA DE EXERCÍCIOS */
+.lesson-row-aprova {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.lesson-row-aprova:hover {
+    border-color: #cbd5e1;
+    transform: translateX(2px);
+}
+
+.lesson-row-aprova.completed {
+    border-left: 4px solid var(--brand-green);
+}
+
+.lesson-row-aprova.unlocked {
+    border-left: 4px solid var(--brand-primary);
+}
+
+/* CARTÕES DE OPÇÃO DE QUIZ (5 ALTERNATIVAS A-E) */
+.quiz-card-aprova {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
+    user-select: none;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.quiz-card-aprova:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.quiz-card-aprova.selected {
+    border-color: var(--brand-primary);
+    background-color: var(--brand-primary-soft);
+    color: var(--brand-primary-hover);
+}
+
+.quiz-badge-aprova {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background-color: #ffffff;
+    flex-shrink: 0;
+}
+
+.quiz-card-aprova.selected .quiz-badge-aprova {
+    border-color: var(--brand-primary);
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+/* DRAWER DE FEEDBACK */
+.feedback-drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    z-index: 100;
+    transform: translateY(100%);
+    transition: transform 0.25s ease-out;
+    border-top: 1px solid var(--border-color);
+    background-color: #ffffff;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-drawer.show {
+    transform: translateY(0);
+}
+
+.feedback-drawer.success {
+    border-top-color: var(--brand-green);
+}
+
+.feedback-drawer.error {
+    border-top-color: var(--brand-red);
+}

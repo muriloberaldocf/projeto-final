@@ -1,0 +1,108 @@
+/* ============================================================
+   VESTILINGO - RIVALIDADE & LIGA DOS ESTUDANTES (LEADERBOARD)
+   ============================================================ */
+
+.leaderboard-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.league-banner {
+    text-align: center;
+    padding: 32px 20px;
+    background: linear-gradient(135deg, #1cb0f6 0%, #0084c7 100%);
+    color: #ffffff;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 6px 0 #006699;
+    margin-bottom: 32px;
+}
+
+.league-title {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.league-subtitle {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+/* Lista de Ranqueados */
+.rank-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rank-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: 0 3px 0 var(--border-color);
+    transition: transform 0.15s ease;
+}
+
+.rank-card:hover {
+    transform: translateY(-2px);
+}
+
+.rank-card.current-user {
+    border-color: var(--color-green);
+    background-color: var(--color-green-light);
+}
+
+.rank-position {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.rank-position.top-1 { background-color: var(--color-yellow); color: #4b3c00; }
+.rank-position.top-2 { background-color: #e0e0e0; color: #333; }
+.rank-position.top-3 { background-color: #e6a15c; color: #ffffff; }
+
+.rank-user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    margin-left: 16px;
+}
+
+.rank-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background-color: var(--color-blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--color-blue-dark);
+}
+
+.rank-name {
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.rank-xp {
+    font-weight: 800;
+    color: var(--color-yellow-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+}

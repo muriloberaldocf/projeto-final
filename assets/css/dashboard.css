@@ -1,0 +1,164 @@
+/* ============================================================
+   SENAILINGO - DASHBOARD & TRILHA DE APRENDIZADO (SENAI-SP)
+   ============================================================ */
+
+/* Seletor de Matérias */
+.subject-selector {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 28px;
+}
+
+.subject-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    background-color: #ffffff;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 3px 0 var(--border-color);
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    color: var(--text-primary);
+}
+
+.subject-tab:hover {
+    transform: translateY(-2px);
+}
+
+.subject-tab.active {
+    border-color: var(--color-senai-red);
+    background-color: var(--color-senai-red-light);
+    color: var(--color-senai-red-dark);
+    box-shadow: 0 4px 0 var(--color-senai-red);
+}
+
+/* Banner de Unidade SESI/SENAI */
+.unit-banner {
+    background: linear-gradient(135deg, var(--color-senai-blue) 0%, var(--color-senai-blue-dark) 100%);
+    color: #ffffff;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 5px 0 var(--color-senai-blue-dark);
+    border-left: 6px solid var(--color-senai-red);
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.unit-banner h2 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.unit-banner p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* ÁRVORE DA TRILHA (NODES DA LIÇÃO) */
+.roadmap-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    margin: 32px 0 60px 0;
+    position: relative;
+}
+
+/* Formato em zigue-zague */
+.roadmap-node-wrapper {
+    position: relative;
+}
+
+.roadmap-node-wrapper:nth-child(2n) {
+    transform: translateX(35px);
+}
+
+.roadmap-node-wrapper:nth-child(3n) {
+    transform: translateX(-35px);
+}
+
+/* Node Círculo de Lição com cores SENAI */
+.lesson-node {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border: none;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.lesson-node.unlocked {
+    background-color: var(--color-senai-red);
+    box-shadow: 0 8px 0 var(--color-senai-red-dark);
+    color: #ffffff;
+}
+
+.lesson-node.unlocked:hover {
+    transform: scale(1.06);
+}
+
+.lesson-node.unlocked:active {
+    transform: translateY(6px);
+    box-shadow: 0 2px 0 var(--color-senai-red-dark);
+}
+
+.lesson-node.completed {
+    background-color: var(--color-gold);
+    box-shadow: 0 8px 0 var(--color-gold-dark);
+    color: #3d2c00;
+}
+
+.lesson-node.locked {
+    background-color: #e2e8f0;
+    box-shadow: 0 8px 0 #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Popup Tooltip ao passar o cursor */
+.node-tooltip {
+    position: absolute;
+    bottom: 95px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-senai-blue-dark);
+    color: #ffffff;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    z-index: 10;
+    display: none;
+}
+
+.node-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--color-senai-blue-dark) transparent transparent transparent;
+}
+
+.roadmap-node-wrapper:hover .node-tooltip {
+    display: block;
+}
