@@ -9,6 +9,19 @@ if (!$lessonId) {
     header("Location: dashboard.php");
     exit;
 }
+
+// Buscar o slug da matéria desta lição para manter a navegação ao sair
+$stmtLesson = $pdo->prepare("
+    SELECT l.*, s.slug AS subject_slug 
+    FROM lessons l 
+    JOIN units u ON l.unit_id = u.id 
+    JOIN subjects s ON u.subject_id = s.id 
+    WHERE l.id = ?
+");
+$stmtLesson->execute([$lessonId]);
+$lessonInfo = $stmtLesson->fetch();
+
+$subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -26,17 +39,19 @@ if (!$lessonId) {
     <script>
         window.LESSON_ID = <?= $lessonId ?>;
         window.LESSON_MODE = '<?= htmlspecialchars($mode) ?>';
+        window.SUBJECT_SLUG = '<?= htmlspecialchars($subjectSlug) ?>';
     </script>
 </head>
 <body class="lesson-page bg-mesh-gradient">
 
     <!-- HEADER DA LIÇÃO -->
-    <header class="lesson-header bg-white border-bottom shadow-sm">
-        <a href="dashboard.php" class="btn btn-aprova-light btn-sm rounded-circle p-1 px-2" title="Voltar">
+    <header class="lesson-header bg-white border-bottom shadow-sm d-flex align-items-center gap-3">
+        <a href="dashboard.php?subject=<?= urlencode($subjectSlug) ?>" class="btn btn-aprova-light btn-sm rounded-circle p-1 px-2" title="Voltar à Trilha">
             <i class="bi bi-x-lg"></i>
         </a>
+        <img src="assets/img/logo_mascot.png" alt="AprovaQuest" style="height: 32px; width: auto; object-fit: contain;">
         
-        <div class="progress-bar-container">
+        <div class="progress-bar-container flex-grow-1">
             <div class="progress-bar-fill" id="lessonProgress" style="background-color: var(--brand-primary);"></div>
         </div>
     </header>

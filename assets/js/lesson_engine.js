@@ -1,8 +1,8 @@
 /**
  * MOTOR DE LIÇÕES GAMIFICADAS - APROVAQUEST
- * - Sistema de vidas totalmente removido.
+ * - Sistema de Vidas 100% Removido.
  * - Registra cada resposta correta em tempo real para não repeti-la nos próximos 5 dias.
- * - Ocultação de resolução para o Modo Chefão Boss.
+ * - Dinâmica Avançada de XP (Base + Bônus de Precisão) com Notificação de Level Up.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             questions = data.questions;
 
-            // Se for Modo Chefão Boss
             if (data.is_boss_mode && modeBadge) {
                 isBossChallenge = true;
                 modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> DESAFIO BOSS (VARIAÇÃO #${data.boss_variant})</span>`;
@@ -64,11 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOption = null;
         isAnswerChecked = false;
 
-        // Barra de Progresso
         const progressPercent = Math.round((index / questions.length) * 100);
         if (progressBar) progressBar.style.width = `${progressPercent}%`;
 
-        // Ocultar Feedback Drawer
         if (feedbackDrawer) {
             feedbackDrawer.classList.remove('show', 'success', 'error');
         }
@@ -104,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function selectOption(letter) {
         if (isAnswerChecked) return;
 
-        sounds.playClick();
+        if (typeof sounds !== 'undefined') sounds.playClick();
         selectedOption = letter;
 
         document.querySelectorAll('.quiz-card-aprova').forEach(card => {
@@ -150,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentQ = questions[currentIndex];
         const isCorrect = (selectedOption === currentQ.correct_option.toLowerCase());
 
-        // Salvar resposta no banco em segundo plano para o filtro de 5 dias
         fetch('api/save_answer.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -164,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hideResolution = isBossChallenge || currentQ.hide_resolution || currentQ.is_boss;
 
         if (isCorrect) {
-            sounds.playCorrect();
+            if (typeof sounds !== 'undefined') sounds.playCorrect();
             correctAnswersCount++;
             feedbackDrawer.className = 'feedback-drawer show success';
             feedbackTitle.innerHTML = `<i class="bi bi-check-circle-fill text-success me-2"></i> Resposta Correta!`;
@@ -175,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 explanationBox.innerHTML = `<strong>Explicação:</strong><br>${currentQ.explanation_text}`;
             }
         } else {
-            sounds.playError();
+            if (typeof sounds !== 'undefined') sounds.playError();
             feedbackDrawer.className = 'feedback-drawer show error';
             feedbackTitle.innerHTML = `<i class="bi bi-x-circle-fill text-danger me-2"></i> Resposta Incorreta (Gabarito: Opção ${currentQ.correct_option.toUpperCase()})`;
 
@@ -197,9 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadQuestion(currentIndex);
     });
 
-    // Conclusão da Lição
+    // Conclusão da Lição com Card de Recompensa de XP e Notificação de Level Up
     function finishLesson() {
-        sounds.playComplete();
+        if (typeof sounds !== 'undefined') sounds.playComplete();
         const scorePercent = Math.round((correctAnswersCount / questions.length) * 100);
 
         if (feedbackDrawer) {
@@ -216,42 +212,75 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 lesson_id: lessonId,
-                score_percent: scorePercent
+                score_percent: scorePercent,
+                mode: lessonMode
             })
         })
         .then(res => res.json())
         .then(res => {
             const body = document.getElementById('lessonBody');
-            body.innerHTML = `
-                <div class="card card-aprova text-center p-5 my-4 shadow-sm">
-                    <i class="bi ${isBossChallenge ? 'bi-shield-lock-fill text-danger' : 'bi-trophy text-warning'} display-4 mb-3"></i>
-                    <h3 class="fw-bold text-dark mb-2">${isBossChallenge ? 'Desafio Boss Concluído!' : 'Tópico Concluído!'}</h3>
-                    <p class="text-secondary mb-4">${isBossChallenge ? 'As questões que você acertou ficarão gravadas e não serão repetidas pelos próximos 5 dias!' : 'As questões que você acertou não se repetirão pelos próximos 5 dias.'}</p>
-                    
-                    <div class="row g-3 mb-4">
-                        <div class="col-6">
-                            <div class="p-3 bg-light border rounded-3">
-                                <span class="d-block small text-muted text-uppercase fw-semibold">XP Ganho</span>
-                                <span class="fs-4 fw-bold text-warning">+${res.xp_gained || (isBossChallenge ? 50 : 20)} XP</span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="p-3 bg-light border rounded-3">
-                                <span class="d-block small text-muted text-uppercase fw-semibold">Precisão</span>
-                                <span class="fs-4 fw-bold text-success">${scorePercent}%</span>
-                            </div>
-                        </div>
+            
+            let levelUpHtml = '';
+            if (res.leveled_up) {
+                levelUpHtml = `
+                    <div class="alert alert-warning border-warning shadow-sm rounded-3 py-3 mb-4 text-center">
+                        <i class="bi bi-stars text-warning fs-3 d-block mb-1"></i>
+                        <h4 class="fw-bold text-dark mb-0">SUBIU DE NÍVEL!</h4>
+                        <span class="badge bg-warning text-dark font-monospace mt-1 px-3 py-1 fs-6">NÍVEL ${res.level} CONQUISTADO</span>
                     </div>
+                `;
+            }
 
-                    <button type="button" onclick="window.location.href='dashboard.php'" class="btn btn-aprova-primary py-2.5 fw-semibold w-100">
-                        Voltar à Trilha de Estudos
-                    </button>
-                </div>
-            `;
-        })
-        .catch(err => {
-            console.error('Erro ao enviar progresso:', err);
-            window.location.href = 'dashboard.php';
+                    const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
+
+                    body.innerHTML = `
+                        ${levelUpHtml}
+                        <div class="card card-aprova text-center p-5 my-3 shadow-lg border-2">
+                            <div class="mb-3">
+                                <i class="bi ${isBossChallenge ? 'bi-fire text-danger' : 'bi-trophy-fill text-warning'} display-3"></i>
+                            </div>
+                            <h3 class="fw-bold text-dark mb-1">${isBossChallenge ? 'Desafio Boss Superado!' : 'Fase Concluída!'}</h3>
+                            <p class="text-secondary small mb-4">Você completou os exercícios desta etapa!</p>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-4">
+                                    <div class="p-3 bg-light border rounded-3">
+                                        <span class="d-block small text-muted font-monospace">XP BASE</span>
+                                        <span class="fs-5 fw-bold text-primary">+${res.base_xp || 35}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-light border rounded-3">
+                                        <span class="d-block small text-muted font-monospace">BÔNUS</span>
+                                        <span class="fs-5 fw-bold text-success">+${res.accuracy_bonus || 0}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-indigo-subtle border border-indigo-subtle rounded-3">
+                                        <span class="d-block small text-primary font-monospace fw-bold">TOTAL XP</span>
+                                        <span class="fs-4 fw-extrabold text-primary">+${res.xp_gained}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 border mb-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-fire text-warning fs-4"></i>
+                                    <span class="fw-bold text-dark">Ofensiva Diária</span>
+                                </div>
+                                <span class="badge bg-warning text-dark font-monospace px-3 py-1.5 fs-6">${res.streak_days} DIAS</span>
+                            </div>
+
+                            <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-aprova-primary py-3 fw-bold w-100 fs-6 shadow">
+                                VOLTAR À TRILHA DE ESTUDOS
+                            </button>
+                        </div>
+                    `;
+                })
+                .catch(err => {
+                    console.error('Erro ao enviar progresso:', err);
+                    const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
+                    window.location.href = redirectUrl;
+                });
+            }
         });
-    }
-});

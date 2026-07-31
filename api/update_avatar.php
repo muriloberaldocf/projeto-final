@@ -24,7 +24,8 @@ $avatarsCatalog = [
     'bi-award' => 350,
     'bi-gem' => 500,
     'bi-incognito' => 750,
-    'bi-crown' => 1000
+    'bi-crown' => 1000,
+    'bi-emoji-smile-fill' => 1500
 ];
 
 if (!array_key_exists($avatarIcon, $avatarsCatalog)) {
@@ -39,13 +40,18 @@ $userXp = (int) $stmtUser->fetchColumn();
 
 $requiredXp = $avatarsCatalog[$avatarIcon];
 if ($userXp < $requiredXp) {
-    echo json_encode(['success' => false, 'message' => "Você precisa de no mínimo {$requiredXp} XP para desbloquear este avatar!"]);
+    echo json_encode(['success' => false, 'message' => "Você precisa de no mínimo {$requiredXp} XP para desbloquear esta recompensa do Hipopótamo!"]);
     exit;
 }
 
-// Equipar Avatar
-$stmtUpdate = $pdo->prepare("UPDATE users SET avatar_icon = ? WHERE id = ?");
-$stmtUpdate->execute([$avatarIcon, $userId]);
+// Equipar Avatar (Se for o Hipopótamo Lendário 1500 XP, define também a foto de perfil do mascote!)
+if ($avatarIcon === 'bi-emoji-smile-fill') {
+    $stmtUpdate = $pdo->prepare("UPDATE users SET avatar_icon = ?, avatar = 'assets/img/logo_mascot.png' WHERE id = ?");
+    $stmtUpdate->execute([$avatarIcon, $userId]);
+} else {
+    $stmtUpdate = $pdo->prepare("UPDATE users SET avatar_icon = ? WHERE id = ?");
+    $stmtUpdate->execute([$avatarIcon, $userId]);
+}
 
 echo json_encode([
     'success' => true,

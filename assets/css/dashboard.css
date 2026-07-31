@@ -1,164 +1,488 @@
 /* ============================================================
-   SENAILINGO - DASHBOARD & TRILHA DE APRENDIZADO (SENAI-SP)
+   APROVAQUEST — DUOLINGO-INSPIRED 80% UX GAME DESIGN SYSTEM
+   Paleta Autêntica: Indigo (#4f46e5), Ciano (#06b6d4), Dourado (#f59e0b), Esmeralda (#10b981)
    ============================================================ */
 
-/* Seletor de Matérias */
-.subject-selector {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 12px;
-    margin-bottom: 28px;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+    /* Paleta da Sua Marca AprovaQuest com Acabamento 3D Duolingo */
+    --duo-brand: #4f46e5;
+    --duo-brand-hover: #4338ca;
+    --duo-brand-shadow: #312e81;
+    --duo-brand-soft: #eef2ff;
+
+    --duo-cyan: #06b6d4;
+    --duo-cyan-hover: #0891b2;
+    --duo-cyan-shadow: #0e7490;
+
+    --duo-emerald: #10b981;
+    --duo-emerald-hover: #059669;
+    --duo-emerald-shadow: #047857;
+
+    --duo-gold: #f59e0b;
+    --duo-gold-hover: #d97706;
+    --duo-gold-shadow: #b45309;
+
+    --duo-red: #ef4444;
+    --duo-red-hover: #dc2626;
+    --duo-red-shadow: #b91c1c;
+
+    --duo-locked-bg: #e2e8f0;
+    --duo-locked-border: #cbd5e1;
+    --duo-locked-shadow: #94a3b8;
+    --duo-locked-text: #94a3b8;
 }
 
-.subject-tab {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: var(--radius-md);
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f8fafc;
+}
+
+/* ============================================================
+   HEADER TOP HUD DUOLINGO
+   ============================================================ */
+.duo-navbar {
     background-color: #ffffff;
-    border: 2px solid var(--border-color);
-    box-shadow: 0 3px 0 var(--border-color);
-    font-weight: 800;
-    font-size: 14px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s ease;
-    color: var(--text-primary);
+    border-bottom: 2px solid #e2e8f0;
+    padding: 8px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.subject-tab:hover {
+.duo-brand-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--duo-brand);
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+.duo-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    border-radius: 14px;
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 2px 0 #e2e8f0;
+    transition: transform 0.15s ease;
+}
+
+.duo-stat-pill:hover {
     transform: translateY(-2px);
 }
 
-.subject-tab.active {
-    border-color: var(--color-senai-red);
-    background-color: var(--color-senai-red-light);
-    color: var(--color-senai-red-dark);
-    box-shadow: 0 4px 0 var(--color-senai-red);
-}
-
-/* Banner de Unidade SESI/SENAI */
-.unit-banner {
-    background: linear-gradient(135deg, var(--color-senai-blue) 0%, var(--color-senai-blue-dark) 100%);
+/* ============================================================
+   BANNERS DE UNIDADE GAMIFICADOS (DUOLINGO UNIT HEADERS)
+   ============================================================ */
+.duo-unit-banner {
+    background: linear-gradient(135deg, var(--duo-brand) 0%, #3730a3 100%);
     color: #ffffff;
-    padding: 24px;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 5px 0 var(--color-senai-blue-dark);
-    border-left: 6px solid var(--color-senai-red);
-    margin-bottom: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    border-radius: 16px;
+    padding: 14px 18px;
+    box-shadow: 0 6px 0 #1e1b4b, 0 8px 16px rgba(79, 70, 229, 0.2);
+    border: 2px solid #818cf8;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
 }
 
-.unit-banner h2 {
-    font-family: var(--font-heading);
-    font-size: 22px;
+.duo-unit-banner.cyan-theme {
+    background: linear-gradient(135deg, var(--duo-cyan) 0%, #0e7490 100%);
+    box-shadow: 0 6px 0 #155e75, 0 8px 16px rgba(6, 182, 212, 0.2);
+    border-color: #67e8f9;
+}
+
+.duo-unit-banner.emerald-theme {
+    background: linear-gradient(135deg, var(--duo-emerald) 0%, #047857 100%);
+    box-shadow: 0 6px 0 #064e3b, 0 8px 16px rgba(16, 185, 129, 0.2);
+    border-color: #6ee7b7;
+}
+
+.duo-unit-title {
+    font-family: 'Outfit', sans-serif;
     font-weight: 800;
+    font-size: 1.15rem;
+    margin-bottom: 2px;
+    letter-spacing: -0.3px;
 }
 
-.unit-banner p {
-    font-size: 14px;
-    opacity: 0.9;
+.duo-unit-desc {
+    font-size: 0.82rem;
+    opacity: 0.92;
+    margin-bottom: 0;
 }
 
-/* ÁRVORE DA TRILHA (NODES DA LIÇÃO) */
-.roadmap-tree {
+.btn-duo-guidebook {
+    background-color: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+    transition: all 0.15s ease;
+}
+
+.btn-duo-guidebook:hover {
+    background-color: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.btn-duo-guidebook:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================
+   MAPA DE TRILHA EM ONDA CURVA (DUOLINGO CURVED SNAKE PATH)
+   ============================================================ */
+.duo-path-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 28px;
-    margin: 32px 0 60px 0;
+    gap: 14px;
+    padding: 10px 0 25px 0;
     position: relative;
 }
 
-/* Formato em zigue-zague */
-.roadmap-node-wrapper {
+.duo-node-wrapper {
     position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.roadmap-node-wrapper:nth-child(2n) {
-    transform: translateX(35px);
+/* Posicionamento em curva senoidal idêntico ao Duolingo */
+.duo-node-wrapper:nth-child(8n+1) { transform: translateX(0); }
+.duo-node-wrapper:nth-child(8n+2) { transform: translateX(45px); }
+.duo-node-wrapper:nth-child(8n+3) { transform: translateX(70px); }
+.duo-node-wrapper:nth-child(8n+4) { transform: translateX(45px); }
+.duo-node-wrapper:nth-child(8n+5) { transform: translateX(0); }
+.duo-node-wrapper:nth-child(8n+6) { transform: translateX(-45px); }
+.duo-node-wrapper:nth-child(8n+7) { transform: translateX(-70px); }
+.duo-node-wrapper:nth-child(8n+8) { transform: translateX(-45px); }
+
+@media (max-width: 576px) {
+    .duo-node-wrapper:nth-child(8n+2), .duo-node-wrapper:nth-child(8n+4) { transform: translateX(25px); }
+    .duo-node-wrapper:nth-child(8n+3) { transform: translateX(45px); }
+    .duo-node-wrapper:nth-child(8n+6), .duo-node-wrapper:nth-child(8n+8) { transform: translateX(-25px); }
+    .duo-node-wrapper:nth-child(8n+7) { transform: translateX(-45px); }
 }
 
-.roadmap-node-wrapper:nth-child(3n) {
-    transform: translateX(-35px);
-}
-
-/* Node Círculo de Lição com cores SENAI */
-.lesson-node {
+/* ============================================================
+   BOTÃO DE LIÇÃO CIRCULAR 3D DUOLINGO
+   ============================================================ */
+.duo-node-btn {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
     cursor: pointer;
     position: relative;
-    border: none;
-    transition: all 0.15s ease;
     user-select: none;
+    outline: none;
+    transition: all 0.12s ease-in-out;
 }
 
-.lesson-node.unlocked {
-    background-color: var(--color-senai-red);
-    box-shadow: 0 8px 0 var(--color-senai-red-dark);
+/* FASE CONCLUÍDA (VERDE ESMERALDA OU DOURADO 3D) */
+.duo-node-btn.completed {
+    background-color: var(--duo-emerald);
+    box-shadow: 0 8px 0 var(--duo-emerald-shadow), 0 10px 20px rgba(16, 185, 129, 0.3);
     color: #ffffff;
 }
 
-.lesson-node.unlocked:hover {
-    transform: scale(1.06);
+.duo-node-btn.completed:hover {
+    background-color: var(--duo-emerald-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 0 var(--duo-emerald-shadow), 0 14px 24px rgba(16, 185, 129, 0.4);
 }
 
-.lesson-node.unlocked:active {
+.duo-node-btn.completed:active {
     transform: translateY(6px);
-    box-shadow: 0 2px 0 var(--color-senai-red-dark);
+    box-shadow: 0 2px 0 var(--duo-emerald-shadow);
 }
 
-.lesson-node.completed {
-    background-color: var(--color-gold);
-    box-shadow: 0 8px 0 var(--color-gold-dark);
-    color: #3d2c00;
+/* FASE ATUAL / DESBLOQUEADA (ÍNDIGO BRAND 3D) */
+.duo-node-btn.unlocked {
+    background-color: var(--duo-brand);
+    box-shadow: 0 8px 0 var(--duo-brand-shadow), 0 10px 22px rgba(79, 70, 229, 0.35);
+    color: #ffffff;
 }
 
-.lesson-node.locked {
-    background-color: #e2e8f0;
-    box-shadow: 0 8px 0 #cbd5e1;
-    color: #94a3b8;
+.duo-node-btn.unlocked:hover {
+    background-color: var(--duo-brand-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 0 var(--duo-brand-shadow), 0 14px 26px rgba(79, 70, 229, 0.45);
+}
+
+.duo-node-btn.unlocked:active {
+    transform: translateY(6px);
+    box-shadow: 0 2px 0 var(--duo-brand-shadow);
+}
+
+/* FASE BLOQUEADA (NEUTRO BLOQUEADO) */
+.duo-node-btn.locked {
+    background-color: var(--duo-locked-bg);
+    box-shadow: 0 8px 0 var(--duo-locked-border);
+    color: var(--duo-locked-text);
     cursor: not-allowed;
 }
 
-/* Popup Tooltip ao passar o cursor */
-.node-tooltip {
-    position: absolute;
-    bottom: 95px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--color-senai-blue-dark);
+/* FASE BAÚ DE RECOMPENSA (TREASURE CHEST 🎁) */
+.duo-node-btn.chest-node {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background-color: var(--duo-gold);
+    box-shadow: 0 7px 0 var(--duo-gold-shadow), 0 10px 20px rgba(245, 158, 11, 0.35);
     color: #ffffff;
-    padding: 14px 18px;
-    border-radius: var(--radius-md);
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-    z-index: 10;
-    display: none;
 }
 
-.node-tooltip::after {
-    content: '';
+.duo-node-btn.chest-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 0 var(--duo-gold-shadow);
+}
+
+.duo-node-btn.chest-node:active {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 var(--duo-gold-shadow);
+}
+
+/* FASE CHEFÃO DE UNIDADE (CROWN / BOSS NODE 👑) */
+.duo-node-btn.boss-node {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: var(--duo-red);
+    box-shadow: 0 9px 0 var(--duo-red-shadow), 0 12px 24px rgba(239, 68, 68, 0.4);
+    color: #ffffff;
+    border: 4px solid #fef08a;
+}
+
+.duo-node-btn.boss-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 11px 0 var(--duo-red-shadow);
+}
+
+.duo-node-btn.boss-node:active {
+    transform: translateY(7px);
+    box-shadow: 0 2px 0 var(--duo-red-shadow);
+}
+
+/* ============================================================
+   BALÃO DE FALA DO PERSONAGEM (SPEECH BUBBLE DUOLINGO)
+   ============================================================ */
+.duo-speech-bubble-wrapper {
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 6px;
-    border-style: solid;
-    border-color: var(--color-senai-blue-dark) transparent transparent transparent;
+    top: -56px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: duoFloatBubble 2s infinite ease-in-out;
 }
 
-.roadmap-node-wrapper:hover .node-tooltip {
-    display: block;
+.duo-speech-bubble {
+    background-color: var(--duo-brand);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.duo-speech-arrow {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid var(--duo-brand);
+    margin-top: -1px;
+}
+
+@keyframes duoFloatBubble {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* ANEL DE PROGRESSO SVG AO REDOR DO BOTÃO */
+.duo-svg-ring {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 92px;
+    height: 92px;
+    pointer-events: none;
+}
+
+.duo-svg-ring circle {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+.duo-ring-bg {
+    stroke: #e2e8f0;
+}
+
+.duo-ring-fill {
+    stroke: var(--duo-brand);
+    transition: stroke-dashoffset 0.6s ease;
+}
+
+/* ============================================================
+   CARD POPOVER DE FASE ESTILO DUOLINGO
+   ============================================================ */
+.duo-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.duo-modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.duo-modal-card {
+    background-color: #ffffff;
+    border-radius: 24px;
+    border: 3px solid #e2e8f0;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+    width: 100%;
+    max-width: 380px;
+    padding: 28px 24px;
+    text-align: center;
+    transform: scale(0.85) translateY(20px);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+.duo-modal-backdrop.show .duo-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.btn-duo-primary {
+    background-color: var(--duo-emerald);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    padding: 14px 20px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 6px 0 var(--duo-emerald-shadow), 0 10px 20px rgba(16, 185, 129, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.12s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btn-duo-primary:hover {
+    background-color: var(--duo-emerald-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 var(--duo-emerald-shadow);
+}
+
+.btn-duo-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--duo-emerald-shadow);
+}
+
+.btn-duo-boss {
+    background-color: var(--duo-red);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 12px 18px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 5px 0 var(--duo-red-shadow);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.12s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btn-duo-boss:hover {
+    background-color: var(--duo-red-hover);
+    transform: translateY(-2px);
+}
+
+.btn-duo-boss:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--duo-red-shadow);
+}
+
+/* WIDGETS DA SIDEBAR DUOLINGO */
+.duo-card-widget {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 0 #f1f5f9;
+}
+
+.duo-widget-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #1e293b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }

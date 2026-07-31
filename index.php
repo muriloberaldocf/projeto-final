@@ -7,145 +7,147 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AprovaQuest — Prática Inteligente para Vestibulares</title>
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+
+    <!-- TAILWIND CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Custom CSS AprovaQuest -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <style>
-        /* Estilos adicionais para harmonização de abas e botões */
-        .auth-nav-link {
-            border: none;
-            border-radius: 8px !important;
-            font-weight: 600;
-            color: var(--text-muted);
-            padding: 10px 16px;
-            transition: all 0.15s ease;
-        }
-
-        .auth-nav-link.active {
-            background-color: var(--brand-primary) !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-        }
-    </style>
 </head>
-<body class="bg-mesh-gradient bg-grid-pattern">
+<body class="min-h-full font-sans antialiased text-slate-800 bg-slate-50 selection:bg-indigo-500 selection:text-white flex flex-col">
 
-    <!-- NAVBAR INDEPENDENTE -->
-    <nav class="navbar navbar-expand-lg navbar-aprova sticky-top">
-        <div class="container">
-            <a class="brand-logo-aprova" href="index.php">
-                <div class="brand-icon-box">
-                    <i class="bi bi-check-all"></i>
-                </div>
-                <span>AprovaQuest</span>
-                <span class="brand-badge-aprova ms-1">PRO</span>
+    <!-- HEADER TOP -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-slate-200 py-2.5 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <a href="index.php" class="flex items-center gap-3 group text-decoration-none">
+                <img src="assets/img/logo_mascot.png" alt="AprovaQuest Logo" class="h-11 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase">PRO</span>
             </a>
-            <div class="ms-auto d-none d-md-block text-muted small fw-medium">
-                Prática Inteligente & Simulados
+
+            <div class="text-xs font-bold text-slate-500 hidden sm:block">
+                Prática Inteligente & Simulados Gamificados
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- CONTEÚDO PRINCIPAL COM FUNDO DECORATIVO E RICO -->
-    <main class="container py-5">
-        <div class="row align-items-center g-5 py-3">
-            <!-- COLUNA ESQUERDA -->
-            <div class="col-lg-6">
-                <span class="badge bg-indigo-subtle text-primary border border-indigo-subtle px-3 py-2 rounded-pill fw-semibold mb-3 d-inline-flex align-items-center gap-1" style="background-color: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">
-                    <i class="bi bi-stars"></i> PREPARAÇÃO DE ALTO RENDIMENTO
+    <!-- CONTEÚDO DA LANDING & AUTH -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+            
+            <!-- ESQUERDA: APRESENTAÇÃO -->
+            <div class="lg:col-span-7 space-y-6">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase tracking-wider">
+                    <i class="bi bi-stars text-amber-500"></i> PREPARAÇÃO DE ALTO RENDIMENTO
                 </span>
 
-                <h1 class="display-5 fw-bold text-dark mb-3" style="letter-spacing: -0.8px; line-height: 1.15;">
-                    Sua Jornada de Exercícios para os <span style="color: #4f46e5;">Vestibulares</span>
+                <h1 class="font-outfit font-extrabold text-4xl sm:text-5xl lg:text-6xl text-slate-900 leading-tight tracking-tight">
+                    Conquiste sua Vaga Praticando <span class="text-indigo-600">Questões Reais</span>
                 </h1>
 
-                <p class="text-secondary mb-4 fs-6" style="line-height: 1.6;">
-                    Pratique com milhares de questões organizadas por disciplinas, acompanhe sua evolução acadêmica em tempo real e consolide seu aprendizado.
+                <p class="text-base text-slate-600 font-medium leading-relaxed max-w-xl">
+                    Acelere sua aprovação no ENEM, FUVEST, UNICAMP e VUNESP com simulados interativos, resolução passo a passo e evolução em tempo real.
                 </p>
 
-                <!-- CARDS DE RECURSOS FLUTUANTES -->
-                <div class="row g-3">
-                    <div class="col-sm-6">
-                        <div class="card card-aprova p-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-3 p-2 text-primary" style="background-color: #eef2ff;">
-                                    <i class="bi bi-ui-checks-grid fs-4"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold">5 Alternativas (A a E)</h6>
-                                    <span class="text-muted small">Estrutura oficial</span>
-                                </div>
-                            </div>
+                <!-- RECURSOS -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-white rounded-2xl border-2 border-slate-200 p-4 shadow-[0_4px_0_0_#e2e8f0] flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-200 shrink-0">
+                            <i class="bi bi-ui-checks-grid fs-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-outfit font-bold text-sm text-slate-900">5 Alternativas (A a E)</h4>
+                            <span class="text-xs text-slate-500 font-medium">Estrutura oficial de vestibulares</span>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
-                        <div class="card card-aprova p-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-3 p-2 text-info" style="background-color: #ecfeff;">
-                                    <i class="bi bi-graph-up-arrow fs-4"></i>
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold">Evolução de XP</h6>
-                                    <span class="text-muted small">Desempenho diário</span>
-                                </div>
-                            </div>
+                    <div class="bg-white rounded-2xl border-2 border-slate-200 p-4 shadow-[0_4px_0_0_#e2e8f0] flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200 shrink-0">
+                            <i class="bi bi-lightning-charge-fill fs-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-outfit font-bold text-sm text-slate-900">Evolução de XP & Fases</h4>
+                            <span class="text-xs text-slate-500 font-medium">Suba de nível praticando</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CARD DE AUTENTICAÇÃO COM GLASSMORPHISM HARMONIZADO -->
-            <div class="col-lg-5 offset-lg-1">
-                <div class="card card-aprova p-4 shadow-lg border-0" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);">
-                    <ul class="nav nav-pills nav-fill mb-4 bg-light p-1 rounded-3" id="authTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link auth-nav-link active" id="login-tab" onclick="switchAuth('login')">
-                                Entrar
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link auth-nav-link" id="register-tab" onclick="switchAuth('register')">
-                                Criar Conta
-                            </button>
-                        </li>
-                    </ul>
+            <!-- DIREITA: FORMULÁRIO DE LOGIN / REGISTRO TAILWIND -->
+            <div class="lg:col-span-5">
+                <div class="bg-white rounded-3xl border-4 border-slate-200 p-7 shadow-2xl space-y-5">
+                    <div class="text-center pb-2 border-b border-slate-100">
+                        <img src="assets/img/logo_mascot.png" alt="Mascote AprovaQuest" class="h-16 mx-auto w-auto object-contain mb-1 drop-shadow-sm">
+                        <p class="text-xs font-bold text-slate-400 mb-0">Acesse sua conta para continuar praticando</p>
+                    </div>
 
-                    <form id="formAuth">
-                        <div id="nameField" class="mb-3" style="display: none;">
-                            <label class="form-label text-muted small fw-semibold">Nome Completo</label>
-                            <input type="text" id="inputName" class="form-control form-control-aprova" placeholder="Seu nome">
+                    <!-- TABS ENTRAR / CRIAR CONTA -->
+                    <div class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200" id="authTabs">
+                        <button type="button" onclick="switchAuth('login')" id="login-tab" class="flex-1 py-2.5 rounded-xl font-outfit font-extrabold text-sm transition-all bg-indigo-600 text-white shadow-sm">
+                            Entrar
+                        </button>
+                        <button type="button" onclick="switchAuth('register')" id="register-tab" class="flex-1 py-2.5 rounded-xl font-outfit font-bold text-sm text-slate-600 hover:text-slate-900 transition-all">
+                            Criar Conta
+                        </button>
+                    </div>
+
+                    <form id="formAuth" class="space-y-4">
+                        <div id="nameField" style="display: none;">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nome Completo</label>
+                            <input type="text" id="inputName" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 font-medium text-sm focus:border-indigo-600 focus:outline-none" placeholder="Seu nome">
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted small fw-semibold">E-mail</label>
-                            <input type="email" id="inputEmail" class="form-control form-control-aprova" placeholder="estudante@aprovaquest.com" required>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">E-mail</label>
+                            <input type="email" id="inputEmail" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 font-medium text-sm focus:border-indigo-600 focus:outline-none" placeholder="estudante@aprovaquest.com" required>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label text-muted small fw-semibold">Senha</label>
-                            <input type="password" id="inputPassword" class="form-control form-control-aprova" placeholder="••••••••" required>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Senha</label>
+                            <input type="password" id="inputPassword" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 font-medium text-sm focus:border-indigo-600 focus:outline-none" placeholder="••••••••" required>
                         </div>
 
-                        <button type="submit" id="btnSubmit" class="btn btn-aprova-primary w-100 py-2.5 fs-6">
+                        <button type="submit" id="btnSubmit" class="w-full py-3.5 px-6 rounded-2xl font-outfit font-extrabold text-base bg-indigo-600 text-white shadow-[0_6px_0_0_#312e81] hover:bg-indigo-700 active:translate-y-1 active:shadow-[0_2px_0_0_#312e81] transition-all">
                             Entrar na Plataforma
                         </button>
                     </form>
 
-                    <div id="errorMessage" class="alert alert-danger mt-3 mb-0 small" style="display: none;"></div>
+                    <div id="errorMessage" class="hidden p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold text-center"></div>
 
-                    <!-- ACESSO RÁPIDO HARMONIZADO -->
-                    <div class="mt-4 pt-3 border-top text-center">
-                        <button type="button" onclick="demoLogin()" class="btn btn-aprova-soft btn-sm w-100 fw-semibold py-2">
-                            <i class="bi bi-lightning-fill me-1"></i> Acessar como Aluno Demo
+                    <!-- ACESSO DEMO -->
+                    <div class="pt-4 border-t border-slate-200 text-center">
+                        <button type="button" onclick="demoLogin()" class="w-full py-3 px-4 rounded-2xl font-outfit font-extrabold text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-all flex items-center justify-center gap-2">
+                            <i class="bi bi-lightning-fill text-amber-500 fs-6"></i> ACESSAR COMO ALUNO DEMO
                         </button>
                     </div>
                 </div>
@@ -153,28 +155,34 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </main>
 
-    <footer class="container py-4 border-top text-center text-muted small">
-        <p class="mb-0">AprovaQuest &copy; 2026 — Plataforma Independente de Exercícios</p>
+    <footer class="py-6 border-t border-slate-200 text-center text-xs font-semibold text-slate-400">
+        AprovaQuest &copy; 2026 — Plataforma Independente de Exercícios Gamificados
     </footer>
 
-    <!-- Bootstrap 5.3 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/sound_effects.js"></script>
     <script>
         let currentMode = 'login';
 
         function switchAuth(mode) {
             currentMode = mode;
-            document.getElementById('login-tab').classList.toggle('active', mode === 'login');
-            document.getElementById('register-tab').classList.toggle('active', mode === 'register');
-            
+            const loginTab = document.getElementById('login-tab');
+            const regTab = document.getElementById('register-tab');
+
+            if (mode === 'login') {
+                loginTab.className = 'flex-1 py-2.5 rounded-xl font-outfit font-extrabold text-sm transition-all bg-indigo-600 text-white shadow-sm';
+                regTab.className = 'flex-1 py-2.5 rounded-xl font-outfit font-bold text-sm text-slate-600 hover:text-slate-900 transition-all';
+            } else {
+                regTab.className = 'flex-1 py-2.5 rounded-xl font-outfit font-extrabold text-sm transition-all bg-indigo-600 text-white shadow-sm';
+                loginTab.className = 'flex-1 py-2.5 rounded-xl font-outfit font-bold text-sm text-slate-600 hover:text-slate-900 transition-all';
+            }
+
             document.getElementById('nameField').style.display = (mode === 'register') ? 'block' : 'none';
             document.getElementById('btnSubmit').textContent = (mode === 'register') ? 'Criar Minha Conta' : 'Entrar na Plataforma';
         }
 
         document.getElementById('formAuth').addEventListener('submit', function(e) {
             e.preventDefault();
-            sounds.playClick();
+            if (typeof sounds !== 'undefined') sounds.playClick();
 
             const formData = new FormData();
             formData.append('action', currentMode);
@@ -195,13 +203,13 @@ if (isset($_SESSION['user_id'])) {
                 } else {
                     const err = document.getElementById('errorMessage');
                     err.textContent = data.message;
-                    err.style.display = 'block';
+                    err.classList.remove('hidden');
                 }
             });
         });
 
         function demoLogin() {
-            sounds.playClick();
+            if (typeof sounds !== 'undefined') sounds.playClick();
             fetch('api/auth.php?action=demo_login')
                 .then(res => res.json())
                 .then(data => {
