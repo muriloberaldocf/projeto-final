@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> DESAFIO BOSS (VARIAÇÃO #${data.boss_variant})</span>`;
             }
 
+
+
             loadQuestion(0);
         })
         .catch(err => {

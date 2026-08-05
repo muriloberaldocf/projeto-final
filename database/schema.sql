@@ -1,10 +1,7 @@
 -- ============================================================
--- SCRIPT DE CRIAÇÃO DO BANCO DE DADOS E CARGA INICIAL (VESTILINGO)
--- Duolingo para Vestibulares (ENEM, FUVEST, UNICAMP, VUNESP, SENAI)
+-- SCRIPT DE CRIAÇÃO DAS TABELAS (HIPOGABARITO)
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS `vestilingo` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `vestilingo`;
 
 -- 1. Tabela de Usuários
 CREATE TABLE IF NOT EXISTS `users` (

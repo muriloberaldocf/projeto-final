@@ -28,7 +28,7 @@ $subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercício — AprovaQuest</title>
+    <title>Exercício — HipoGabarito</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -49,7 +49,7 @@ $subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
         <a href="dashboard.php?subject=<?= urlencode($subjectSlug) ?>" class="btn btn-aprova-light btn-sm rounded-circle p-1 px-2" title="Voltar à Trilha">
             <i class="bi bi-x-lg"></i>
         </a>
-        <img src="assets/img/logo_mascot.png" alt="AprovaQuest" style="height: 32px; width: auto; object-fit: contain;">
+        <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito" style="height: 32px; width: auto; object-fit: contain;">
         
         <div class="progress-bar-container flex-grow-1">
             <div class="progress-bar-fill" id="lessonProgress" style="background-color: var(--brand-primary);"></div>
@@ -79,6 +79,8 @@ $subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
             <i class="bi bi-keyboard me-1"></i> Atalho: use as teclas <strong>1-5</strong> ou <strong>A-E</strong> e pressione <strong>Enter</strong>.
         </div>
     </main>
+
+
 
     <!-- RODAPÉ FIXO -->
     <footer class="lesson-footer bg-white border-top py-3">

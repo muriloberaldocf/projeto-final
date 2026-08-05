@@ -22,7 +22,7 @@ $lessons = $pdo->query("SELECT l.id, l.title, s.name as subject_name FROM lesson
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Professor — AprovaQuest</title>
+    <title>Painel do Professor — HipoGabarito</title>
 
     <!-- TAILWIND CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -62,7 +62,7 @@ $lessons = $pdo->query("SELECT l.id, l.title, s.name as subject_name FROM lesson
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-slate-200 py-3 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <a href="dashboard.php" class="flex items-center gap-2 group text-decoration-none">
-                <img src="assets/img/logo_mascot.png" alt="AprovaQuest Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
+                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
             </a>
 
             <!-- HUD STATUS DO ALUNO (SEM VIDAS!) -->

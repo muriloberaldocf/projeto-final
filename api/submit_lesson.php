@@ -58,18 +58,23 @@ $newLevel = max(1, floor($newXp / 100) + 1);
 $leveledUp = ($newLevel > $oldLevel);
 
 // 4. LÓGICA DA OFENSIVA DIÁRIA (DAILY STREAK)
+// Para o Fogo/Ofensiva acender de verdade, é preciso ter completado lições em pelo menos 2 DIAS SEGUIDOS CONSECUTIVOS.
 $today = date('Y-m-d');
 $lastActive = $user['last_active_date'];
-$newStreak = $user['streak_days'] ?? 1;
+$currentStreak = (int)($user['streak_days'] ?? 0);
+$newStreak = $currentStreak;
 
 if (empty($lastActive)) {
+    // Primeiro dia estudando no sistema -> Começa em 1 (Chama ainda apagada/em progresso)
     $newStreak = 1;
 } else if ($lastActive !== $today) {
     $yesterday = date('Y-m-d', strtotime('-1 day'));
     if ($lastActive === $yesterday) {
-        $newStreak += 1;
+        // Estudo no dia consecutivo (2º dia em diante) -> incrementa o streak!
+        $newStreak = max(2, $currentStreak + 1);
     } else {
-        $newStreak = 1; // Perdeu um dia, reseta para 1
+        // Quebrou a sequência (passou mais de 1 dia) -> volta para 1 dia
+        $newStreak = 1;
     }
 }
 

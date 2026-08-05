@@ -52,10 +52,13 @@ foreach ($units as $unit) {
         $unitLessons[] = [
             'id' => $lesson['id'],
             'title' => $lesson['title'],
+            'intro_text' => $lesson['intro_text'] ?? null,
+            'video_url' => $lesson['video_url'] ?? null,
+            'video_title' => $lesson['video_title'] ?? null,
             'xp_reward' => $isCompleted ? 35 : $lesson['xp_reward'],
             'is_completed' => $isCompleted,
             'is_unlocked' => true, // Livre acesso para qualquer tópico!
-            'advanced_unlocked' => $isCompleted, // Modo Desafio com questões mais difíceis ativado se já concluiu
+            'advanced_unlocked' => $isCompleted, // Modo Desafio ativado se já concluiu
             'score' => $completedLessonsMap[$lesson['id']] ?? 0
         ];
     }

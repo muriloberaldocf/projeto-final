@@ -28,7 +28,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranking Arcade — AprovaQuest</title>
+    <title>Ranking de Amigos — HipoGabarito</title>
 
     <!-- TAILWIND CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -56,11 +56,12 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
         }
     </script>
 
-    <!-- GOOGLE FONTS & BOOTSTRAP ICONS -->
+    <!-- GOOGLE FONTS & BOOTSTRAP ICONS & SWEETALERT2 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="min-h-full font-sans antialiased text-slate-800 bg-slate-50 selection:bg-indigo-500 selection:text-white">
 
@@ -68,16 +69,20 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-slate-200 py-3 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <a href="dashboard.php" class="flex items-center gap-2 group text-decoration-none">
-                <img src="assets/img/logo_mascot.png" alt="AprovaQuest Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
+                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
             </a>
 
-            <!-- HUD STATUS DO ALUNO (SEM VIDAS!) -->
+            <!-- HUD STATUS DO ALUNO -->
+            <?php
+            $streakCountLeaderboard = (int)($user['streak_days'] ?? 1);
+            $isStreakActiveLeaderboard = ($streakCountLeaderboard >= 2);
+            ?>
             <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-2xl border-2 border-slate-200 shadow-[0_3px_0_0_#e2e8f0]" title="Ofensiva Diária">
-                    <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <div class="flex items-center gap-2 <?= $isStreakActiveLeaderboard ? 'bg-amber-50 border-amber-300 shadow-[0_3px_0_0_#f59e0b]' : 'bg-white border-slate-200 shadow-[0_3px_0_0_#e2e8f0]' ?> px-3.5 py-1.5 rounded-2xl border-2 transition-all" title="<?= $isStreakActiveLeaderboard ? 'Ofensiva Ativa! (2+ dias consecutivos)' : 'Fogo apagado: estude amanhã novamente para acender!' ?>">
+                    <svg class="w-5 h-5 <?= $isStreakActiveLeaderboard ? 'text-amber-500 animate-pulse' : 'text-slate-300' ?>" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="font-outfit font-extrabold text-slate-700 text-sm"><?= htmlspecialchars($user['streak_days'] ?? 1) ?>d</span>
+                    <span class="font-outfit font-extrabold <?= $isStreakActiveLeaderboard ? 'text-amber-700' : 'text-slate-400' ?> text-sm"><?= $streakCountLeaderboard ?>d</span>
                 </div>
 
                 <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-2xl border-2 border-slate-200 shadow-[0_3px_0_0_#e2e8f0]" title="XP Acumulado">
@@ -124,7 +129,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                             <svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4m6 17v-5m0 0a2 2 0 100-4 2 2 0 000 4zm0 5a2 2 0 100-4 2 2 0 000 4zM6 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4zM18 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4z"/>
                             </svg>
-                            Ranking Arcade
+                            Ranking de Amigos
                         </a>
 
                         <a href="profile.php" class="flex items-center gap-3 px-4 py-3 rounded-2xl font-outfit font-bold text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
@@ -133,16 +138,6 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                             </svg>
                             Meu Perfil
                         </a>
-
-                        <?php if (($user['role'] ?? '') === 'admin'): ?>
-                            <a href="admin.php" class="flex items-center gap-3 px-4 py-3 rounded-2xl font-outfit font-bold text-sm text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all mt-4">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                Painel Professor
-                            </a>
-                        <?php endif; ?>
 
                         <div class="pt-3 border-t border-slate-200 mt-3">
                             <a href="api/auth.php?action=logout" class="flex items-center gap-3 px-4 py-2.5 rounded-2xl font-outfit font-bold text-xs text-slate-400 hover:text-rose-600 transition-all">
@@ -156,22 +151,23 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 </div>
             </aside>
 
-            <!-- CONTEÚDO PRINCIPAL: TABELA DE RANKING ARCADE -->
+            <!-- CONTEÚDO PRINCIPAL: TABELA DE RANKING DE AMIGOS -->
             <section class="lg:col-span-9 space-y-6">
-                <!-- BANNER DE RANKING -->
-                <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-white rounded-3xl p-6 shadow-[0_8px_0_0_#b45309] border-2 border-amber-400 flex items-center justify-between">
+                
+                <!-- BANNER DE RANKING E BOTÃO DE ADICIONAR AMIGOS -->
+                <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-indigo-700 text-white rounded-3xl p-6 shadow-lg border-2 border-amber-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/20 text-amber-100 border border-white/30 uppercase tracking-wider mb-2">
-                            LIGA DE ALTO RENDIMENTO
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/20 text-amber-100 border border-white/30 uppercase tracking-wider mb-2">
+                            <i class="bi bi-people-fill"></i> LIGA PRIVADA ENTRE AMIGOS
                         </span>
-                        <h2 class="font-outfit font-extrabold text-2xl mb-1">Ranking Geral Arcade</h2>
-                        <p class="text-xs text-amber-100 font-medium mb-0">Estudantes com maior pontuação acumulada nos exercícios e simulados.</p>
+                        <h2 class="font-outfit font-extrabold text-2xl sm:text-3xl mb-1">Ranking de Amigos</h2>
+                        <p class="text-xs sm:text-sm text-amber-100 font-medium mb-0">Dispute a liderança do XP com seus colegas de classe e amigos adicionados.</p>
                     </div>
-                    <div class="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-amber-200">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5 3v4M3 5h4m6 17v-5m0 0a2 2 0 100-4 2 2 0 000 4zm0 5a2 2 0 100-4 2 2 0 000 4zM6 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4zM18 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
+                    
+                    <button onclick="openAddFriendModal()" class="bg-white text-indigo-700 hover:bg-amber-50 font-outfit font-black px-5 py-3 rounded-2xl shadow-md transition-all flex items-center gap-2 text-sm whitespace-nowrap group">
+                        <i class="bi bi-person-plus-fill text-amber-500 text-lg group-hover:scale-110 transition-transform"></i>
+                        + Adicionar Amigos
+                    </button>
                 </div>
 
                 <!-- TABELA DE RANKING -->
@@ -188,14 +184,55 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                                 </tr>
                             </thead>
                             <tbody id="rankTableBody" class="divide-y divide-slate-100">
-                                <!-- JS Populates -->
+                                <!-- Preenchido via JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
+
             </section>
         </div>
     </main>
+
+    <!-- MODAL DE ADICIONAR AMIGOS -->
+    <div id="addFriendModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl border-2 border-slate-200 max-w-lg w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+            
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">
+                        <i class="bi bi-person-add"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-outfit font-extrabold text-slate-900 text-lg leading-tight">Buscar e Adicionar Amigos</h3>
+                        <p class="text-xs text-slate-500">Digite o nome ou e-mail do seu amigo de estudos</p>
+                    </div>
+                </div>
+                <button onclick="closeAddFriendModal()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+            </div>
+
+            <!-- CAMPO DE BUSCA -->
+            <div class="relative mb-4">
+                <i class="bi bi-search absolute left-4 top-3.5 text-slate-400 text-base"></i>
+                <input type="text" id="friendSearchInput" oninput="searchUsers()" placeholder="Digite o nome ou e-mail..." class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:border-indigo-600 transition">
+            </div>
+
+            <!-- RESULTADOS DA BUSCA -->
+            <div id="searchResultsContainer" class="max-h-64 overflow-y-auto space-y-2 pr-1">
+                <div class="text-center py-8 text-slate-400 text-xs">
+                    <i class="bi bi-search text-2xl mb-1 block"></i>
+                    Digite pelo menos 2 letras para pesquisar colegas
+                </div>
+            </div>
+
+            <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end">
+                <button onclick="closeAddFriendModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                    Fechar
+                </button>
+            </div>
+
+        </div>
+    </div>
 
     <script src="assets/js/sound_effects.js"></script>
     <script>
@@ -212,7 +249,9 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             'bi-emoji-smile-fill': '🦛 Hipopótamo Lendário'
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', loadLeaderboard);
+
+        function loadLeaderboard() {
             fetch('api/get_leaderboard.php')
                 .then(res => res.json())
                 .then(data => {
@@ -220,6 +259,19 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
                     const tbody = document.getElementById('rankTableBody');
                     tbody.innerHTML = '';
+
+                    if (data.rankings.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="py-12 text-center text-slate-400">
+                                    <i class="bi bi-people text-4xl mb-2 inline-block"></i>
+                                    <p class="font-bold text-sm text-slate-600">Você ainda não possui amigos no ranking!</p>
+                                    <p class="text-xs text-slate-400 mb-4">Clique no botão "+ Adicionar Amigos" acima para adicionar seus colegas.</p>
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
 
                     data.rankings.forEach((r, idx) => {
                         const pos = idx + 1;
@@ -237,10 +289,10 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                         const tr = document.createElement('tr');
                         tr.className = `transition-colors ${isMe ? 'bg-indigo-50/80 font-semibold' : 'hover:bg-slate-50'}`;
 
-                        // USAR A FOTO REAL DO USUÁRIO (R.AVATAR) SE EXISTIR, OU FALLBACK PARA DICEBEAR
                         const userPhoto = (r.avatar && r.avatar.trim() !== '') ? r.avatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(r.name)}`;
                         const badgeIcon = r.avatar_icon || 'bi-person-circle';
                         const badgeName = BADGE_MAP[badgeIcon] || 'Estudante Padrão';
+                        const isStreakActive = (parseInt(r.streak_days) >= 2);
 
                         tr.innerHTML = `
                             <td class="py-4 px-6">${posBadge}</td>
@@ -248,7 +300,10 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                                 <div class="flex items-center gap-3">
                                     <img src="${userPhoto}" class="w-10 h-10 rounded-full border-2 border-indigo-500 bg-indigo-50 object-cover shadow-sm">
                                     <div class="min-w-0">
-                                        <span class="font-outfit font-bold text-slate-900 text-sm block truncate">${r.name} ${isMe ? '<span class="ml-1 text-[10px] px-2 py-0.5 rounded-full bg-indigo-600 text-white font-extrabold">VOCÊ</span>' : ''}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-outfit font-bold text-slate-900 text-sm truncate">${r.name}</span>
+                                            ${isMe ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-600 text-white font-extrabold">VOCÊ</span>' : ''}
+                                        </div>
                                         <span class="text-[11px] font-bold text-indigo-600 flex items-center gap-1">
                                             <i class="bi ${badgeIcon}"></i>
                                             <span>${badgeName}</span>
@@ -260,7 +315,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                                 <span class="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-slate-100 text-slate-700 border border-slate-200">NÍVEL ${r.level}</span>
                             </td>
                             <td class="py-4 px-6">
-                                <span class="text-amber-500 font-extrabold text-xs flex items-center gap-1">
+                                <span class="${isStreakActive ? 'text-amber-500' : 'text-slate-400'} font-extrabold text-xs flex items-center gap-1">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/></svg>
                                     ${r.streak_days}d
                                 </span>
@@ -270,8 +325,114 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                         tbody.appendChild(tr);
                     });
                 });
-        });
+        }
+
+        // FUNÇÕES DO MODAL DE AMIGOS
+        function openAddFriendModal() {
+            document.getElementById('addFriendModal').classList.remove('hidden');
+            document.getElementById('friendSearchInput').value = '';
+            document.getElementById('friendSearchInput').focus();
+            document.getElementById('searchResultsContainer').innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-xs">
+                    <i class="bi bi-search text-2xl mb-1 block"></i>
+                    Digite pelo menos 2 letras para pesquisar colegas
+                </div>
+            `;
+        }
+
+        function closeAddFriendModal() {
+            document.getElementById('addFriendModal').classList.add('hidden');
+        }
+
+        let searchTimeout = null;
+        function searchUsers() {
+            clearTimeout(searchTimeout);
+            const query = document.getElementById('friendSearchInput').value.trim();
+            const container = document.getElementById('searchResultsContainer');
+
+            if (query.length < 2) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 text-xs">
+                        <i class="bi bi-search text-2xl mb-1 block"></i>
+                        Digite pelo menos 2 letras para pesquisar colegas
+                    </div>
+                `;
+                return;
+            }
+
+            searchTimeout = setTimeout(async () => {
+                container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs"><i class="bi bi-arrow-repeat animate-spin text-xl inline-block"></i> Buscando...</div>`;
+
+                try {
+                    const res = await fetch(`api/friends.php?action=search&q=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+
+                    if (!data.success || data.users.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-6 text-slate-400 text-xs">
+                                Nenhum estudante encontrado com o nome ou e-mail "${query}".
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    data.users.forEach(u => {
+                        const isFriend = (u.friend_status === 'accepted');
+                        const userPhoto = (u.avatar && u.avatar.trim() !== '') ? u.avatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(u.name)}`;
+
+                        const card = document.createElement('div');
+                        card.className = "flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-indigo-300 transition";
+                        card.innerHTML = `
+                            <div class="flex items-center gap-3">
+                                <img src="${userPhoto}" class="w-10 h-10 rounded-full border-2 border-indigo-500 object-cover shadow-sm">
+                                <div>
+                                    <span class="font-outfit font-bold text-slate-900 text-sm block">${u.name}</span>
+                                    <span class="text-[11px] text-slate-500">Nível ${u.level} • ${u.xp} XP</span>
+                                </div>
+                            </div>
+
+                            ${isFriend ? `
+                                <span class="bg-emerald-100 text-emerald-700 font-extrabold text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1">
+                                    <i class="bi bi-check-lg"></i> Amigo
+                                </span>
+                            ` : `
+                                <button onclick="addFriend(${u.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition flex items-center gap-1">
+                                    <i class="bi bi-person-plus"></i> Adicionar
+                                </button>
+                            `}
+                        `;
+                        container.appendChild(card);
+                    });
+
+                } catch (err) {
+                    console.error(err);
+                }
+            }, 300);
+        }
+
+        async function addFriend(friendId) {
+            const formData = new FormData();
+            formData.append('action', 'add_friend');
+            formData.append('friend_id', friendId);
+
+            const res = await fetch('api/friends.php', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                Swal.fire({
+                    title: 'Tudo Certo!',
+                    text: data.message,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                searchUsers();
+                loadLeaderboard();
+            } else {
+                Swal.fire('Ops!', data.message, 'warning');
+            }
+        }
     </script>
 </body>
 </html>
-

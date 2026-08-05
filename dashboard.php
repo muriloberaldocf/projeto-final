@@ -30,7 +30,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trilha de Aprendizado — AprovaQuest</title>
+    <title>Trilha de Aprendizado — HipoGabarito</title>
 
     <!-- TAILWIND CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -97,16 +97,20 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <!-- LOGO DA MARCA -->
             <a href="dashboard.php" class="flex items-center gap-2 group text-decoration-none">
-                <img src="assets/img/logo_mascot.png" alt="AprovaQuest Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
+                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
             </a>
 
             <!-- HUD STATUS DO ALUNO -->
+            <?php
+            $streakCount = (int)($user['streak_days'] ?? 1);
+            $isStreakActive = ($streakCount >= 2);
+            ?>
             <div class="flex items-center gap-2.5">
-                <div class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-2xl border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0]" title="Ofensiva Diária">
-                    <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <div class="flex items-center gap-1.5 <?= $isStreakActive ? 'bg-amber-50 border-amber-300 shadow-[0_2px_0_0_#f59e0b]' : 'bg-white border-slate-200 shadow-[0_2px_0_0_#e2e8f0]' ?> px-3 py-1 rounded-2xl border-2 transition-all" title="<?= $isStreakActive ? 'Ofensiva Ativa! (2+ dias consecutivos)' : 'Fogo apagado: estude amanhã novamente para acender!' ?>">
+                    <svg class="w-4 h-4 <?= $isStreakActive ? 'text-amber-500 animate-pulse' : 'text-slate-300' ?>" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="font-outfit font-extrabold text-slate-700 text-xs"><?= htmlspecialchars($user['streak_days'] ?? 1) ?>d</span>
+                    <span class="font-outfit font-extrabold <?= $isStreakActive ? 'text-amber-700' : 'text-slate-400' ?> text-xs"><?= $streakCount ?>d</span>
                 </div>
 
                 <div class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-2xl border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0]" title="XP Acumulado">
@@ -199,18 +203,6 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
             <!-- SIDEBAR DIREITA -->
             <aside class="lg:col-span-3 space-y-3.5">
-                <!-- MASCOTE HIPÓ COMPANHEIRO (ESTILO DUOLINGO) -->
-                <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white rounded-3xl p-3.5 shadow-[0_4px_0_0_#312e81] border-2 border-indigo-400 flex items-center gap-3 relative overflow-hidden group">
-                    <img src="assets/img/logo_mascot.png" alt="Mascote Hipó" class="w-14 h-14 object-contain drop-shadow-lg shrink-0 group-hover:scale-110 transition-transform">
-                    <div>
-                        <div class="flex items-center gap-1">
-                            <h4 class="font-outfit font-extrabold text-xs text-amber-300 mb-0">Hipó — Guia AprovaQuest</h4>
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        </div>
-                        <p class="text-[11px] text-indigo-100 font-bold mb-0 leading-tight mt-0.5">"Pratique exercícios todos os dias para garantir sua vaga no vestibular!"</p>
-                    </div>
-                </div>
-
                 <!-- META DIÁRIA -->
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-3.5 shadow-[0_3px_0_0_#e2e8f0]">
                     <div class="flex items-center justify-between mb-2">
@@ -297,11 +289,23 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             </div>
 
             <div class="space-y-2">
+                <!-- BOTÃO DE TEORIA DA FASE -->
+                <button type="button" id="btnTheoryStage" class="w-full py-2 px-4 rounded-2xl font-outfit font-bold text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-all flex items-center justify-center gap-2">
+                    <i class="bi bi-book-half text-indigo-600 text-sm"></i>
+                    Ler Teoria & Conceitos
+                </button>
+
+                <!-- BOTÃO DE VÍDEO AULA -->
+                <button type="button" id="btnVideoStage" class="w-full py-2 px-4 rounded-2xl font-outfit font-bold text-xs bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-all flex items-center justify-center gap-2">
+                    <i class="bi bi-play-btn-fill text-amber-600 text-sm"></i>
+                    Assistir Vídeo-Aula
+                </button>
+
                 <button type="button" id="btnPlayStage" class="w-full py-2.5 px-4 rounded-2xl font-outfit font-extrabold text-sm bg-emerald-500 text-white shadow-[0_4px_0_0_#047857] hover:bg-emerald-600 active:translate-y-0.5 active:shadow-[0_1px_0_0_#047857] transition-all flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
                     </svg>
-                    COMEÇAR +35 XP
+                    RESOLVER QUESTÕES (+35 XP)
                 </button>
 
                 <button type="button" id="btnBossStage" style="display: none;" class="w-full py-2.5 px-4 rounded-2xl font-outfit font-extrabold text-xs bg-rose-600 text-white shadow-[0_4px_0_0_#9f1239] hover:bg-rose-700 active:translate-y-0.5 active:shadow-[0_1px_0_0_#9f1239] transition-all items-center justify-center gap-2">
@@ -309,6 +313,54 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
                     </svg>
                     DESAFIO BOSS (+50 XP)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE TEORIA / LEITURA DO CONTEXTO DA FASE -->
+    <div id="theoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl w-full max-w-lg p-6 relative transform scale-95 transition-transform duration-200" id="theoryModalCard">
+            <button onclick="closeTheoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">
+                    <i class="bi bi-book-half"></i>
+                </div>
+                <div>
+                    <h3 id="theoryModalTitle" class="font-outfit font-extrabold text-slate-900 text-lg leading-tight">Teoria do Conteúdo</h3>
+                    <span class="text-xs text-indigo-600 font-bold">Resumo Prático dos Conceitos</span>
+                </div>
+            </div>
+            <div id="theoryModalBody" class="text-slate-700 text-xs sm:text-sm leading-relaxed max-h-72 overflow-y-auto pr-1"></div>
+            <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end">
+                <button onclick="closeTheoryModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                    Fechar Leitura
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE VÍDEO-AULA DA FASE -->
+    <div id="videoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl w-full max-w-2xl p-6 relative transform scale-95 transition-transform duration-200" id="videoModalCard">
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+                    <i class="bi bi-play-btn-fill"></i>
+                </div>
+                <div>
+                    <h3 id="videoModalTitle" class="font-outfit font-extrabold text-slate-900 text-base leading-tight">Vídeo-Aula Explicativa</h3>
+                    <span class="text-xs text-amber-600 font-bold">Assista antes de resolver os exercícios</span>
+                </div>
+            </div>
+            
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-inner mb-4">
+                <iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="closeVideoModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                    Fechar Vídeo
                 </button>
             </div>
         </div>
@@ -546,6 +598,20 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 window.location.href = `lesson.php?id=${lesson.id}`;
             };
 
+            // Configurar Botão de Teoria & Conceitos da Fase
+            const btnTheory = document.getElementById('btnTheoryStage');
+            btnTheory.onclick = () => {
+                if (typeof sounds !== 'undefined') sounds.playClick();
+                openTheoryModal(lesson);
+            };
+
+            // Configurar Botão de Vídeo-Aula da Fase
+            const btnVideo = document.getElementById('btnVideoStage');
+            btnVideo.onclick = () => {
+                if (typeof sounds !== 'undefined') sounds.playClick();
+                openVideoModal(lesson);
+            };
+
             const btnBoss = document.getElementById('btnBossStage');
             if (lesson.is_completed || isBoss) {
                 btnBoss.style.display = 'flex';
@@ -573,10 +639,65 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             card.classList.add('scale-95');
         }
 
+        // CONTROLADORES DO MODAL DE TEORIA & CONCEITOS
+        function openTheoryModal(lesson) {
+            document.getElementById('theoryModalTitle').textContent = lesson.title || 'Teoria do Conteúdo';
+            
+            const rawText = lesson.intro_text || `📌 **Resumo Prático:** Neta fase de **${lesson.title}**, revise os conceitos essenciais para garantir um excelente desempenho nas questões!\n\n💡 **Dica:** Preste atenção aos detalhes das fórmulas e grandezas envolvidas.`;
+            const formattedHtml = rawText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>');
+            
+            document.getElementById('theoryModalBody').innerHTML = formattedHtml;
+
+            const modal = document.getElementById('theoryModal');
+            const card = document.getElementById('theoryModalCard');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function closeTheoryModal() {
+            if (typeof sounds !== 'undefined') sounds.playClick();
+            const modal = document.getElementById('theoryModal');
+            const card = document.getElementById('theoryModalCard');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+
+        // CONTROLADORES DO MODAL DE VÍDEO-AULA
+        function openVideoModal(lesson) {
+            document.getElementById('videoModalTitle').textContent = lesson.video_title || `Vídeo-Aula: ${lesson.title}`;
+            const videoUrl = lesson.video_url || 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+            document.getElementById('videoIframe').src = videoUrl;
+
+            const modal = document.getElementById('videoModal');
+            const card = document.getElementById('videoModalCard');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function closeVideoModal() {
+            if (typeof sounds !== 'undefined') sounds.playClick();
+            document.getElementById('videoIframe').src = ''; // Parar o vídeo ao fechar
+            const modal = document.getElementById('videoModal');
+            const card = document.getElementById('videoModalCard');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+
         document.getElementById('stageModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeStageModal();
-            }
+            if (e.target === this) closeStageModal();
+        });
+        document.getElementById('theoryModal').addEventListener('click', function(e) {
+            if (e.target === this) closeTheoryModal();
+        });
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) closeVideoModal();
         });
 
         document.addEventListener('DOMContentLoaded', () => loadRoadmap(currentSubject));

@@ -84,10 +84,17 @@ if ($isBossMode) {
     }
 }
 
+// Buscar informações da lição (título e explicação prévia intro_text)
+$stmtLInfo = $pdo->prepare("SELECT title, intro_text FROM lessons WHERE id = ?");
+$stmtLInfo->execute([$lessonId]);
+$lessonDetails = $stmtLInfo->fetch(PDO::FETCH_ASSOC);
+
 echo json_encode([
     'success' => true,
     'is_boss_mode' => $isBossMode,
     'boss_variant' => $bossVariant + 1,
     'total_answered' => $totalAnswered,
+    'lesson_title' => $lessonDetails['title'] ?? 'Lição',
+    'intro_text' => $lessonDetails['intro_text'] ?? null,
     'questions' => $questions
 ]);

@@ -1,11 +1,12 @@
 <?php
 /**
- * Conexão com o Banco de Dados MySQL via PDO - AprovaQuest
+ * Conexão com o Banco de Dados MySQL via PDO - HipoGabarito
  * Configurado para o ambiente padrão do XAMPP (localhost, root, sem senha)
  */
 
 $host = 'localhost';
-$db   = 'vestilingo';
+define('DB_NAME', 'vestilingo');
+define('APP_NAME', 'HipoGabarito');
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
@@ -17,11 +18,13 @@ $options = [
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
 
+$db = DB_NAME;
+
 try {
     // 1. Conectar ao servidor MySQL
     $pdo = new PDO($dsn, $user, $pass, $options);
     
-    // 2. Garantir que o banco vestilingo existe
+    // 2. Garantir que o banco hipogabarito existe
     $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     $pdo->exec("USE `$db`");
 
@@ -44,7 +47,7 @@ try {
     <head>
         <meta charset='UTF-8'>
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>Conexão Offline — AprovaQuest</title>
+        <title>Conexão Offline — HipoGabarito</title>
         <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'>
         <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css' rel='stylesheet'>
         <link rel='stylesheet' href='assets/css/main.css'>
@@ -85,4 +88,8 @@ function checkAuth() {
         header("Location: index.php");
         exit;
     }
+}
+
+function isLoggedIn() {
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }

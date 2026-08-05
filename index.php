@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AprovaQuest — Prática Inteligente para Vestibulares</title>
+    <title>HipoGabarito — Prática Inteligente para Vestibulares</title>
 
     <!-- TAILWIND CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -51,7 +51,7 @@ if (isset($_SESSION['user_id'])) {
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-slate-200 py-2.5 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <a href="index.php" class="flex items-center gap-3 group text-decoration-none">
-                <img src="assets/img/logo_mascot.png" alt="AprovaQuest Logo" class="h-11 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-11 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform">
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase">PRO</span>
             </a>
 
@@ -107,7 +107,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="lg:col-span-5">
                 <div class="bg-white rounded-3xl border-4 border-slate-200 p-7 shadow-2xl space-y-5">
                     <div class="text-center pb-2 border-b border-slate-100">
-                        <img src="assets/img/logo_mascot.png" alt="Mascote AprovaQuest" class="h-16 mx-auto w-auto object-contain mb-1 drop-shadow-sm">
+                        <img src="assets/img/hipogabarito_logo.png" alt="Mascote HipoGabarito" class="h-16 mx-auto w-auto object-contain mb-1 drop-shadow-sm">
                         <p class="text-xs font-bold text-slate-400 mb-0">Acesse sua conta para continuar praticando</p>
                     </div>
 
@@ -156,7 +156,7 @@ if (isset($_SESSION['user_id'])) {
     </main>
 
     <footer class="py-6 border-t border-slate-200 text-center text-xs font-semibold text-slate-400">
-        AprovaQuest &copy; 2026 — Plataforma Independente de Exercícios Gamificados
+        HipoGabarito &copy; 2026 — Plataforma Independente de Exercícios Gamificados
     </footer>
 
     <script src="assets/js/sound_effects.js"></script>
