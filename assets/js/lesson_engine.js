@@ -46,7 +46,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> DESAFIO BOSS (VARIAÇÃO #${data.boss_variant})</span>`;
             }
 
+            // EXIBIR EXPLICAÇÃO TEÓRICA E VÍDEO-AULA NO CABEÇALHO SUPERIOR DA LIÇÃO
+            const introBox = document.getElementById('lessonIntroBox');
+            const introContentText = document.getElementById('introContentText');
+            const videoContainer = document.getElementById('videoContainer');
+            const videoIframe = document.getElementById('videoIframe');
+            const videoTitleText = document.getElementById('videoTitleText');
+            const introContentContainer = document.getElementById('introContentContainer');
 
+            let hasHeaderContent = false;
+
+            // 1. Renderizar Vídeo-Aula (Local MP4 ou YouTube Embed)
+            if (data.video_url && videoContainer) {
+                const videoWrapper = document.getElementById('videoWrapper') || videoContainer.querySelector('.ratio');
+                if (data.video_title && videoTitleText) {
+                    videoTitleText.textContent = data.video_title;
+                }
+
+                if (videoWrapper) {
+                    if (data.video_url.endsWith('.mp4') || data.video_url.endsWith('.webm') || data.video_url.includes('/vids/')) {
+                        videoWrapper.innerHTML = `
+                            <video controls controlsList="nodownload" class="w-100 h-100 object-fit-contain bg-black">
+                                <source src="${data.video_url}" type="video/mp4">
+                                Seu navegador não suporta a reprodução de vídeos HTML5.
+                            </video>
+                        `;
+                    } else {
+                        videoWrapper.innerHTML = `
+                            <iframe class="w-100 h-100 border-0" src="${data.video_url}" title="Vídeo Aula" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                        `;
+                    }
+                }
+                videoContainer.style.display = 'block';
+                hasHeaderContent = true;
+            }
+
+            // 2. Renderizar Resumo Teórico Aprofundado
+            if (data.intro_text && introContentText) {
+                const formattedIntro = data.intro_text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '<br><br>')
+                    .replace(/\n/g, '<br>');
+                introContentText.innerHTML = formattedIntro;
+                introContentText.style.display = 'block';
+                hasHeaderContent = true;
+            }
+
+            if (hasHeaderContent && introBox) {
+                introBox.style.display = 'block';
+
+                const btnToggleIntro = document.getElementById('btnToggleIntro');
+                if (btnToggleIntro && introContentContainer) {
+                    btnToggleIntro.onclick = () => {
+                        if (introContentContainer.style.display === 'none') {
+                            introContentContainer.style.display = 'block';
+                            btnToggleIntro.innerHTML = '<i class="bi bi-chevron-up me-1"></i> Ocultar';
+                        } else {
+                            introContentContainer.style.display = 'none';
+                            btnToggleIntro.innerHTML = '<i class="bi bi-chevron-down me-1"></i> Mostrar Conteúdo';
+                        }
+                    };
+                }
+            }
 
             loadQuestion(0);
         })

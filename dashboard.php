@@ -8,7 +8,8 @@ $userId = $_SESSION['user_id'];
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
-$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($user['name'] ?? 'Player');
+$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'assets/img/default_avatar.jpg';
+$userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
 $userBadgeMap = [
     'bi-person-circle' => 'Estudante Padrão',
@@ -63,6 +64,8 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
 
     <style>
         /* SCROLLBAR MODERNO */
@@ -106,6 +109,31 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             $isStreakActive = ($streakCount >= 2);
             ?>
             <div class="flex items-center gap-2.5">
+                <!-- SININHO DE NOTIFICAÇÕES NA NAVBAR -->
+                <div class="relative">
+                    <button id="notifBellBtn" onclick="toggleNotifDropdown()" class="relative p-2 rounded-2xl bg-white border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0] hover:bg-slate-50 text-slate-600 hover:text-indigo-600 transition-all flex items-center justify-center" title="Notificações">
+                        <i class="bi bi-bell-fill text-base"></i>
+                        <span id="notifBadge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center shadow-sm animate-pulse">0</span>
+                    </button>
+
+                    <!-- DROPDOWN DE NOTIFICAÇÕES -->
+                    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-3xl border-2 border-slate-200 shadow-2xl z-50 p-4 animate-in fade-in zoom-in-95 duration-150">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="bi bi-bell-fill text-indigo-600"></i>
+                                <h4 class="font-outfit font-extrabold text-slate-900 text-sm mb-0">Central de Notificações</h4>
+                            </div>
+                            <span id="notifCountText" class="text-[11px] font-bold text-slate-400">0 notificações</span>
+                        </div>
+
+                        <div id="notifListContainer" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                            <div class="text-center py-6 text-slate-400 text-xs">
+                                <i class="bi bi-arrow-repeat animate-spin text-xl block mb-1"></i> Carregando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-1.5 <?= $isStreakActive ? 'bg-amber-50 border-amber-300 shadow-[0_2px_0_0_#f59e0b]' : 'bg-white border-slate-200 shadow-[0_2px_0_0_#e2e8f0]' ?> px-3 py-1 rounded-2xl border-2 transition-all" title="<?= $isStreakActive ? 'Ofensiva Ativa! (2+ dias consecutivos)' : 'Fogo apagado: estude amanhã novamente para acender!' ?>">
                     <svg class="w-4 h-4 <?= $isStreakActive ? 'text-amber-500 animate-pulse' : 'text-slate-300' ?>" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
@@ -121,7 +149,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 </div>
 
                 <a href="profile.php" class="ml-0.5 group" title="Meu Perfil">
-                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-indigo-600 object-cover group-hover:scale-105 transition-transform shadow-sm">
+                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-8 h-8 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover group-hover:scale-105 transition-transform">
                 </a>
             </div>
         </div>
@@ -129,13 +157,16 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
     <!-- LAYOUT PRINCIPAL (GRID 3 COLUNAS) -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <!-- BARRA DE SELEÇÃO DE MATÉRIAS (LARGURA INTEGRAL CENTRALIZADA) -->
+        <div class="mb-4 flex items-center justify-center gap-2.5 flex-wrap sm:flex-nowrap overflow-x-auto pb-1 scrollbar-none" id="subjectSelector"></div>
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
             <!-- SIDEBAR ESQUERDA -->
-            <aside class="lg:col-span-3">
+            <aside class="lg:col-span-3 sticky top-20 space-y-3.5">
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-3.5 shadow-[0_3px_0_0_#e2e8f0]">
                     <div class="flex items-center gap-3 p-2.5 mb-2.5 bg-slate-50 rounded-2xl border border-slate-200">
-                        <img src="<?= htmlspecialchars($userAvatar) ?>" class="w-10 h-10 rounded-full border-2 border-indigo-600 object-cover shadow-sm">
+                        <img src="<?= htmlspecialchars($userAvatar) ?>" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-10 h-10 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-outfit font-bold text-slate-900 text-sm truncate"><?= htmlspecialchars($user['name'] ?? 'Estudante') ?></h3>
                             <div class="flex items-center gap-1 text-[11px] font-bold text-indigo-600 truncate mt-0.5" title="Título Equipado">
@@ -167,16 +198,6 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                             Meu Perfil
                         </a>
 
-                        <?php if (($user['role'] ?? '') === 'admin'): ?>
-                            <a href="admin.php" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-xs text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all mt-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                Painel Professor
-                            </a>
-                        <?php endif; ?>
-
                         <div class="pt-2 border-t border-slate-200 mt-2">
                             <a href="api/auth.php?action=logout" class="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl font-outfit font-bold text-xs text-slate-400 hover:text-rose-600 transition-all">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -191,8 +212,6 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
             <!-- COLUNA CENTRAL: MAPA EM ONDA DA TRILHA -->
             <section class="lg:col-span-6 space-y-4">
-                <div class="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-none" id="subjectSelector"></div>
-
                 <div id="roadmapMapTree" class="space-y-4">
                     <div class="flex flex-col items-center justify-center py-10 bg-white rounded-3xl border-2 border-slate-200 shadow-sm">
                         <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -202,7 +221,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             </section>
 
             <!-- SIDEBAR DIREITA -->
-            <aside class="lg:col-span-3 space-y-3.5">
+            <aside class="lg:col-span-3 sticky top-20 space-y-3.5">
                 <!-- META DIÁRIA -->
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-3.5 shadow-[0_3px_0_0_#e2e8f0]">
                     <div class="flex items-center justify-between mb-2">
@@ -354,7 +373,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 </div>
             </div>
             
-            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-inner mb-4">
+            <div id="videoModalPlayerContainer" class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-inner mb-4">
                 <iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
@@ -552,10 +571,13 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                                 iconSvg = SVG_ICONS.STAR;
                             }
 
+                            window.LESSONS_MAP = window.LESSONS_MAP || {};
+                            window.LESSONS_MAP[lesson.id] = lesson;
+
                             nodeWrapper.innerHTML = `
                                 ${speechBubbleHtml}
                                 ${svgRingHtml}
-                                <button type="button" class="${btnClasses}" onclick='openStageModal(${JSON.stringify(lesson)}, ${globalStageCounter}, ${isBoss})'>
+                                <button type="button" class="${btnClasses}" onclick="openStageModalById(${lesson.id}, ${globalStageCounter}, ${isBoss})">
                                     ${iconSvg}
                                 </button>
                             `;
@@ -567,6 +589,13 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                         treeContainer.appendChild(pathContainer);
                     });
                 });
+        }
+
+        function openStageModalById(lessonId, stageNumber, isBoss) {
+            const lesson = (window.LESSONS_MAP || {})[lessonId];
+            if (lesson) {
+                openStageModal(lesson, stageNumber, isBoss);
+            }
         }
 
         function openStageModal(lesson, stageNumber, isBoss) {
@@ -667,11 +696,24 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             card.classList.add('scale-95');
         }
 
-        // CONTROLADORES DO MODAL DE VÍDEO-AULA
+        // CONTROLADORES DO MODAL DE VÍDEO-AULA (SUPORTA MP4 LOCAL E YOUTUBE EMBED)
         function openVideoModal(lesson) {
             document.getElementById('videoModalTitle').textContent = lesson.video_title || `Vídeo-Aula: ${lesson.title}`;
-            const videoUrl = lesson.video_url || 'https://www.youtube.com/embed/dQw4w9WgXcQ';
-            document.getElementById('videoIframe').src = videoUrl;
+            const videoUrl = lesson.video_url || 'assets/vids/Porcentagem_nos_Exames.mp4';
+            const container = document.getElementById('videoModalPlayerContainer');
+
+            if (videoUrl.endsWith('.mp4') || videoUrl.endsWith('.webm') || videoUrl.includes('/vids/')) {
+                container.innerHTML = `
+                    <video controls controlsList="nodownload" class="w-full h-full object-contain bg-black" autoplay>
+                        <source src="${videoUrl}" type="video/mp4">
+                        Seu navegador não suporta a reprodução de vídeos HTML5.
+                    </video>
+                `;
+            } else {
+                container.innerHTML = `
+                    <iframe id="videoIframe" class="w-full h-full border-0" src="${videoUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `;
+            }
 
             const modal = document.getElementById('videoModal');
             const card = document.getElementById('videoModalCard');
@@ -682,7 +724,8 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
         function closeVideoModal() {
             if (typeof sounds !== 'undefined') sounds.playClick();
-            document.getElementById('videoIframe').src = ''; // Parar o vídeo ao fechar
+            const container = document.getElementById('videoModalPlayerContainer');
+            if (container) container.innerHTML = ''; // Parar o vídeo ao fechar
             const modal = document.getElementById('videoModal');
             const card = document.getElementById('videoModalCard');
             modal.classList.add('opacity-0', 'pointer-events-none');
@@ -702,5 +745,6 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
         document.addEventListener('DOMContentLoaded', () => loadRoadmap(currentSubject));
     </script>
+    <script src="assets/js/notifications.js"></script>
 </body>
 </html>

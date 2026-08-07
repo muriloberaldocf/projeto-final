@@ -6,7 +6,8 @@ $userId = $_SESSION['user_id'];
 $stmtUser = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmtUser->execute([$userId]);
 $user = $stmtUser->fetch();
-$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($user['name'] ?? 'Player');
+$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'assets/img/default_avatar.jpg';
+$userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
 $userBadgeMap = [
     'bi-person-circle' => 'Estudante Padrão',
@@ -60,6 +61,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
 </head>
 <body class="min-h-full font-sans antialiased text-slate-800 bg-slate-50 selection:bg-indigo-500 selection:text-white">
 
@@ -72,6 +74,31 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 
             <!-- HUD STATUS DO ALUNO -->
             <div class="flex items-center gap-3">
+                <!-- SININHO DE NOTIFICAÇÕES NA NAVBAR -->
+                <div class="relative">
+                    <button id="notifBellBtn" onclick="toggleNotifDropdown()" class="relative p-2 rounded-2xl bg-white border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0] hover:bg-slate-50 text-slate-600 hover:text-indigo-600 transition-all flex items-center justify-center" title="Notificações">
+                        <i class="bi bi-bell-fill text-base"></i>
+                        <span id="notifBadge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center shadow-sm animate-pulse">0</span>
+                    </button>
+
+                    <!-- DROPDOWN DE NOTIFICAÇÕES -->
+                    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-3xl border-2 border-slate-200 shadow-2xl z-50 p-4 animate-in fade-in zoom-in-95 duration-150">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="bi bi-bell-fill text-indigo-600"></i>
+                                <h4 class="font-outfit font-extrabold text-slate-900 text-sm mb-0">Central de Notificações</h4>
+                            </div>
+                            <span id="notifCountText" class="text-[11px] font-bold text-slate-400">0 notificações</span>
+                        </div>
+
+                        <div id="notifListContainer" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                            <div class="text-center py-6 text-slate-400 text-xs">
+                                <i class="bi bi-arrow-repeat animate-spin text-xl block mb-1"></i> Carregando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-2xl border-2 border-slate-200 shadow-[0_3px_0_0_#e2e8f0]" title="Ofensiva Diária">
                     <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
@@ -87,7 +114,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 </div>
 
                 <a href="profile.php" class="ml-1 group" title="Meu Perfil">
-                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-600 object-cover group-hover:scale-105 transition-transform shadow-sm">
+                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-10 h-10 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover group-hover:scale-105 transition-transform shadow-sm">
                 </a>
             </div>
         </div>
@@ -98,10 +125,10 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             <!-- SIDEBAR ESQUERDA -->
-            <aside class="lg:col-span-3">
+            <aside class="lg:col-span-3 sticky top-20 space-y-3.5">
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-[0_4px_0_0_#e2e8f0]">
                     <div class="flex items-center gap-3.5 p-3 mb-4 bg-slate-50 rounded-2xl border border-slate-200">
-                        <img src="<?= htmlspecialchars($userAvatar) ?>" class="w-12 h-12 rounded-full border-2 border-indigo-600 object-cover shadow-sm">
+                        <img src="<?= htmlspecialchars($userAvatar) ?>" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-12 h-12 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover shadow-sm">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-outfit font-bold text-slate-900 text-base truncate"><?= htmlspecialchars($user['name'] ?? 'Estudante') ?></h3>
                             <div class="flex items-center gap-1 text-xs font-bold text-indigo-600 truncate mt-0.5" title="Título Equipado">
@@ -334,5 +361,6 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             searchGoogle({ preventDefault: () => {} });
         }
     </script>
+    <script src="assets/js/notifications.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 /**
  * API DE CLASSIFICAÇÃO / LEADERBOARD ENTRE AMIGOS - HIPO GABARITO
- * Retorna o ranking contendo APENAS o usuário atual e seus amigos adicionados.
+ * Retorna o ranking contendo o próprio usuário logado E todos os seus amigos com status 'accepted'.
  */
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
@@ -11,24 +11,30 @@ if (!isLoggedIn()) {
     exit;
 }
 
-$userId = $_SESSION['user_id'];
+$userId = (int)$_SESSION['user_id'];
 
 try {
-    // Buscar Usuário Atual e Amigos adicionados (status 'accepted')
+    // 1. Buscar o próprio usuário + todos os amigos aceitos
     $stmt = $pdo->prepare("
-        SELECT DISTINCT u.id, u.name, u.xp, u.level, u.streak_days, u.avatar, u.avatar_icon
+        SELECT u.id, u.name, u.xp, u.level, u.streak_days, u.avatar, u.avatar_icon, u.avatar_frame
         FROM users u
-        LEFT JOIN user_friends f 
-               ON (f.user_id = u.id AND f.friend_id = :uid) 
-               OR (f.friend_id = u.id AND f.user_id = :uid)
-        WHERE u.id = :uid 
-           OR (f.status = 'accepted' AND (f.user_id = :uid OR f.friend_id = :uid))
+        WHERE u.id = ?
+           OR u.id IN (
+               SELECT CASE WHEN user_id = ? THEN friend_id ELSE user_id END
+               FROM user_friends
+               WHERE (user_id = ? OR friend_id = ?) AND status = 'accepted'
+           )
         ORDER BY u.xp DESC, u.level DESC
     ");
-    $stmt->execute(['uid' => $userId]);
+    $stmt->execute([$userId, $userId, $userId, $userId]);
     $rankings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Se o usuário não tiver outros amigos na lista, adicionar contagem de amigos
+    foreach ($rankings as &$r) {
+        $r['is_me'] = ((int)$r['id'] === $userId);
+    }
+    unset($r);
+
+    // 2. Contar número total de amigos aceitos
     $stmtFriendsCount = $pdo->prepare("
         SELECT COUNT(DISTINCT CASE WHEN user_id = ? THEN friend_id ELSE user_id END) 
         FROM user_friends 

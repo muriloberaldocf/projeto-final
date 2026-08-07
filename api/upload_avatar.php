@@ -75,9 +75,12 @@ if (isset($_FILES['avatar_file']) && $_FILES['avatar_file']['error'] === UPLOAD_
 // 2. SELEÇÃO DE URL OU PRESET
 $inputData = json_decode(file_get_contents('php://input'), true);
 if (!empty($inputData['avatar_url'])) {
-    $avatarUrl = filter_var($inputData['avatar_url'], FILTER_SANITIZE_URL);
+    $avatarUrl = trim($inputData['avatar_url']);
     
-    if (!filter_var($avatarUrl, FILTER_VALIDATE_URL) && strpos($avatarUrl, 'uploads/') !== 0) {
+    $isValidUrl = filter_var($avatarUrl, FILTER_VALIDATE_URL);
+    $isLocalAsset = (strpos($avatarUrl, 'assets/') === 0 || strpos($avatarUrl, 'uploads/') === 0 || file_exists(__DIR__ . '/../' . $avatarUrl));
+    
+    if (!$isValidUrl && !$isLocalAsset) {
         echo json_encode(['success' => false, 'message' => 'URL de imagem inválida.']);
         exit;
     }

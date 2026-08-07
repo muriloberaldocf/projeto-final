@@ -58,6 +58,38 @@ $subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
 
     <!-- CORPO DA QUESTÃO -->
     <main class="lesson-body" id="lessonBody">
+        <!-- CAIXA DE EXPLICAÇÃO TEÓRICA E VÍDEO-AULA NO CABEÇALHO DA LIÇÃO -->
+        <div id="lessonIntroBox" class="bg-white rounded-4 border-2 border-indigo-200 p-3 p-md-4 mb-4 shadow-sm" style="display: none;">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-indigo-100">
+                <div class="d-flex align-items-center gap-2 text-indigo-900 fw-bold">
+                    <i class="bi bi-journal-bookmark-fill text-indigo-600 fs-5"></i>
+                    <span>Explicação Teórica & Vídeo-Aula em Português</span>
+                </div>
+                <button type="button" id="btnToggleIntro" class="btn btn-sm btn-light border text-indigo-700 fw-semibold py-1 px-3.5 text-xs rounded-pill">
+                    <i class="bi bi-chevron-up me-1"></i> Ocultar
+                </button>
+            </div>
+
+            <!-- CONTEÚDO EXPANDÍVEL -->
+            <div id="introContentContainer">
+                <!-- PLAYER DE VÍDEO-AULA EM PORTUGUÊS -->
+                <div id="videoContainer" class="mb-3" style="display: none;">
+                    <div class="d-flex align-items-center gap-2 text-dark font-outfit fw-bold text-sm mb-2" id="videoTitleContainer">
+                        <i class="bi bi-youtube text-danger fs-5"></i>
+                        <span id="videoTitleText">Vídeo-Aula Explicativa em Português</span>
+                    </div>
+                    <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow-sm border">
+                        <iframe id="videoIframe" src="" title="Vídeo Aula" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                    </div>
+                </div>
+
+                <!-- RESUMO TEÓRICO APROFUNDADO -->
+                <div id="introContentText" class="text-secondary small leading-relaxed font-medium pt-2">
+                    <!-- Conteúdo explicativo renderizado via JS -->
+                </div>
+            </div>
+        </div>
+
         <div class="mb-3 d-flex align-items-center gap-2">
             <span class="badge bg-light text-secondary border font-monospace" id="examTag">
                 EXERCÍCIO

@@ -8,10 +8,21 @@ $userId = $_SESSION['user_id'];
 $stmtUser = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmtUser->execute([$userId]);
 $user = $stmtUser->fetch();
-$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($user['name'] ?? 'Player');
+$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'assets/img/default_avatar.jpg';
+$userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
 $currentAvatar = $user['avatar_icon'] ?? 'bi-person-circle';
 $userXp = (int) ($user['xp'] ?? 0);
+
+$frames = [
+    ['key' => 'frame-indigo',  'name' => 'Índigo Padrão',       'xp' => 0,    'desc' => 'Borda violeta clássica'],
+    ['key' => 'frame-emerald', 'name' => 'Esmeralda',           'xp' => 100,  'desc' => 'Verde vivo da vitória'],
+    ['key' => 'frame-cyan',    'name' => 'Azul Ciano',          'xp' => 300,  'desc' => 'Brilho ciano oceânico'],
+    ['key' => 'frame-purple',  'name' => 'Roxo Místico',        'xp' => 500,  'desc' => 'Aura de sabedoria'],
+    ['key' => 'frame-rose',    'name' => 'Rosa Neon',            'xp' => 750,  'desc' => 'Energia vibrante'],
+    ['key' => 'frame-rainbow', 'name' => '🦛 Arco-Íris Lendária', 'xp' => 1000, 'desc' => 'Efeito multicor animado contínuo (1000 XP)'],
+    ['key' => 'frame-gold',    'name' => '👑 Dourada Suprema',   'xp' => 1500, 'desc' => 'Brilho metálico ouro com pulso (1500 XP)'],
+];
 
 // Catálogo de Avatares / Insígnias e Títulos por XP
 $avatars = [
@@ -81,6 +92,31 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
+    <style>
+        img.frame-indigo, .frame-indigo { outline: 4px solid #4f46e5 !important; outline-offset: -2px !important; box-shadow: 0 0 14px rgba(79,70,229,0.7) !important; border-radius: 9999px !important; }
+        img.frame-emerald, .frame-emerald { outline: 4px solid #10b981 !important; outline-offset: -2px !important; box-shadow: 0 0 14px rgba(16,185,129,0.7) !important; border-radius: 9999px !important; }
+        img.frame-cyan, .frame-cyan { outline: 4px solid #06b6d4 !important; outline-offset: -2px !important; box-shadow: 0 0 16px rgba(6,182,212,0.75) !important; border-radius: 9999px !important; }
+        img.frame-purple, .frame-purple { outline: 4px solid #a855f7 !important; outline-offset: -2px !important; box-shadow: 0 0 16px rgba(168,85,247,0.75) !important; border-radius: 9999px !important; }
+        img.frame-rose, .frame-rose { outline: 4px solid #f43f5e !important; outline-offset: -2px !important; box-shadow: 0 0 18px rgba(244,63,94,0.8) !important; border-radius: 9999px !important; }
+        img.frame-rainbow, .frame-rainbow { outline: 4.5px solid #ff0055 !important; outline-offset: -2px !important; border-radius: 9999px !important; animation: rainbowRgbFast 1.8s linear infinite !important; }
+        img.frame-gold, .frame-gold { outline: 4px solid #f59e0b !important; outline-offset: -2px !important; border-radius: 9999px !important; animation: goldOutlineCycle 2.2s ease-in-out infinite alternate !important; }
+        @keyframes rainbowRgbFast {
+            0%   { outline-color: #ff0055 !important; box-shadow: 0 0 18px #ff0055, 0 0 32px rgba(255,0,85,0.85) !important; }
+            14%  { outline-color: #ff6600 !important; box-shadow: 0 0 18px #ff6600, 0 0 32px rgba(255,102,0,0.85) !important; }
+            28%  { outline-color: #ffee00 !important; box-shadow: 0 0 18px #ffee00, 0 0 32px rgba(255,238,0,0.85) !important; }
+            42%  { outline-color: #00ff66 !important; box-shadow: 0 0 18px #00ff66, 0 0 32px rgba(0,255,102,0.85) !important; }
+            57%  { outline-color: #00d5ff !important; box-shadow: 0 0 18px #00d5ff, 0 0 32px rgba(0,213,255,0.85) !important; }
+            71%  { outline-color: #9900ff !important; box-shadow: 0 0 18px #9900ff, 0 0 32px rgba(153,0,255,0.85) !important; }
+            85%  { outline-color: #ff00cc !important; box-shadow: 0 0 18px #ff00cc, 0 0 32px rgba(255,0,204,0.85) !important; }
+            100% { outline-color: #ff0055 !important; box-shadow: 0 0 18px #ff0055, 0 0 32px rgba(255,0,85,0.85) !important; }
+        }
+        @keyframes goldOutlineCycle {
+            0% { outline-color: #fbbf24 !important; box-shadow: 0 0 14px #f59e0b, 0 0 22px rgba(251,191,36,0.6) !important; }
+            50% { outline-color: #fef08a !important; box-shadow: 0 0 26px #fbbf24, 0 0 38px rgba(245,158,11,0.9) !important; }
+            100% { outline-color: #d97706 !important; box-shadow: 0 0 16px #d97706, 0 0 25px rgba(217,119,6,0.7) !important; }
+        }
+    </style>
 </head>
 <body class="min-h-full font-sans antialiased text-slate-800 bg-slate-50 selection:bg-indigo-500 selection:text-white">
 
@@ -97,6 +133,31 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
             $isStreakActiveProfile = ($streakProfile >= 2);
             ?>
             <div class="flex items-center gap-3">
+                <!-- SININHO DE NOTIFICAÇÕES NA NAVBAR -->
+                <div class="relative">
+                    <button id="notifBellBtn" onclick="toggleNotifDropdown()" class="relative p-2 rounded-2xl bg-white border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0] hover:bg-slate-50 text-slate-600 hover:text-indigo-600 transition-all flex items-center justify-center" title="Notificações">
+                        <i class="bi bi-bell-fill text-base"></i>
+                        <span id="notifBadge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center shadow-sm animate-pulse">0</span>
+                    </button>
+
+                    <!-- DROPDOWN DE NOTIFICAÇÕES -->
+                    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-3xl border-2 border-slate-200 shadow-2xl z-50 p-4 animate-in fade-in zoom-in-95 duration-150">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="bi bi-bell-fill text-indigo-600"></i>
+                                <h4 class="font-outfit font-extrabold text-slate-900 text-sm mb-0">Central de Notificações</h4>
+                            </div>
+                            <span id="notifCountText" class="text-[11px] font-bold text-slate-400">0 notificações</span>
+                        </div>
+
+                        <div id="notifListContainer" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                            <div class="text-center py-6 text-slate-400 text-xs">
+                                <i class="bi bi-arrow-repeat animate-spin text-xl block mb-1"></i> Carregando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-2 <?= $isStreakActiveProfile ? 'bg-amber-50 border-amber-300 shadow-[0_3px_0_0_#f59e0b]' : 'bg-white border-slate-200 shadow-[0_3px_0_0_#e2e8f0]' ?> px-3.5 py-1.5 rounded-2xl border-2 transition-all" title="<?= $isStreakActiveProfile ? 'Ofensiva Ativa! (2+ dias consecutivos)' : 'Fogo apagado: estude amanhã novamente para acender!' ?>">
                     <svg class="w-5 h-5 <?= $isStreakActiveProfile ? 'text-amber-500 animate-pulse' : 'text-slate-300' ?>" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
@@ -112,7 +173,7 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
                 </div>
 
                 <a href="profile.php" class="ml-1 group" title="Meu Perfil">
-                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-600 object-cover group-hover:scale-105 transition-transform shadow-sm">
+                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-10 h-10 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover group-hover:scale-105 transition-transform">
                 </a>
             </div>
         </div>
@@ -123,10 +184,10 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             <!-- SIDEBAR ESQUERDA -->
-            <aside class="lg:col-span-3">
+            <aside class="lg:col-span-3 sticky top-20 space-y-3.5">
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-[0_4px_0_0_#e2e8f0]">
                     <div class="flex items-center gap-3 p-2.5 mb-2.5 bg-slate-50 rounded-2xl border border-slate-200">
-                        <img src="<?= htmlspecialchars($userAvatar) ?>" class="w-10 h-10 rounded-full border-2 border-indigo-600 object-cover shadow-sm">
+                        <img src="<?= htmlspecialchars($userAvatar) ?>" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-10 h-10 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-outfit font-bold text-slate-900 text-sm truncate"><?= htmlspecialchars($user['name'] ?? 'Estudante') ?></h3>
                             <div class="flex items-center gap-1 text-[11px] font-bold text-indigo-600 truncate mt-0.5" title="Título Equipado">
@@ -158,16 +219,6 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
                             Meu Perfil
                         </a>
 
-                        <?php if (($user['role'] ?? '') === 'admin'): ?>
-                            <a href="admin.php" class="flex items-center gap-3 px-4 py-3 rounded-2xl font-outfit font-bold text-sm text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all mt-4">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                Painel Professor
-                            </a>
-                        <?php endif; ?>
-
                         <div class="pt-3 border-t border-slate-200 mt-3">
                             <a href="api/auth.php?action=logout" class="flex items-center gap-3 px-4 py-2.5 rounded-2xl font-outfit font-bold text-xs text-slate-400 hover:text-rose-600 transition-all">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -186,7 +237,7 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-[0_3px_0_0_#e2e8f0] flex flex-col sm:flex-row items-center gap-5">
                     <!-- FOTO COM BADGE DE CÂMERA CLICÁVEL -->
                     <div class="relative group cursor-pointer" onclick="openPhotoModal()" title="Clique para alterar sua foto de perfil">
-                        <img src="<?= htmlspecialchars($userAvatar) ?>" id="profileAvatarImg" class="w-20 h-20 rounded-full border-4 border-indigo-600 object-cover shadow-md bg-indigo-50 group-hover:opacity-90 transition-opacity">
+                        <img src="<?= htmlspecialchars($userAvatar) ?>" id="profileAvatarImg" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-20 h-20 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover group-hover:opacity-90 transition-opacity">
                         <div class="absolute bottom-0 right-0 w-7 h-7 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-md border-2 border-white group-hover:scale-110 transition-transform">
                             <i class="bi bi-camera-fill text-xs"></i>
                         </div>
@@ -253,6 +304,45 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
                                     <button class="w-full py-1 px-2.5 rounded-xl font-outfit font-bold text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 transition-all">Equipar</button>
                                 <?php else: ?>
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-xl text-[11px] font-bold bg-slate-200 text-slate-600"><i class="bi bi-lock-fill"></i> <?= $av['xp'] ?> XP</span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <!-- MOLDURAS DO AVATAR POR XP -->
+                <div class="bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-[0_3px_0_0_#e2e8f0]">
+                    <div class="mb-4">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-1">
+                            <i class="bi bi-bounding-box-circles text-indigo-600"></i> NOVO RECURSO
+                        </span>
+                        <h3 class="font-outfit font-extrabold text-lg text-slate-900 mb-0.5">Molduras de Avatar por XP</h3>
+                        <p class="text-xs text-slate-500 font-medium mb-0">Desbloqueie molduras incríveis para sua foto de perfil conforme ganha XP! Atingir <strong>1000 XP</strong> libera a <strong>Arco-Íris Animada</strong> e <strong>1500 XP</strong> libera a <strong>Dourada Suprema</strong>!</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        <?php foreach ($frames as $fr): ?>
+                            <?php 
+                                $isUnlockedFrame = ($userXp >= $fr['xp']);
+                                $isEquippedFrame = ($userFrame === $fr['key']);
+                            ?>
+                            <div class="bg-slate-50 rounded-2xl border-2 p-3.5 text-center transition-all <?= 
+                                $isEquippedFrame ? 'border-indigo-600 bg-indigo-50/50 shadow-sm' : ($isUnlockedFrame ? 'border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer' : 'border-slate-200 opacity-60')
+                            ?>" <?= $isUnlockedFrame ? "onclick=\"equipAvatarFrame('{$fr['key']}')\"" : '' ?>>
+                                
+                                <div class="relative w-16 h-16 mx-auto mb-2 flex items-center justify-center">
+                                    <img src="<?= htmlspecialchars($userAvatar) ?>" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-14 h-14 rounded-full <?= $fr['key'] ?> object-cover">
+                                </div>
+
+                                <h4 class="font-outfit font-bold text-xs text-slate-900 mb-0.5"><?= htmlspecialchars($fr['name']) ?></h4>
+                                <p class="text-[10px] text-slate-500 font-medium mb-2 leading-tight"><?= htmlspecialchars($fr['desc']) ?></p>
+
+                                <?php if ($isEquippedFrame): ?>
+                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-[11px] font-extrabold bg-indigo-600 text-white shadow-sm">Equipado</span>
+                                <?php elseif ($isUnlockedFrame): ?>
+                                    <button class="w-full py-1 px-2.5 rounded-xl font-outfit font-extrabold text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 transition-all">Equipar Moldura</button>
+                                <?php else: ?>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-200 text-slate-600"><i class="bi bi-lock-fill"></i> <?= $fr['xp'] ?> XP</span>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -346,18 +436,18 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
                     <?php
                     $presetAvatars = [
                         ['name' => 'Mascote Hipopótamo', 'url' => 'assets/img/logo_mascot.png'],
-                        ['name' => 'Robô Gamer', 'url' => 'https://api.dicebear.com/7.x/bottts/svg?seed=GamerAprova'],
-                        ['name' => 'Estudante Focado', 'url' => 'https://api.dicebear.com/7.x/avataaars/svg?seed=Vestibular2025'],
-                        ['name' => 'Astronauta', 'url' => 'https://api.dicebear.com/7.x/bottts/svg?seed=AstroQuest'],
-                        ['name' => 'Cientista', 'url' => 'https://api.dicebear.com/7.x/avataaars/svg?seed=GenioQuimico'],
-                        ['name' => 'Mago do Saber', 'url' => 'https://api.dicebear.com/7.x/lorelei/svg?seed=MagoAprova'],
-                        ['name' => 'Ninja', 'url' => 'https://api.dicebear.com/7.x/bottts/svg?seed=NinjaMath'],
-                        ['name' => 'Coruja da Sabedoria', 'url' => 'https://api.dicebear.com/7.x/identicon/svg?seed=CorujaWise'],
-                        ['name' => 'Leão da Aprovação', 'url' => 'https://api.dicebear.com/7.x/bottts/svg?seed=KingLion'],
-                        ['name' => 'Medicina', 'url' => 'https://api.dicebear.com/7.x/avataaars/svg?seed=DoctorPro'],
-                        ['name' => 'Engenharia', 'url' => 'https://api.dicebear.com/7.x/bottts/svg?seed=EngineerTech'],
-                        ['name' => 'Direito', 'url' => 'https://api.dicebear.com/7.x/lorelei/svg?seed=JusticeHero'],
-                        ['name' => 'Foguete', 'url' => 'https://api.dicebear.com/7.x/identicon/svg?seed=RocketXP']
+                        ['name' => 'Robô Gamer', 'url' => 'assets/img/avatars/avatar_robot.jpg'],
+                        ['name' => 'Estudante Focado', 'url' => 'assets/img/avatars/avatar_student.jpg'],
+                        ['name' => 'Astronauta', 'url' => 'assets/img/avatars/avatar_astronaut.jpg'],
+                        ['name' => 'Cientista', 'url' => 'assets/img/avatars/avatar_scientist.jpg'],
+                        ['name' => 'Mago do Saber', 'url' => 'assets/img/avatars/avatar_wizard.jpg'],
+                        ['name' => 'Ninja', 'url' => 'assets/img/avatars/avatar_ninja.jpg'],
+                        ['name' => 'Coruja da Sabedoria', 'url' => 'assets/img/avatars/avatar_owl.jpg'],
+                        ['name' => 'Leão da Aprovação', 'url' => 'assets/img/avatars/avatar_lion.jpg'],
+                        ['name' => 'Medicina', 'url' => 'assets/img/avatars/avatar_doctor.jpg'],
+                        ['name' => 'Engenharia', 'url' => 'assets/img/avatars/avatar_engineer.jpg'],
+                        ['name' => 'Direito', 'url' => 'assets/img/avatars/avatar_lawyer.jpg'],
+                        ['name' => 'Foguete', 'url' => 'assets/img/avatars/avatar_rocket.jpg']
                     ];
                     foreach ($presetAvatars as $preset):
                     ?>
@@ -544,7 +634,39 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
                 }
             });
         }
+
+        // EQUIPAR MOLDURA DO AVATAR POR XP
+        function equipAvatarFrame(frameKey) {
+            if (typeof sounds !== 'undefined') sounds.playClick();
+            fetch('api/update_frame.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ frame: frameKey })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Moldura Equipada!',
+                            text: data.message,
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => window.location.reload());
+                    } else {
+                        window.location.reload();
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => {
+                alert('Erro ao conectar com o servidor.');
+            });
+        }
     </script>
+    <script src="assets/js/notifications.js"></script>
 </body>
 </html>
 
