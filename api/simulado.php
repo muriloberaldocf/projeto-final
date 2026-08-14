@@ -1,260 +1,321 @@
 <?php
+/**
+ * API DE SIMULADOS CRONOMETRADOS — HIPOGABARITO
+ * Suporta geração e correção de simulados para ENEM, FUVEST, UNICAMP, UNESP e MISTO.
+ * Questões organizadas por nível: Fácil → Médio → Difícil.
+ */
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../config/db.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
+    echo json_encode(['status' => 'error', 'message' => 'Usuário não autenticado.']);
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$action = $_GET['action'] ?? '';
+$userId = (int)$_SESSION['user_id'];
+$method = $_SERVER['REQUEST_METHOD'];
 
 try {
-    switch ($action) {
-        case 'start':
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                throw new Exception("Method not allowed");
-            }
-            
-            $exam_type = $_POST['exam_type'] ?? 'enem';
-            $total_questions = (int)($_POST['total_questions'] ?? 15);
-            
-            $time_limits = [
-                15 => 30,
-                30 => 60,
-                45 => 90,
-                90 => 180
-            ];
-            $time_limit_min = $time_limits[$total_questions] ?? 30;
-            
-            $selected_questions = [];
-            
-            $base_query = "
-                SELECT q.id, q.question_text, q.option_a, q.option_b, q.option_c, q.option_d, q.option_e, q.exam_source, s.name as subject_name, s.id as subject_id
-                FROM questions q
-                JOIN lessons l ON q.lesson_id = l.id
-                JOIN units u ON l.unit_id = u.id
-                JOIN subjects s ON u.subject_id = s.id
-                WHERE q.id NOT IN (
-                    SELECT question_id FROM user_answers 
-                    WHERE user_id = ? AND is_correct = 1 AND answered_at >= DATE_SUB(NOW(), INTERVAL 3 DAY)
-                )
-            ";
-            
-            if (in_array($exam_type, ['enem', 'misto'])) {
-                // Select proportionally from all 6 subjects
-                $per_subject = max(1, round($total_questions / 6));
-                $stmt = $pdo->prepare($base_query . " AND s.id = ? ORDER BY RAND() LIMIT ?");
-                
-                for ($i = 1; $i <= 6; $i++) {
-                    $stmt->execute([$user_id, $i, $per_subject]);
-                    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    $selected_questions = array_merge($selected_questions, $res);
-                }
-                
-                // Trim if we have too many, or we can just leave it if it's slightly off due to rounding, 
-                // but let's strictly limit to total_questions
-                shuffle($selected_questions);
-                $selected_questions = array_slice($selected_questions, 0, $total_questions);
-            } else {
-                // fuvest, unicamp, unesp
-                $source = strtoupper($exam_type);
-                $stmt = $pdo->prepare($base_query . " AND q.exam_source LIKE ? ORDER BY RAND() LIMIT ?");
-                $stmt->execute([$user_id, "%$source%", $total_questions]);
-                $selected_questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                
-                // Fill remainder if not enough
-                if (count($selected_questions) < $total_questions) {
-                    $needed = $total_questions - count($selected_questions);
-                    $ids_to_exclude = array_column($selected_questions, 'id');
-                    $exclude_sql = count($ids_to_exclude) > 0 ? " AND q.id NOT IN (" . implode(',', array_map('intval', $ids_to_exclude)) . ") " : "";
-                    
-                    $stmt_fill = $pdo->prepare($base_query . $exclude_sql . " ORDER BY RAND() LIMIT ?");
-                    $stmt_fill->execute([$user_id, $needed]);
-                    $fill_res = $stmt_fill->fetchAll(PDO::FETCH_ASSOC);
-                    $selected_questions = array_merge($selected_questions, $fill_res);
-                }
-            }
-            
-            if (count($selected_questions) == 0) {
-                throw new Exception("No questions available to generate simulado.");
-            }
-            
-            $actual_total = count($selected_questions);
-            
-            $pdo->beginTransaction();
-            
-            $stmt = $pdo->prepare("INSERT INTO simulados (user_id, exam_type, total_questions, time_limit_min, started_at) VALUES (?, ?, ?, ?, NOW())");
-            $stmt->execute([$user_id, $exam_type, $actual_total, $time_limit_min]);
-            $simulado_id = $pdo->lastInsertId();
-            
-            $stmt_ans = $pdo->prepare("INSERT INTO simulado_answers (simulado_id, question_id, subject_id) VALUES (?, ?, ?)");
-            $return_questions = [];
-            foreach ($selected_questions as $q) {
-                $stmt_ans->execute([$simulado_id, $q['id'], $q['subject_id']]);
-                
-                unset($q['subject_id']); // Not needed in output
-                $return_questions[] = $q;
-            }
-            
-            $pdo->commit();
-            
+    // -------------------------------------------------------------
+    // 1. REQUISIÇÃO DE FINALIZAÇÃO / CORREÇÃO DO SIMULADO (POST)
+    // -------------------------------------------------------------
+    $inputRaw = file_get_contents('php://input');
+    $inputJson = json_decode($inputRaw, true);
+
+    // Se for POST com respostas (ou ?action=finish)
+    if ($method === 'POST' && (isset($inputJson['answers']) || isset($_POST['answers']) || isset($_GET['action']) && $_GET['action'] === 'finish')) {
+        $answers = $inputJson['answers'] ?? $_POST['answers'] ?? [];
+        $timeSpent = (int)($inputJson['time_spent'] ?? $_POST['time_spent'] ?? 0);
+        $examType = trim($inputJson['exam'] ?? $_POST['exam'] ?? 'misto');
+
+        $totalQuestions = count($answers);
+        if ($totalQuestions === 0) {
             echo json_encode([
-                'simulado_id' => $simulado_id,
-                'questions' => $return_questions
+                'status' => 'error',
+                'message' => 'Nenhuma resposta enviada.'
             ]);
-            break;
-            
-        case 'answer':
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                throw new Exception("Method not allowed");
+            exit;
+        }
+
+        $correctCount = 0;
+        $bySubject = [];
+        $byDifficulty = ['fácil' => ['correct' => 0, 'total' => 0], 'médio' => ['correct' => 0, 'total' => 0], 'difícil' => ['correct' => 0, 'total' => 0]];
+
+        // Buscar detalhes das questões respondidas
+        $questionIds = array_keys($answers);
+        $placeholders = implode(',', array_fill(0, count($questionIds), '?'));
+
+        $stmt = $pdo->prepare("
+            SELECT q.id, q.correct_option, q.difficulty, s.name as subject_name
+            FROM questions q
+            LEFT JOIN lessons l ON q.lesson_id = l.id
+            LEFT JOIN units u ON l.unit_id = u.id
+            LEFT JOIN subjects s ON u.subject_id = s.id
+            WHERE q.id IN ($placeholders)
+        ");
+        $stmt->execute(array_map('intval', $questionIds));
+        $questionsList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $questionsMap = [];
+        foreach ($questionsList as $q) {
+            $questionsMap[$q['id']] = $q;
+        }
+
+        $pdo->beginTransaction();
+
+        $stmtAnswer = $pdo->prepare("
+            INSERT INTO user_answers (user_id, question_id, chosen_option, is_correct, answered_at)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+
+        foreach ($answers as $qId => $chosen) {
+            $qId = (int)$qId;
+            $chosen = strtolower(trim($chosen));
+            $qInfo = $questionsMap[$qId] ?? null;
+
+            if ($qInfo) {
+                $isCorrect = ($chosen === strtolower(trim($qInfo['correct_option']))) ? 1 : 0;
+                $subjectName = $qInfo['subject_name'] ?: 'Geral';
+                $diff = $qInfo['difficulty'] ?: 'médio';
+
+                if ($isCorrect) {
+                    $correctCount++;
+                }
+
+                if (!isset($bySubject[$subjectName])) {
+                    $bySubject[$subjectName] = ['correct' => 0, 'total' => 0];
+                }
+                $bySubject[$subjectName]['total']++;
+                if ($isCorrect) {
+                    $bySubject[$subjectName]['correct']++;
+                }
+
+                // Acumular por dificuldade
+                if (isset($byDifficulty[$diff])) {
+                    $byDifficulty[$diff]['total']++;
+                    if ($isCorrect) {
+                        $byDifficulty[$diff]['correct']++;
+                    }
+                }
+
+                $stmtAnswer->execute([$userId, $qId, $chosen, $isCorrect]);
             }
-            
-            $simulado_id = $_POST['simulado_id'] ?? null;
-            $question_id = $_POST['question_id'] ?? null;
-            $chosen_option = $_POST['chosen_option'] ?? null;
-            
-            if (!$simulado_id || !$question_id || !$chosen_option) {
-                throw new Exception("Missing parameters");
-            }
-            
-            // Check if simulado belongs to user
-            $stmt = $pdo->prepare("SELECT id FROM simulados WHERE id = ? AND user_id = ?");
-            $stmt->execute([$simulado_id, $user_id]);
-            if (!$stmt->fetch()) {
-                throw new Exception("Simulado not found or unauthorized");
-            }
-            
-            // Get correct option
-            $stmt = $pdo->prepare("SELECT correct_option FROM questions WHERE id = ?");
-            $stmt->execute([$question_id]);
-            $q = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (!$q) {
-                throw new Exception("Question not found");
-            }
-            
-            $is_correct = ($chosen_option === $q['correct_option']) ? 1 : 0;
-            
-            $stmt = $pdo->prepare("UPDATE simulado_answers SET chosen_option = ?, is_correct = ? WHERE simulado_id = ? AND question_id = ?");
-            $stmt->execute([$chosen_option, $is_correct, $simulado_id, $question_id]);
-            
-            echo json_encode(['success' => true]);
-            break;
-            
-        case 'finish':
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                throw new Exception("Method not allowed");
-            }
-            
-            $simulado_id = $_POST['simulado_id'] ?? null;
-            $time_spent_sec = (int)($_POST['time_spent_sec'] ?? 0);
-            
-            if (!$simulado_id) {
-                throw new Exception("Missing simulado_id");
-            }
-            
-            $stmt = $pdo->prepare("SELECT * FROM simulados WHERE id = ? AND user_id = ? AND finished_at IS NULL");
-            $stmt->execute([$simulado_id, $user_id]);
-            $simulado = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (!$simulado) {
-                throw new Exception("Simulado not found, unauthorized, or already finished");
-            }
-            
-            $pdo->beginTransaction();
-            
-            // Calculate total correct and breakdown
-            $stmt = $pdo->prepare("
-                SELECT sa.subject_id, s.name as subject_name, SUM(sa.is_correct) as correct, COUNT(sa.id) as total
-                FROM simulado_answers sa
-                JOIN subjects s ON sa.subject_id = s.id
-                WHERE sa.simulado_id = ?
-                GROUP BY sa.subject_id, s.name
+        }
+
+        $score = $totalQuestions > 0 ? round(($correctCount / $totalQuestions) * 100) : 0;
+
+        // Cálculo de Recompensa de XP
+        // 3 XP por acerto + Bônus de 30 XP para >= 75% + Bônus de 40 XP para >= 90%
+        $xpGained = ($correctCount * 3);
+        if ($score >= 75) {
+            $xpGained += 30;
+        }
+        if ($score >= 90) {
+            $xpGained += 40;
+        }
+
+        // Registrar simulado na tabela simulados se existir
+        try {
+            $stmtSim = $pdo->prepare("
+                INSERT INTO simulados (user_id, exam_type, total_questions, time_limit_min, score, total_correct, time_spent_sec, xp_earned, started_at, finished_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
             ");
-            $stmt->execute([$simulado_id]);
-            $breakdown_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            $total_correct = 0;
-            $breakdown = [];
-            foreach ($breakdown_data as $row) {
-                $total_correct += $row['correct'];
-                $breakdown[] = [
-                    'subject_name' => $row['subject_name'],
-                    'correct' => (int)$row['correct'],
-                    'total' => (int)$row['total'],
-                    'percentage' => $row['total'] > 0 ? round(($row['correct'] / $row['total']) * 100, 2) : 0
-                ];
+            $stmtSim->execute([$userId, $examType, $totalQuestions, round($timeSpent / 60), $score, $correctCount, $timeSpent, $xpGained]);
+        } catch (Exception $e) {
+            // Ignora caso a tabela tenha diferenças de schema
+        }
+
+        // Atualizar XP e Nível do Usuário
+        $stmtUser = $pdo->prepare("UPDATE users SET xp = xp + ? WHERE id = ?");
+        $stmtUser->execute([$xpGained, $userId]);
+
+        $stmtGetXp = $pdo->prepare("SELECT xp FROM users WHERE id = ?");
+        $stmtGetXp->execute([$userId]);
+        $currentXp = (int)$stmtGetXp->fetchColumn();
+        $newLevel = floor($currentXp / 100) + 1;
+
+        $stmtLevel = $pdo->prepare("UPDATE users SET level = ? WHERE id = ?");
+        $stmtLevel->execute([$newLevel, $userId]);
+
+        $pdo->commit();
+
+        // Remover dificuldades com 0 questões do breakdown
+        $byDiffClean = [];
+        foreach ($byDifficulty as $key => $val) {
+            if ($val['total'] > 0) {
+                $byDiffClean[$key] = $val;
             }
-            
-            $total_questions = $simulado['total_questions'];
-            $score = $total_questions > 0 ? round(($total_correct / $total_questions) * 100, 2) : 0;
-            
-            // Calculate XP
-            $xp_earned = $total_correct * 2;
-            if ($score >= 90) {
-                $xp_earned += 50;
-            } elseif ($score >= 70) {
-                $xp_earned += 20;
-            }
-            
-            // Update simulados
-            $stmt = $pdo->prepare("UPDATE simulados SET score = ?, total_correct = ?, time_spent_sec = ?, xp_earned = ?, finished_at = NOW() WHERE id = ?");
-            $stmt->execute([$score, $total_correct, $time_spent_sec, $xp_earned, $simulado_id]);
-            
-            // Update user XP and Level
-            $stmt = $pdo->prepare("UPDATE users SET xp = xp + ? WHERE id = ?");
-            $stmt->execute([$xp_earned, $user_id]);
-            
-            $stmt = $pdo->prepare("SELECT xp FROM users WHERE id = ?");
-            $stmt->execute([$user_id]);
-            $user_data = $stmt->fetch(PDO::FETCH_ASSOC);
-            $new_level = floor($user_data['xp'] / 100) + 1;
-            
-            $stmt = $pdo->prepare("UPDATE users SET level = ? WHERE id = ?");
-            $stmt->execute([$new_level, $user_id]);
-            
-            $pdo->commit();
-            
-            echo json_encode([
-                'score' => $score,
-                'total_correct' => $total_correct,
-                'total_questions' => $total_questions,
-                'xp_earned' => $xp_earned,
-                'time_spent_sec' => $time_spent_sec,
-                'breakdown' => $breakdown
-            ]);
-            break;
-            
-        case 'history':
-            if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-                throw new Exception("Method not allowed");
-            }
-            
-            $stmt = $pdo->prepare("
-                SELECT id, exam_type, total_questions, score, total_correct, time_spent_sec, xp_earned, finished_at
-                FROM simulados
-                WHERE user_id = ? AND finished_at IS NOT NULL
-                ORDER BY finished_at DESC
-                LIMIT 10
-            ");
-            $stmt->execute([$user_id]);
-            $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            echo json_encode($history);
-            break;
-            
-        default:
-            throw new Exception("Invalid action");
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'score' => $score,
+            'correct_answers' => $correctCount,
+            'total_questions' => $totalQuestions,
+            'xp_gained' => $xpGained,
+            'time_spent' => $timeSpent,
+            'by_subject' => $bySubject,
+            'by_difficulty' => $byDiffClean
+        ]);
+        exit;
     }
+
+    // -------------------------------------------------------------
+    // 2. REQUISIÇÃO DE CARREGAMENTO / GERAÇÃO DE QUESTÕES (GET/POST)
+    // Questões ordenadas por dificuldade: fácil → médio → difícil
+    // -------------------------------------------------------------
+    $exam = trim($_GET['exam'] ?? $_POST['exam'] ?? $_GET['exam_type'] ?? $_POST['exam_type'] ?? 'enem');
+    $count = (int)($_GET['count'] ?? $_POST['count'] ?? $_GET['total_questions'] ?? $_POST['total_questions'] ?? 30);
+
+    if ($count <= 0) $count = 30;
+
+    // Distribuição proporcional por dificuldade:
+    // 30% fácil, 45% médio, 25% difícil
+    $countFacil   = max(1, round($count * 0.30));
+    $countDificil = max(1, round($count * 0.25));
+    $countMedio   = $count - $countFacil - $countDificil;
+    if ($countMedio < 1) $countMedio = 1;
+
+    $baseSelect = "
+        SELECT 
+            q.id,
+            q.question_text,
+            q.option_a,
+            q.option_b,
+            q.option_c,
+            q.option_d,
+            q.option_e,
+            q.exam_source as source,
+            q.difficulty,
+            COALESCE(s.name, 'Geral') as subject,
+            COALESCE(s.id, 1) as subject_id
+        FROM questions q
+        LEFT JOIN lessons l ON q.lesson_id = l.id
+        LEFT JOIN units u ON l.unit_id = u.id
+        LEFT JOIN subjects s ON u.subject_id = s.id
+    ";
+
+    // Construir filtro de banca
+    $examFilter = "";
+    if ($exam === 'enem') {
+        $examFilter = " AND q.exam_source LIKE '%ENEM%'";
+    } elseif ($exam === 'fuvest') {
+        $examFilter = " AND (q.exam_source LIKE '%FUVEST%' OR q.exam_source LIKE '%USP%')";
+    } elseif ($exam === 'unicamp') {
+        $examFilter = " AND q.exam_source LIKE '%UNICAMP%'";
+    } elseif ($exam === 'unesp') {
+        $examFilter = " AND q.exam_source LIKE '%UNESP%'";
+    }
+    // misto = sem filtro de banca
+
+    // Buscar cada nível separadamente
+    $selectedQuestions = [];
+    $allCollectedIds = [];
+
+    $diffLevels = [
+        'fácil'   => $countFacil,
+        'médio'   => $countMedio,
+        'difícil' => $countDificil,
+    ];
+
+    foreach ($diffLevels as $diff => $needed) {
+        $excludeClause = "";
+        if (!empty($allCollectedIds)) {
+            $excludeClause = " AND q.id NOT IN (" . implode(',', array_map('intval', $allCollectedIds)) . ")";
+        }
+
+        $sql = $baseSelect . " WHERE q.difficulty = ?" . $examFilter . $excludeClause . " ORDER BY RAND() LIMIT ?";
+        $stmtDiff = $pdo->prepare($sql);
+        $stmtDiff->bindValue(1, $diff, PDO::PARAM_STR);
+        $stmtDiff->bindValue(2, $needed, PDO::PARAM_INT);
+        $stmtDiff->execute();
+        $fetched = $stmtDiff->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($fetched as $q) {
+            $selectedQuestions[] = $q;
+            $allCollectedIds[] = (int)$q['id'];
+        }
+    }
+
+    // Se algum nível retornou menos do que o esperado, preencher o restante randomicamente
+    if (count($selectedQuestions) < $count) {
+        $needed = $count - count($selectedQuestions);
+        $excludeClause = "";
+        if (!empty($allCollectedIds)) {
+            $excludeClause = " WHERE q.id NOT IN (" . implode(',', array_map('intval', $allCollectedIds)) . ")";
+            if (!empty($examFilter)) {
+                $excludeClause .= $examFilter;
+            }
+        } elseif (!empty($examFilter)) {
+            $excludeClause = " WHERE 1=1" . $examFilter;
+        }
+
+        $stmtFill = $pdo->prepare($baseSelect . $excludeClause . " ORDER BY RAND() LIMIT ?");
+        $stmtFill->bindValue(1, $needed, PDO::PARAM_INT);
+        $stmtFill->execute();
+        $fillQuestions = $stmtFill->fetchAll(PDO::FETCH_ASSOC);
+
+        $selectedQuestions = array_merge($selectedQuestions, $fillQuestions);
+    }
+
+    // Se banca exclusiva tem poucas questões, preencher com outras bancas
+    if (count($selectedQuestions) < $count) {
+        $needed = $count - count($selectedQuestions);
+        $existingIds = array_column($selectedQuestions, 'id');
+        $excludeClause = "";
+        if (!empty($existingIds)) {
+            $excludeClause = " WHERE q.id NOT IN (" . implode(',', array_map('intval', $existingIds)) . ")";
+        }
+        $stmtFill2 = $pdo->prepare($baseSelect . $excludeClause . " ORDER BY RAND() LIMIT ?");
+        $stmtFill2->bindValue(1, $needed, PDO::PARAM_INT);
+        $stmtFill2->execute();
+        $fillQuestions2 = $stmtFill2->fetchAll(PDO::FETCH_ASSOC);
+        $selectedQuestions = array_merge($selectedQuestions, $fillQuestions2);
+    }
+
+    // Ordenar resultado final por dificuldade: fácil → médio → difícil
+    $diffOrder = ['fácil' => 1, 'médio' => 2, 'difícil' => 3];
+    usort($selectedQuestions, function($a, $b) use ($diffOrder) {
+        $oa = $diffOrder[$a['difficulty'] ?? 'médio'] ?? 2;
+        $ob = $diffOrder[$b['difficulty'] ?? 'médio'] ?? 2;
+        return $oa - $ob;
+    });
+
+    if (empty($selectedQuestions)) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Nenhuma questão encontrada para este simulado.'
+        ]);
+        exit;
+    }
+
+    // Calcular contagem por dificuldade para o frontend
+    $diffCounts = ['fácil' => 0, 'médio' => 0, 'difícil' => 0];
+    foreach ($selectedQuestions as $q) {
+        $d = $q['difficulty'] ?? 'médio';
+        if (isset($diffCounts[$d])) $diffCounts[$d]++;
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'exam' => $exam,
+        'count' => count($selectedQuestions),
+        'difficulty_counts' => $diffCounts,
+        'questions' => $selectedQuestions
+    ]);
+
 } catch (Exception $e) {
-    if ($pdo->inTransaction()) {
+    if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    http_response_code(400);
-    echo json_encode(['error' => $e->getMessage()]);
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Erro no servidor: ' . $e->getMessage()
+    ]);
 }

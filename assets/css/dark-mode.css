@@ -1,0 +1,440 @@
+/**
+ * Dark Mode Stylesheet
+ * 
+ * Provides dark mode overrides for Tailwind CSS utility classes and custom components.
+ * Activated by adding the 'dark' class to the <html> element.
+ * 
+ * Design Philosophy:
+ * - Background base: #0f172a (slate-900)
+ * - Card/surface bg: #1e293b (slate-800)
+ * - Elevated surface: #334155 (slate-700)
+ * - Border color: #475569 (slate-600)
+ * - Primary text: #f1f5f9 (slate-100)
+ * - Secondary text: #94a3b8 (slate-400)
+ */
+
+/* ==========================================================================
+   1. TRANSITION & SETUP
+   ========================================================================== */
+html.dark *,
+html.dark *::before,
+html.dark *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease, box-shadow 0.3s ease;
+}
+
+/* Disable transition on page load to prevent flash */
+html.no-transition *,
+html.no-transition *::before,
+html.no-transition *::after {
+    transition: none !important;
+}
+
+/* ==========================================================================
+   2. ROOT VARIABLES
+   ========================================================================== */
+html.dark {
+    --bg-main: #0f172a;
+    --card-bg: #1e293b;
+    --border-color: #475569;
+    --text-primary: #f1f5f9;
+    --brand-primary-soft: rgba(99, 102, 241, 0.15);
+}
+
+/* ==========================================================================
+   3. GLOBAL BODY & HTML
+   ========================================================================== */
+html.dark {
+    background-color: #0f172a;
+}
+html.dark body {
+    background-color: #0f172a;
+    color: #f1f5f9;
+}
+
+/* ==========================================================================
+   4. TAILWIND BACKGROUND UTILITY OVERRIDES
+   ========================================================================== */
+html.dark .bg-white {
+    background-color: #1e293b !important;
+}
+html.dark .bg-white\/95 {
+    background-color: rgba(30, 41, 59, 0.95) !important;
+}
+html.dark .bg-slate-50 {
+    background-color: #1e293b !important;
+}
+html.dark .bg-slate-100 {
+    background-color: #334155 !important;
+}
+html.dark .bg-slate-200 {
+    background-color: #475569 !important;
+}
+html.dark .bg-\[\#F1EFF5\] {
+    background-color: #0f172a !important;
+}
+html.dark .bg-indigo-50 {
+    background-color: rgba(99, 102, 241, 0.15) !important;
+}
+html.dark .bg-amber-50 {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+}
+html.dark .bg-emerald-50 {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+}
+html.dark .bg-rose-50 {
+    background-color: rgba(244, 63, 94, 0.12) !important;
+}
+html.dark .bg-slate-50\/80 {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* ==========================================================================
+   5. TAILWIND TEXT UTILITY OVERRIDES
+   ========================================================================== */
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-\[\#17151C\] {
+    color: #f1f5f9 !important;
+}
+html.dark .text-slate-700 {
+    color: #cbd5e1 !important;
+}
+html.dark .text-slate-600 {
+    color: #94a3b8 !important;
+}
+html.dark .text-slate-500 {
+    color: #94a3b8 !important;
+}
+html.dark .text-slate-400 {
+    color: #64748b !important;
+}
+
+/* ==========================================================================
+   6. TAILWIND BORDER UTILITY OVERRIDES
+   ========================================================================== */
+html.dark .border-slate-200,
+html.dark .border-slate-100,
+html.dark .border-slate-300 {
+    border-color: #475569 !important;
+}
+html.dark .border-2.border-slate-200 {
+    border-color: #475569 !important;
+}
+html.dark .border-amber-300 {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* ==========================================================================
+   7. FORM INPUTS
+   ========================================================================== */
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #0f172a;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+html.dark input::placeholder,
+html.dark select::placeholder,
+html.dark textarea::placeholder {
+    color: #64748b;
+}
+
+/* ==========================================================================
+   8. SCROLLBAR & SELECTION
+   ========================================================================== */
+html.dark ::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+html.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+html.dark ::selection {
+    background: #6842C2;
+    color: white;
+}
+
+/* ==========================================================================
+   9. COMPONENT OVERRIDES
+   ========================================================================== */
+
+/* Top Header */
+html.dark header.sticky {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: #334155;
+}
+
+/* Cards */
+html.dark .card-3d,
+html.dark .card-aprova {
+    background-color: #1e293b;
+    border-color: #475569;
+    box-shadow: 0 4px 0 0 #334155;
+}
+
+/* Buttons */
+html.dark .btn-aprova-light {
+    background-color: #334155;
+    color: #cbd5e1;
+    border-color: #475569;
+    box-shadow: 0 3px 0 0 #1e293b;
+}
+html.dark .btn-aprova-light:hover {
+    background-color: #475569;
+}
+
+/* Notification Dropdown */
+html.dark #notifDropdown {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+/* Sidebar */
+html.dark #mainSidebar > div {
+    background-color: #1e293b;
+    border-color: #475569;
+    box-shadow: 0 4px 0 0 #334155;
+}
+html.dark .sidebar-user-card {
+    background-color: #0f172a;
+    border-color: #334155;
+}
+html.dark #mainSidebar nav a:not([class*='bg-indigo-600']) {
+    color: #94a3b8;
+}
+html.dark #mainSidebar nav a:not([class*='bg-indigo-600']):hover {
+    background-color: #334155;
+    color: #f1f5f9;
+}
+html.dark #mainSidebar .border-t {
+    border-color: #334155;
+}
+
+/* SweetAlert2 */
+html.dark .swal2-popup {
+    background: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+}
+html.dark .swal2-title {
+    color: #f1f5f9;
+}
+html.dark .swal2-html-container {
+    color: #94a3b8;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 1rem;
+    border: 2px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 2px 0 0 #e2e8f0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #64748b;
+    font-size: 1.1rem;
+    padding: 0;
+}
+.theme-toggle-btn:hover {
+    background: #f8fafc;
+    color: #f59e0b;
+}
+html.dark .theme-toggle-btn {
+    background: #334155;
+    border-color: #475569;
+    box-shadow: 0 2px 0 0 #1e293b;
+    color: #fbbf24;
+}
+html.dark .theme-toggle-btn:hover {
+    background: #475569;
+    color: #fde68a;
+}
+
+/* Dashboard-specific: Duolingo trail */
+html.dark .unit-banner-aprova {
+    border-color: #475569;
+}
+html.dark .trail-node-btn {
+    border-color: #475569;
+}
+
+/* Simulado-specific */
+html.dark .simulado-option-card {
+    background-color: #1e293b;
+    border-color: #475569;
+}
+html.dark .simulado-option-card:hover {
+    background-color: #334155;
+    border-color: #6366f1;
+}
+html.dark .simulado-option-card.selected {
+    background-color: rgba(99, 102, 241, 0.15);
+    border-color: #6366f1;
+}
+
+/* Exam selector cards (simulado) */
+html.dark .exam-card {
+    background: #1e293b;
+    border-color: #475569;
+}
+html.dark .exam-card:hover {
+    border-color: #6366f1;
+}
+html.dark .exam-card.selected {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: #6366f1;
+}
+
+/* ==========================================================================
+   10. FOOTER
+   ========================================================================== */
+html.dark footer {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+html.dark footer a {
+    color: #64748b;
+}
+html.dark footer a:hover {
+    color: #818cf8;
+}
+
+/* ==========================================================================
+   11. LESSON PAGE (lesson.css overrides)
+   ========================================================================== */
+html.dark body.lesson-page {
+    background-color: #0f172a;
+}
+html.dark .lesson-header {
+    background: #1e293b;
+    border-color: #475569;
+}
+html.dark .progress-bar-container {
+    background-color: #334155;
+}
+html.dark .question-container-card {
+    background-color: #1e293b;
+    border-color: #475569;
+}
+html.dark .quiz-card-aprova {
+    background-color: #1e293b;
+    border-color: #475569;
+}
+html.dark .quiz-card-aprova:hover {
+    border-color: #6366f1;
+    background-color: #334155;
+}
+html.dark .quiz-card-aprova.selected {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: #6366f1;
+}
+html.dark .quiz-card-aprova.correct {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: #10b981;
+}
+html.dark .quiz-card-aprova.wrong {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: #ef4444;
+}
+html.dark .feedback-bar-aprova {
+    background-color: #1e293b;
+    border-color: #475569;
+}
+
+/* ==========================================================================
+   12. DASHBOARD PAGE (dashboard.css overrides)
+   ========================================================================== */
+html.dark .duo-navbar {
+    background-color: #0f172a;
+    border-color: #334155;
+}
+html.dark .duo-stat-pill {
+    background-color: #1e293b;
+    border-color: #475569;
+    box-shadow: 0 2px 0 #334155;
+}
+/* Trail node buttons - keep locked nodes dimmer */
+html.dark .duo-trail-node.locked .duo-trail-btn {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    box-shadow: 0 4px 0 0 #334155 !important;
+}
+
+/* ==========================================================================
+   13. INDEX / LOGIN PAGE
+   ========================================================================== */
+html.dark .border-\[\#d8cef2\] {
+    border-color: #475569 !important;
+}
+html.dark .bg-\[\#f1eff5\] {
+    background-color: #0f172a !important;
+}
+html.dark .text-\[\#6842C2\] {
+    color: #818cf8 !important;
+}
+html.dark .bg-\[\#6842C2\] {
+    background-color: #6842C2 !important;
+}
+html.dark .shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+html.dark .border-4.border-\[\#d8cef2\] {
+    border-color: #475569 !important;
+}
+html.dark .shadow-\[0_4px_0_0_\#d8cef2\] {
+    box-shadow: 0 4px 0 0 #334155 !important;
+}
+html.dark .shadow-\[0_6px_0_0_\#3D256B\] {
+    box-shadow: 0 6px 0 0 #1e1b4b !important;
+}
+html.dark .shadow-\[0_2px_0_0_\#e2e8f0\] {
+    box-shadow: 0 2px 0 0 #334155 !important;
+}
+html.dark .shadow-\[0_4px_0_0_\#e2e8f0\] {
+    box-shadow: 0 4px 0 0 #334155 !important;
+}
+
+/* ==========================================================================
+   14. MISCELLANEOUS OVERRIDES
+   ========================================================================== */
+/* Profile page cards */
+html.dark .bg-gradient-to-br {
+    opacity: 0.9;
+}
+
+/* Leaderboard table rows */
+html.dark tr:hover td {
+    background-color: #334155 !important;
+}
+html.dark table thead th {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #94a3b8 !important;
+}
+html.dark table tbody td {
+    border-color: #334155 !important;
+}
+
+/* Badge/tag overrides */
+html.dark .bg-indigo-100 {
+    background-color: rgba(99, 102, 241, 0.2) !important;
+}
+html.dark .bg-emerald-100 {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+}
+html.dark .bg-rose-100 {
+    background-color: rgba(244, 63, 94, 0.15) !important;
+}
+html.dark .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+}

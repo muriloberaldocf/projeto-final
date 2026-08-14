@@ -46,12 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> DESAFIO BOSS (VARIAÇÃO #${data.boss_variant})</span>`;
             }
 
-            // EXIBIR EXPLICAÇÃO TEÓRICA E VÍDEO-AULA NO CABEÇALHO SUPERIOR DA LIÇÃO
+            // EXIBIR EXPLICAÇÃO TEÓRICA E LEITURA RECOMENDADA NO CABEÇALHO DA LIÇÃO
             const introBox = document.getElementById('lessonIntroBox');
             const introContentText = document.getElementById('introContentText');
             const videoContainer = document.getElementById('videoContainer');
-            const videoIframe = document.getElementById('videoIframe');
-            const videoTitleText = document.getElementById('videoTitleText');
             const introContentContainer = document.getElementById('introContentContainer');
 
             let hasHeaderContent = false;
@@ -127,30 +125,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressPercent = Math.round((index / questions.length) * 100);
         if (progressBar) progressBar.style.width = `${progressPercent}%`;
 
+        const questionCounter = document.getElementById('questionCounter');
+        if (questionCounter) {
+            questionCounter.textContent = `QUESTÃO ${index + 1} DE ${questions.length}`;
+        }
+
         if (feedbackDrawer) {
             feedbackDrawer.classList.remove('show', 'success', 'error');
         }
         btnCheck.disabled = true;
 
-        examTag.textContent = isBossChallenge ? 'CHEFÃO BOSS' : (q.exam_source || 'QUESTÃO');
+        examTag.textContent = isBossChallenge ? 'CHEFÃO BOSS' : (q.exam_source || 'VESTIBULAR');
         questionText.textContent = q.question_text;
 
         const options = [
-            { letter: 'a', text: q.option_a },
-            { letter: 'b', text: q.option_b },
-            { letter: 'c', text: q.option_c },
-            { letter: 'd', text: q.option_d },
-            { letter: 'e', text: q.option_e }
+            { letter: 'a', text: q.option_a, key: '1' },
+            { letter: 'b', text: q.option_b, key: '2' },
+            { letter: 'c', text: q.option_c, key: '3' },
+            { letter: 'd', text: q.option_d, key: '4' },
+            { letter: 'e', text: q.option_e, key: '5' }
         ];
 
         optionsContainer.innerHTML = '';
         options.forEach(opt => {
+            if (!opt.text) return;
             const card = document.createElement('div');
             card.className = 'quiz-card-aprova';
             card.dataset.option = opt.letter;
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
             card.innerHTML = `
                 <div class="quiz-badge-aprova">${opt.letter.toUpperCase()}</div>
-                <div>${opt.text}</div>
+                <div class="quiz-text-aprova">${opt.text}</div>
+                <div class="quiz-indicator-aprova">
+                    <span class="quiz-key-hint d-none d-sm-inline-block">${opt.key}</span>
+                    <i class="bi bi-circle quiz-circle-icon"></i>
+                    <i class="bi bi-check-circle-fill quiz-check-icon"></i>
+                    <i class="bi bi-x-circle-fill quiz-wrong-icon"></i>
+                </div>
             `;
 
             card.addEventListener('click', () => selectOption(opt.letter));
@@ -166,10 +178,17 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOption = letter;
 
         document.querySelectorAll('.quiz-card-aprova').forEach(card => {
+            const circleIcon = card.querySelector('.quiz-circle-icon');
             if (card.dataset.option === letter) {
                 card.classList.add('selected');
+                if (circleIcon) {
+                    circleIcon.className = 'bi bi-record-circle-fill quiz-circle-icon';
+                }
             } else {
                 card.classList.remove('selected');
+                if (circleIcon) {
+                    circleIcon.className = 'bi bi-circle quiz-circle-icon';
+                }
             }
         });
 
@@ -220,21 +239,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const hideResolution = isBossChallenge || currentQ.hide_resolution || currentQ.is_boss;
 
+        // Atualizar estado visual de cada card de alternativa
+        document.querySelectorAll('.quiz-card-aprova').forEach(card => {
+            const cardOpt = card.dataset.option;
+            card.classList.remove('selected');
+
+            if (cardOpt === currentQ.correct_option.toLowerCase()) {
+                card.classList.add('is-correct');
+            } else if (cardOpt === selectedOption && !isCorrect) {
+                card.classList.add('is-wrong');
+            } else {
+                card.classList.add('is-disabled');
+            }
+        });
+
         if (isCorrect) {
             if (typeof sounds !== 'undefined') sounds.playCorrect();
             correctAnswersCount++;
             feedbackDrawer.className = 'feedback-drawer show success';
-            feedbackTitle.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-3 text-success"></i><span class="text-success fw-bold">Resposta Correta!</span></div>`;
+            feedbackTitle.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-2 text-success"></i><span class="text-success fw-bold font-outfit fs-4">Excelente! Resposta Correta!</span></div>`;
 
             if (hideResolution) {
                 explanationBox.innerHTML = `<em class="text-muted"><i class="bi bi-shield-lock-fill text-danger me-1"></i> Desafio Boss: A resolução detalhada fica oculta para manter o desafio!</em>`;
             } else {
-                explanationBox.innerHTML = `<strong>Explicação:</strong><br>${currentQ.explanation_text}`;
+                explanationBox.innerHTML = `<strong>Explicação Resolvida:</strong><br>${currentQ.explanation_text}`;
             }
         } else {
             if (typeof sounds !== 'undefined') sounds.playError();
             feedbackDrawer.className = 'feedback-drawer show error';
-            feedbackTitle.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-x-circle-fill fs-3 text-danger"></i><span class="text-danger fw-bold">Resposta Incorreta (Gabarito: Opção ${currentQ.correct_option.toUpperCase()})</span></div>`;
+            feedbackTitle.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-x-circle-fill fs-2 text-danger"></i><span class="text-danger fw-bold font-outfit fs-4">Resposta Incorreta (Gabarito: Opção ${currentQ.correct_option.toUpperCase()})</span></div>`;
 
             if (hideResolution) {
                 explanationBox.innerHTML = `<em class="text-muted"><i class="bi bi-shield-lock-fill text-danger me-1"></i> Desafio Boss: A resolução detalhada fica oculta para manter o desafio!</em>`;

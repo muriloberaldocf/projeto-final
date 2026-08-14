@@ -27,37 +27,35 @@ if (file_exists($envFile)) {
 }
 
 // Leitura das configurações com fallback para o ambiente local XAMPP
-$host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost');
-$port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
-$db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'vestilingo');
-$user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'root');
-$pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : ($_ENV['DB_PASS'] ?? '');
+$dbHost = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost');
+$dbPort = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
+$dbName = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'vestilingo');
+$dbUser = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'root');
+$dbPass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : ($_ENV['DB_PASS'] ?? '');
 $appName = getenv('APP_NAME') ?: ($_ENV['APP_NAME'] ?? 'HipoGabarito');
 
 if (!defined('DB_NAME')) {
-    define('DB_NAME', $db);
+    define('DB_NAME', $dbName);
 }
 if (!defined('APP_NAME')) {
     define('APP_NAME', $appName);
 }
 
 $charset = 'utf8mb4';
-$dsn = "mysql:host=$host;port=$port;charset=$charset";
+$dsn = "mysql:host=$dbHost;port=$dbPort;charset=$charset";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
 
-$db = DB_NAME;
-
 try {
     // 1. Conectar ao servidor MySQL
-    $pdo = new PDO($dsn, $user, $pass, $options);
+    $pdo = new PDO($dsn, $dbUser, $dbPass, $options);
     
     // 2. Garantir que o banco hipogabarito existe
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $pdo->exec("USE `$db`");
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+    $pdo->exec("USE `$dbName`");
 
     // 3. Verificar se as tabelas já foram criadas; se não, executa o schema.sql automaticamente
     $tablesCheck = $pdo->query("SHOW TABLES LIKE 'users'")->fetch();

@@ -13,10 +13,21 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HipoGabarito — Prática Inteligente para Vestibulares</title>
 
+    <!-- ANTI-FLICKER: Aplicar tema salvo ANTES de qualquer renderização -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('hipogabarito_theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark', 'no-transition');
+            }
+        })();
+    </script>
+
     <!-- TAILWIND CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -44,6 +55,16 @@ if (isset($_SESSION['user_id'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/dark-mode.css">
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.documentElement.classList.remove('no-transition');
+            }, 50);
+        });
+    </script>
 </head>
 <body class="min-h-full font-sans antialiased text-[#17151C] bg-[#F1EFF5] selection:bg-[#6842C2] selection:text-white flex flex-col">
 
@@ -55,8 +76,13 @@ if (isset($_SESSION['user_id'])) {
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#f1eff5] text-[#6842C2] border border-[#d8cef2] uppercase">PRO</span>
             </a>
 
-            <div class="text-xs font-bold text-slate-500 hidden sm:block">
-                Prática Inteligente & Simulados Gamificados
+            <div class="flex items-center gap-3">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" title="Alternar Modo Escuro">
+                    <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                </button>
+                <div class="text-xs font-bold text-slate-500 hidden sm:block">
+                    Prática Inteligente & Simulados Gamificados
+                </div>
             </div>
         </div>
     </header>
@@ -155,18 +181,6 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </main>
 
-                    <div id="errorMessage" class="hidden p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold text-center"></div>
-
-                    <!-- ACESSO DEMO -->
-                    <div class="pt-4 border-t border-slate-200 text-center">
-                        <button type="button" onclick="demoLogin()" class="w-full py-3 px-4 rounded-2xl font-outfit font-extrabold text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-all flex items-center justify-center gap-2">
-                            <i class="bi bi-lightning-fill text-amber-500 fs-6"></i> ACESSAR COMO ALUNO DEMO
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
 
     <footer class="py-6 border-t border-slate-200 text-center text-xs font-semibold text-slate-400">
         HipoGabarito &copy; 2026 — Plataforma Independente de Exercícios Gamificados
@@ -231,6 +245,23 @@ if (isset($_SESSION['user_id'])) {
                     }
                 });
         }
+    </script>
+
+    <!-- DARK MODE TOGGLE -->
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('hipogabarito_theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const icon = document.getElementById('themeIcon');
+            if (!icon) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
     </script>
 </body>
 </html>

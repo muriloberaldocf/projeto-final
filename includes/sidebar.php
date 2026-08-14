@@ -5,7 +5,7 @@
  */
 $currentPage = $currentPage ?? basename($_SERVER['PHP_SELF']);
 
-$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'assets/img/default_avatar.jpg';
+$userAvatar = (!empty($user['avatar']) && trim($user['avatar']) !== '') ? $user['avatar'] : 'assets/img/default_avatar.jpg';
 $userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
 $userBadgeMap = [
@@ -23,13 +23,8 @@ $userBadgeMap = [
 $userBadgeIcon = $user['avatar_icon'] ?? 'bi-person-circle';
 $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 ?>
-<aside id="mainSidebar" class="lg:col-span-3 sticky top-20 space-y-3.5 transition-all duration-300 z-30">
-    <div class="bg-white rounded-3xl border-2 border-slate-200 p-4 sm:p-5 shadow-[0_4px_0_0_#e2e8f0] relative">
-        
-        <!-- BOTÃO DE RETRAIR / EXPANDIR SIDEBAR -->
-        <button type="button" onclick="toggleSidebarRetract()" id="sidebarToggleBtn" class="absolute -right-3 top-6 w-7 h-7 bg-white border-2 border-slate-200 text-slate-500 hover:text-indigo-600 rounded-full hidden lg:flex items-center justify-center shadow-md hover:scale-110 transition-all z-20" title="Retrair / Expandir Menu">
-            <i id="sidebarToggleIcon" class="bi bi-chevron-left text-xs font-black"></i>
-        </button>
+<aside id="mainSidebar" class="lg:col-span-3 sticky top-20 space-y-3.5 z-30">
+    <div class="bg-white rounded-3xl border-2 border-slate-200 p-4 sm:p-5 shadow-[0_4px_0_0_#e2e8f0]">
 
         <!-- MINI CARD DO PERFIL DO ALUNO (Oculto em profile.php para não duplicar dados) -->
         <?php if ($currentPage !== 'profile.php'): ?>
@@ -101,59 +96,8 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
 </aside>
 
 <script>
-    function toggleSidebarRetract() {
-        const sidebar = document.getElementById('mainSidebar');
-        const icon = document.getElementById('sidebarToggleIcon');
-        if (!sidebar) return;
-
-        const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
-
-        if (isCollapsed) {
-            sidebar.classList.remove('sidebar-collapsed', 'lg:col-span-1');
-            sidebar.classList.add('lg:col-span-3');
-            if (icon) {
-                icon.classList.remove('bi-chevron-right');
-                icon.classList.add('bi-chevron-left');
-            }
-            localStorage.setItem('sidebar_collapsed', 'false');
-        } else {
-            sidebar.classList.add('sidebar-collapsed', 'lg:col-span-1');
-            sidebar.classList.remove('lg:col-span-3');
-            if (icon) {
-                icon.classList.remove('bi-chevron-left');
-                icon.classList.add('bi-chevron-right');
-            }
-            localStorage.setItem('sidebar_collapsed', 'true');
-        }
-    }
-
-    (function() {
-        if (localStorage.getItem('sidebar_collapsed') === 'true') {
-            const sidebar = document.getElementById('mainSidebar');
-            const icon = document.getElementById('sidebarToggleIcon');
-            if (sidebar) {
-                sidebar.classList.add('sidebar-collapsed', 'lg:col-span-1');
-                sidebar.classList.remove('lg:col-span-3');
-            }
-            if (icon) {
-                icon.classList.remove('bi-chevron-left');
-                icon.classList.add('bi-chevron-right');
-            }
-        }
-    })();
+    // Limpar qualquer estado legado de sidebar retraída no navegador do usuário
+    try {
+        localStorage.removeItem('sidebar_collapsed');
+    } catch(e) {}
 </script>
-
-<style>
-    .sidebar-collapsed .sidebar-text {
-        display: none !important;
-    }
-    .sidebar-collapsed .sidebar-user-card {
-        padding: 0.5rem !important;
-        justify-content: center !important;
-    }
-    .sidebar-collapsed nav a {
-        justify-content: center !important;
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
-    }
-</style>

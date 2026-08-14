@@ -5,14 +5,14 @@
 require_once __DIR__ . '/../config/db.php';
 checkAuth();
 
-if (!isset($user) && isset($_SESSION['user_id'])) {
+if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
     $stmtUser = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmtUser->execute([$userId]);
     $user = $stmtUser->fetch();
 }
 
-$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'assets/img/default_avatar.jpg';
+$userAvatar = (!empty($user['avatar']) && trim($user['avatar']) !== '') ? $user['avatar'] : 'assets/img/default_avatar.jpg';
 $userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
 $userBadgeMap = [
@@ -39,10 +39,21 @@ $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
 
+    <!-- ANTI-FLICKER: Aplicar tema salvo ANTES de qualquer renderização -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('hipogabarito_theme');
+            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark', 'no-transition');
+            }
+        })();
+    </script>
+
     <!-- TAILWIND CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -71,7 +82,17 @@ $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="assets/css/dark-mode.css?v=<?= time() ?>">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Remover classe no-transition após renderizar -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.documentElement.classList.remove('no-transition');
+            }, 50);
+        });
+    </script>
 </head>
 <body class="min-h-full font-sans antialiased text-[#17151C] bg-[#F1EFF5] selection:bg-[#6842C2] selection:text-white flex flex-col min-h-screen">
 
@@ -84,6 +105,11 @@ $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
 
             <!-- HUD STATUS DO ALUNO -->
             <div class="flex items-center gap-3">
+                <!-- TOGGLE DARK MODE -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn" title="Alternar Modo Escuro">
+                    <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                </button>
+
                 <!-- SININHO DE NOTIFICAÇÕES -->
                 <div class="relative">
                     <button id="notifBellBtn" onclick="toggleNotifDropdown()" class="relative p-2 rounded-2xl bg-white border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0] hover:bg-slate-50 text-slate-600 hover:text-indigo-600 transition-all flex items-center justify-center" title="Notificações">

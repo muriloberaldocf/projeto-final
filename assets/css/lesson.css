@@ -1,162 +1,446 @@
 /* ============================================================
-   SENAILINGO - TELA DE LIÇÃO (SESI/SENAI-SP)
+   HIPOGABARITO — TELA DE EXERCÍCIOS & LIÇÕES GAMIFICADAS
+   Cards 3D táteis, feedback animado, badges de alternativas
    ============================================================ */
 
-.lesson-page {
-    background-color: #ffffff;
+:root {
+    --brand-primary: #6842C2;
+    --brand-primary-hover: #5832b2;
+    --brand-primary-dark: #3D256B;
+    --brand-primary-soft: #f5f0ff;
+    --brand-primary-border: #d8cef2;
+    
+    --brand-green: #10b981;
+    --brand-green-dark: #059669;
+    --brand-green-soft: #ecfdf5;
+    
+    --brand-red: #ef4444;
+    --brand-red-dark: #dc2626;
+    --brand-red-soft: #fef2f2;
+    
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+}
+
+body.lesson-page {
+    background-color: #f8fafc;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-primary);
 }
 
 /* Header de Progresso da Lição */
 .lesson-header {
-    max-width: 1000px;
+    background: #ffffff;
+    border-bottom: 2px solid var(--border-color);
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.lesson-header-inner {
+    max-width: 860px;
     margin: 0 auto;
     width: 100%;
-    padding: 12px 16px;
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-.btn-close-lesson {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 2px;
-    transition: color 0.2s;
-}
-
-.btn-close-lesson:hover {
-    color: var(--color-senai-red);
-}
-
-/* Barra de Progresso Vermelho SENAI */
 .progress-bar-container {
     flex: 1;
-    height: 12px;
+    height: 14px;
     background-color: #e2e8f0;
-    border-radius: 20px;
+    border-radius: 9999px;
     overflow: hidden;
     position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .progress-bar-fill {
     height: 100%;
-    background-color: var(--color-senai-red);
+    background: linear-gradient(90deg, #6842C2 0%, #8b5cf6 100%);
     width: 0%;
-    border-radius: 20px;
-    transition: width 0.3s ease;
+    border-radius: 9999px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
-.lesson-hearts {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--color-senai-red);
+.progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    right: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 9999px;
 }
 
 /* Arena Central da Questão */
 .lesson-body {
-    max-width: 800px;
+    max-width: 860px;
     margin: 0 auto;
     width: 100%;
     flex: 1;
-    padding: 12px 20px 70px 20px;
+    padding: 24px 20px 110px 20px;
     display: flex;
     flex-direction: column;
 }
 
-.exam-tag {
-    align-self: flex-start;
-    background-color: var(--color-senai-blue-light);
-    color: var(--color-senai-blue);
-    border: 1px solid var(--color-senai-blue);
+/* Card do Enunciado da Questão */
+.question-container-card {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 1.35rem;
+    box-shadow: 0 4px 0 0 #e2e8f0;
+    padding: 24px 28px;
+    transition: all 0.2s ease;
+}
+
+@media (max-width: 640px) {
+    .question-container-card {
+        padding: 18px 20px;
+    }
+}
+
+.exam-badge-aprova {
+    font-family: 'Outfit', monospace;
     font-weight: 800;
     font-size: 11px;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 4px 10px;
-    border-radius: 16px;
-    margin-bottom: 10px;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1.5px solid #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
 }
 
-.question-title {
-    font-size: 17px;
+.question-title-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1.45;
-    margin-bottom: 14px;
+    color: #0f172a;
+    line-height: 1.6;
+    margin: 0;
 }
 
-/* GRID DE 5 ALTERNATIVAS (A, B, C, D, E) */
+@media (min-width: 768px) {
+    .question-title-text {
+        font-size: 1.25rem;
+    }
+}
+
+/* ============================================================
+   CARDS DE ALTERNATIVAS (A, B, C, D, E) — DESIGN 3D DUOLINGO
+   ============================================================ */
 .options-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 14px;
 }
 
-.option-card {
+.quiz-card-aprova {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-md);
+    gap: 16px;
+    padding: 16px 20px;
+    min-height: 68px;
+    width: 100%;
     background-color: #ffffff;
-    box-shadow: 0 3px 0 var(--border-color);
+    border: 2px solid #e2e8f0;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 0 0 #e2e8f0;
     cursor: pointer;
-    font-size: 14.5px;
-    font-weight: 700;
-    color: var(--text-primary);
-    transition: all 0.15s ease;
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.15s ease,
+                background-color 0.15s ease,
+                box-shadow 0.15s ease;
     user-select: none;
+    position: relative;
+    outline: none;
 }
 
-.option-card:hover {
-    background-color: var(--color-senai-blue-light);
-    border-color: var(--color-senai-blue);
+/* Hover State */
+.quiz-card-aprova:hover:not(.is-disabled):not(.is-correct):not(.is-wrong) {
+    background-color: #fbf9ff;
+    border-color: #a78bfa;
+    box-shadow: 0 4px 0 0 #c4b5fd;
+    transform: translateY(-2px);
 }
 
-.option-card.selected {
-    border-color: var(--color-senai-blue);
-    background-color: var(--color-senai-blue-light);
-    color: var(--color-senai-blue-dark);
-    box-shadow: 0 3px 0 var(--color-senai-blue);
+.quiz-card-aprova:hover:not(.is-disabled):not(.is-correct):not(.is-wrong) .quiz-badge-aprova {
+    border-color: #a78bfa;
+    color: var(--brand-primary);
+    background-color: #ffffff;
 }
 
-.option-letter {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    border: 2px solid var(--border-color);
+/* Active / Press State */
+.quiz-card-aprova:active:not(.is-disabled):not(.is-correct):not(.is-wrong) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 0 #c4b5fd;
+}
+
+/* Selected State */
+.quiz-card-aprova.selected {
+    background-color: #f5f0ff !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 4px 0 0 var(--brand-primary-dark) !important;
+    transform: translateY(-1px);
+}
+
+.quiz-card-aprova.selected .quiz-badge-aprova {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary-dark) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 0 0 var(--brand-primary-dark) !important;
+}
+
+.quiz-card-aprova.selected .quiz-text-aprova {
+    color: #2e1065 !important;
+    font-weight: 700;
+}
+
+.quiz-card-aprova.selected .quiz-circle-icon {
+    color: var(--brand-primary) !important;
+}
+
+/* ============================================================
+   FEEDBACK DE VERIFICAÇÃO (CORRETO / INCORRETO)
+   ============================================================ */
+/* Correct Answer */
+.quiz-card-aprova.is-correct {
+    background-color: var(--brand-green-soft) !important;
+    border-color: var(--brand-green) !important;
+    box-shadow: 0 4px 0 0 var(--brand-green-dark) !important;
+    transform: none;
+    animation: popSuccess 0.35s ease-out;
+}
+
+.quiz-card-aprova.is-correct .quiz-badge-aprova {
+    background-color: var(--brand-green) !important;
+    border-color: var(--brand-green-dark) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 0 0 var(--brand-green-dark) !important;
+}
+
+.quiz-card-aprova.is-correct .quiz-text-aprova {
+    color: #064e3b !important;
+    font-weight: 700;
+}
+
+.quiz-card-aprova.is-correct .quiz-circle-icon {
+    display: none !important;
+}
+
+.quiz-card-aprova.is-correct .quiz-check-icon {
+    display: inline-block !important;
+    color: var(--brand-green) !important;
+}
+
+/* Wrong Answer */
+.quiz-card-aprova.is-wrong {
+    background-color: var(--brand-red-soft) !important;
+    border-color: var(--brand-red) !important;
+    box-shadow: 0 4px 0 0 var(--brand-red-dark) !important;
+    transform: none;
+    animation: cardShake 0.4s ease-in-out;
+}
+
+.quiz-card-aprova.is-wrong .quiz-badge-aprova {
+    background-color: var(--brand-red) !important;
+    border-color: var(--brand-red-dark) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 0 0 var(--brand-red-dark) !important;
+}
+
+.quiz-card-aprova.is-wrong .quiz-text-aprova {
+    color: #7f1d1d !important;
+    font-weight: 700;
+}
+
+.quiz-card-aprova.is-wrong .quiz-circle-icon {
+    display: none !important;
+}
+
+.quiz-card-aprova.is-wrong .quiz-wrong-icon {
+    display: inline-block !important;
+    color: var(--brand-red) !important;
+}
+
+/* Other Disabled Options */
+.quiz-card-aprova.is-disabled {
+    opacity: 0.45;
+    cursor: default !important;
+    pointer-events: none;
+    box-shadow: 0 2px 0 0 #e2e8f0 !important;
+}
+
+/* Elementos Internos do Card */
+.quiz-badge-aprova {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 11px;
+    background-color: #f8fafc;
+    border: 2px solid #cbd5e1;
+    color: #475569;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Outfit', sans-serif;
     font-weight: 800;
-    font-size: 13px;
-    color: var(--text-muted);
-    background-color: #ffffff;
+    font-size: 15px;
+    box-shadow: 0 2px 0 0 #cbd5e1;
+    transition: all 0.15s ease;
     flex-shrink: 0;
 }
 
-.option-card.selected .option-letter {
-    border-color: var(--color-senai-blue);
-    background-color: var(--color-senai-blue);
-    color: #ffffff;
-}
-
-.option-text {
+.quiz-text-aprova {
     flex: 1;
-    line-height: 1.35;
+    font-size: 0.965rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #1e293b;
+    word-break: break-word;
 }
 
-/* RODAPÉ FIXO DE VERIFICAÇÃO */
+.quiz-indicator-aprova {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.quiz-key-hint {
+    font-size: 11px;
+    font-weight: 800;
+    font-family: 'Outfit', monospace;
+    color: #94a3b8;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 2px 7px;
+    border-radius: 6px;
+}
+
+.quiz-circle-icon {
+    display: inline-block;
+    font-size: 17px;
+    color: #cbd5e1;
+    transition: color 0.15s ease;
+}
+
+.quiz-check-icon,
+.quiz-wrong-icon {
+    display: none;
+    font-size: 20px;
+}
+
+/* Animações */
+@keyframes popSuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+@keyframes cardShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+/* ============================================================
+   BOTÕES 3D & COMPONENTES APROVA
+   ============================================================ */
+.btn-aprova-primary {
+    background-color: var(--brand-primary);
+    color: #ffffff !important;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 2px solid var(--brand-primary);
+    border-radius: 1rem;
+    padding: 10px 24px;
+    box-shadow: 0 4px 0 0 var(--brand-primary-dark);
+    transition: all 0.12s ease-in-out;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-aprova-primary:hover:not(:disabled) {
+    background-color: var(--brand-primary-hover);
+    border-color: var(--brand-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 0 var(--brand-primary-dark);
+}
+
+.btn-aprova-primary:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 0 var(--brand-primary-dark);
+}
+
+.btn-aprova-primary:disabled {
+    background-color: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+    color: #94a3b8 !important;
+    box-shadow: 0 4px 0 0 #cbd5e1 !important;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-aprova-light {
+    background-color: #ffffff;
+    color: #64748b;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.85rem;
+    box-shadow: 0 3px 0 0 #e2e8f0;
+    transition: all 0.12s ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-aprova-light:hover {
+    background-color: #f8fafc;
+    color: var(--brand-primary);
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 0 #cbd5e1;
+}
+
+.btn-aprova-light:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 0 #cbd5e1;
+}
+
+/* Card Padrão de Conclusão / Aprovação */
+.card-aprova {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 1.5rem;
+    box-shadow: 0 6px 0 0 #e2e8f0;
+}
+
+/* ============================================================
+   RODAPÉ FIXO & POPUP DRAWER DE FEEDBACK
+   ============================================================ */
 .lesson-footer {
     position: fixed;
     bottom: 0;
@@ -164,29 +448,22 @@
     right: 0;
     background-color: #ffffff;
     border-top: 2px solid var(--border-color);
-    padding: 10px 16px;
-    z-index: 90;
+    padding: 14px 20px;
+    z-index: 45;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
 }
 
-.footer-container {
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* DRAWER / POPUP DE FEEDBACK */
 .feedback-drawer {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 28px;
-    z-index: 100;
+    padding: 24px 20px;
+    z-index: 50;
     transform: translateY(100%);
-    transition: transform 0.3s ease-out;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     border-top: 3px solid transparent;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .feedback-drawer.show {
@@ -194,80 +471,46 @@
 }
 
 .feedback-drawer.success {
-    background-color: #e6f9f0;
-    border-color: var(--color-green);
-    color: #0b5e28;
+    background-color: #f0fdf4;
+    border-color: var(--brand-green);
+    color: #064e3b;
 }
 
 .feedback-drawer.error {
-    background-color: #ffe5e7;
-    border-color: var(--color-senai-red);
-    color: #7a0006;
+    background-color: #fef2f2;
+    border-color: var(--brand-red);
+    color: #7f1d1d;
 }
 
 .drawer-content {
-    max-width: 800px;
+    max-width: 860px;
     margin: 0 auto;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
+    flex-direction: column;
+    gap: 16px;
+}
+
+@media (min-width: 640px) {
+    .drawer-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
 }
 
 .feedback-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-heading);
-    font-size: 24px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
     font-weight: 800;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .explanation-box {
-    font-size: 15px;
+    font-size: 0.925rem;
     font-weight: 600;
-    line-height: 1.5;
-    margin-top: 8px;
-    background: rgba(255, 255, 255, 0.7);
+    line-height: 1.55;
+    background: rgba(255, 255, 255, 0.9);
     padding: 12px 16px;
-    border-radius: var(--radius-sm);
-}
-
-/* Modal de Conclusão */
-.lesson-complete-card {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.lesson-complete-title {
-    font-family: var(--font-heading);
-    font-size: 32px;
-    color: var(--color-senai-blue);
-    margin-bottom: 12px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin: 28px 0;
-}
-
-.stat-box {
-    background: var(--bg-main);
-    border: 2px solid var(--border-color);
-    padding: 16px;
-    border-radius: var(--radius-md);
-}
-
-.stat-box h4 {
-    font-size: 13px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-}
-
-.stat-box span {
-    font-size: 24px;
-    font-weight: 800;
+    border-radius: 0.85rem;
+    border: 1.5px solid rgba(0, 0, 0, 0.06);
 }

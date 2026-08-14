@@ -35,7 +35,8 @@ body {
 }
 
 /* CARDS PADRÃO COM SOMBRA 3D DUOLINGO */
-.card-3d {
+.card-3d,
+.card-aprova {
     background-color: #ffffff;
     border: 2px solid #e2e8f0;
     border-radius: 1.5rem;
@@ -44,9 +45,10 @@ body {
 }
 
 /* BOTÃO 3D GAMIFICADO */
-.btn-3d {
+.btn-3d,
+.btn-aprova-primary {
     background-color: var(--brand-primary);
-    color: white;
+    color: white !important;
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
     border-radius: 1rem;
@@ -59,6 +61,48 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-3d:hover,
+.btn-aprova-primary:hover:not(:disabled) {
+    background-color: var(--brand-primary-hover);
+    transform: translateY(1px);
+    box-shadow: 0 3px 0 0 var(--brand-primary-dark);
+}
+
+.btn-3d:active,
+.btn-aprova-primary:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 0 var(--brand-primary-dark);
+}
+
+.btn-aprova-primary:disabled {
+    background-color: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+    color: #94a3b8 !important;
+    box-shadow: 0 4px 0 0 #cbd5e1 !important;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-aprova-light {
+    background-color: #ffffff;
+    color: #64748b;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.85rem;
+    box-shadow: 0 3px 0 0 #e2e8f0;
+    transition: all 0.12s ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-aprova-light:hover {
+    background-color: #f8fafc;
+    color: var(--brand-primary);
+    border-color: #cbd5e1;
 }
 
 .btn-3d:hover {

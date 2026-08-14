@@ -23,5 +23,25 @@
 
     <!-- SCRIPTS DE NOTIFICAÇÃO E EFEITOS -->
     <script src="assets/js/notifications.js"></script>
+
+    <!-- DARK MODE TOGGLE ENGINE -->
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('hipogabarito_theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const icon = document.getElementById('themeIcon');
+            if (!icon) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+        }
+
+        // Sincronizar ícone ao carregar
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
 </body>
 </html>
