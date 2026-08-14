@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * REESTRUTURAÇÃO MULTI-UNIDADES (4 UNIDADES POR MATÉRIA) - APROVAQUEST
  * Cria uma estrutura completa de unidades temáticas e tópicos por matéria.

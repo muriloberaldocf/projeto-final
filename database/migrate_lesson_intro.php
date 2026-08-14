@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * MIGRAÇÃO: ADICIONAR CAMPO CONTEÚDO EXPLICATIVO (SUMMARY_TEXT / INTRO_TEXT) EM LESSONS
  */

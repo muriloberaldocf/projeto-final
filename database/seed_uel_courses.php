@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UEL (UNIVERSIDADE ESTADUAL DE LONDRINA - PR)
  * Adiciona todas as opções de graduação da UEL e suas notas de corte.

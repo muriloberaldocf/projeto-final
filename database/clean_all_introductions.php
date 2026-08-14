@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * REMOVEDOR DEFINITIVO DE PREÂMBULOS E INTRODUÇÕES
  * Garante que TODAS as questões no banco contenham APENAS o problema direto, sem meta-introduções.

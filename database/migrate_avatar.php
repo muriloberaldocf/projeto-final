@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * MIGRATION PARA AVATARES CUSTOMIZÁVEIS - APROVAQUEST
  */

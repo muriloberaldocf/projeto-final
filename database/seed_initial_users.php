@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * SEED DE USUÁRIOS INICIAIS DA PLATAFORMA HIPOGABARITO
  * Popula 10 estudantes com avatares, XP, níveis, ofensivas e conquistas.
@@ -24,7 +25,7 @@ try {
             'name' => 'Sofia Ferreira',
             'email' => 'sofia.ferreira@enem.com',
             'avatar_icon' => 'bi-emoji-smile-fill',
-            'avatar' => 'assets/img/logo_mascot.png',
+            'avatar' => 'assets/img/hipogabarito_logo.png',
             'avatar_frame' => 'frame-gold',
             'xp' => 1850,
             'level' => 19,

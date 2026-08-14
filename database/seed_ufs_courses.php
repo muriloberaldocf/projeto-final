@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFS (UNIVERSIDADE FEDERAL DE SERGIPE)
  * Adiciona todas as opções de graduação da UFS (São Cristóvão, Lagarto, Itabaiana, Laranjeiras, Nossa Senhora da Glória).

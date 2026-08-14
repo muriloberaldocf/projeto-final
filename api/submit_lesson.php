@@ -21,29 +21,13 @@ if (!$lessonId) {
     exit;
 }
 
-// 1. Registrar Progresso da Lição
-$stmtProg = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, score_percent) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE score_percent = GREATEST(score_percent, VALUES(score_percent))");
-$stmtProg->execute([$userId, $lessonId, $scorePercent]);
+// REGRA DE APROVAÇÃO (Mínimo de 75% de acertos)
+$passed = ($scorePercent >= 75);
 
-// 2. Buscar recompensas da lição
-$stmtL = $pdo->prepare("SELECT xp_reward FROM lessons WHERE id = ?");
-$stmtL->execute([$lessonId]);
-$lesson = $stmtL->fetch();
-
-// DINÂMICA DE XP MELHORADA
-$isBoss = ($mode === 'boss');
-$baseXp = $isBoss ? 50 : ($lesson['xp_reward'] ?? 35);
-
+$xpGained = 0;
+$baseXp = 0;
 $accuracyBonus = 0;
-if ($scorePercent === 100) {
-    $accuracyBonus = 25; // Bônus de Precisão Perfeita!
-} else if ($scorePercent >= 80) {
-    $accuracyBonus = 15; // Bônus Excelente
-} else if ($scorePercent >= 60) {
-    $accuracyBonus = 5;  // Bônus Bom
-}
-
-$xpGained = $baseXp + $accuracyBonus;
+$leveledUp = false;
 
 // 3. Buscar Dados do Usuário
 $stmtUser = $pdo->prepare("SELECT xp, level, streak_days, last_active_date FROM users WHERE id = ?");
@@ -52,38 +36,63 @@ $user = $stmtUser->fetch();
 
 $oldXp = $user['xp'] ?? 0;
 $oldLevel = $user['level'] ?? 1;
-
-$newXp = $oldXp + $xpGained;
-$newLevel = max(1, floor($newXp / 100) + 1);
-$leveledUp = ($newLevel > $oldLevel);
-
-// 4. LÓGICA DA OFENSIVA DIÁRIA (DAILY STREAK)
-// Para o Fogo/Ofensiva acender de verdade, é preciso ter completado lições em pelo menos 2 DIAS SEGUIDOS CONSECUTIVOS.
-$today = date('Y-m-d');
-$lastActive = $user['last_active_date'];
 $currentStreak = (int)($user['streak_days'] ?? 0);
 $newStreak = $currentStreak;
 
-if (empty($lastActive)) {
-    // Primeiro dia estudando no sistema -> Começa em 1 (Chama ainda apagada/em progresso)
-    $newStreak = 1;
-} else if ($lastActive !== $today) {
-    $yesterday = date('Y-m-d', strtotime('-1 day'));
-    if ($lastActive === $yesterday) {
-        // Estudo no dia consecutivo (2º dia em diante) -> incrementa o streak!
-        $newStreak = max(2, $currentStreak + 1);
-    } else {
-        // Quebrou a sequência (passou mais de 1 dia) -> volta para 1 dia
-        $newStreak = 1;
-    }
-}
+if ($passed) {
+    // 1. Registrar Progresso da Lição (apenas se passou com >= 75%)
+    $stmtProg = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, score_percent) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE score_percent = GREATEST(score_percent, VALUES(score_percent))");
+    $stmtProg->execute([$userId, $lessonId, $scorePercent]);
 
-// Atualizar Usuário no Banco de Dados
-$stmtUpdate = $pdo->prepare("UPDATE users SET xp = ?, level = ?, streak_days = ?, last_active_date = ? WHERE id = ?");
-$stmtUpdate->execute([$newXp, $newLevel, $newStreak, $today, $userId]);
+    // 2. Buscar recompensas da lição
+    $stmtL = $pdo->prepare("SELECT xp_reward FROM lessons WHERE id = ?");
+    $stmtL->execute([$lessonId]);
+    $lesson = $stmtL->fetch();
+
+    $isBoss = ($mode === 'boss');
+    $baseXp = $isBoss ? 50 : ($lesson['xp_reward'] ?? 35);
+
+    if ($scorePercent === 100) {
+        $accuracyBonus = 25; // Bônus Perfeito
+    } else if ($scorePercent >= 80) {
+        $accuracyBonus = 15; // Bônus Excelente
+    } else if ($scorePercent >= 75) {
+        $accuracyBonus = 10; // Bônus de Aprovação
+    }
+
+    $xpGained = $baseXp + $accuracyBonus;
+
+    $newXp = $oldXp + $xpGained;
+    $newLevel = max(1, floor($newXp / 100) + 1);
+    $leveledUp = ($newLevel > $oldLevel);
+
+    // 4. LÓGICA DA OFENSIVA DIÁRIA (DAILY STREAK)
+    $today = date('Y-m-d');
+    $lastActive = $user['last_active_date'];
+
+    if (empty($lastActive)) {
+        $newStreak = 1;
+    } else if ($lastActive !== $today) {
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
+        if ($lastActive === $yesterday) {
+            $newStreak = max(2, $currentStreak + 1);
+        } else {
+            $newStreak = 1;
+        }
+    }
+
+    // Atualizar Usuário no Banco de Dados
+    $stmtUpdate = $pdo->prepare("UPDATE users SET xp = ?, level = ?, streak_days = ?, last_active_date = ? WHERE id = ?");
+    $stmtUpdate->execute([$newXp, $newLevel, $newStreak, $today, $userId]);
+} else {
+    $newXp = $oldXp;
+    $newLevel = $oldLevel;
+}
 
 echo json_encode([
     'success' => true,
+    'passed' => $passed,
+    'score_percent' => $scorePercent,
     'xp_gained' => $xpGained,
     'base_xp' => $baseXp,
     'accuracy_bonus' => $accuracyBonus,
@@ -92,3 +101,4 @@ echo json_encode([
     'leveled_up' => $leveledUp,
     'streak_days' => $newStreak
 ]);
+

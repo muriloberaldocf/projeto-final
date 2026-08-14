@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFRJ (UNIVERSIDADE FEDERAL DO RIO DE JANEIRO)
  * Adiciona todas as opções de graduação da UFRJ (Fundão, Praia Vermelha, Macaé, Duque de Caxias).

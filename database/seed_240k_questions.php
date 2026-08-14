@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * SCRIPT MEGA 240.000 QUESTÕES (O DOBRO DE QUESTÕES!)
  * 120 TÓPICOS COM 2.000 QUESTÕES EM CADA TÓPICO - APROVAQUEST

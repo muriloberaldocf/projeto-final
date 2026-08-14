@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UEM (UNIVERSIDADE ESTADUAL DE MARINGÁ - PR)
  * Adiciona todas as opções de graduação da UEM (Maringá, Umuarama, Cianorte, Goioerê, Cidade Gaúcha, Ivaiporã).

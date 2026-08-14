@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFPE (UNIVERSIDADE FEDERAL DE PERNAMBUCO)
  * Adiciona todas as opções de graduação da UFPE (Recife, Caruaru - CAA, Vitória de Santo Antão - CAV).

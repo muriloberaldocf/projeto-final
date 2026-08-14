@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFMT (UNIVERSIDADE FEDERAL DE MATO GROSSO)
  * Adiciona todas as opções de graduação da UFMT (Cuiabá, Sinop, Araguaia).

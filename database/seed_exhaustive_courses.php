@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR EXAUSTIVO DE TODOS OS CURSOS DO BRASIL E NOTAS DE CORTE - APROVAQUEST
  * Cadastra centenas de opções em todas as áreas do conhecimento em universidades de Norte a Sul do Brasil.

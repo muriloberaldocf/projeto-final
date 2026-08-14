@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFG (UNIVERSIDADE FEDERAL DE GOIÁS)
  * Adiciona todas as opções de graduação da UFG (Goiânia, Aparecida de Goiânia, Goiás).

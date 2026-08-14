@@ -56,27 +56,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let hasHeaderContent = false;
 
-            // 1. Renderizar Vídeo-Aula (Local MP4 ou YouTube Embed)
+            // 1. Renderizar Card do Toda Matéria / Leitura Recomendada
             if (data.video_url && videoContainer) {
-                const videoWrapper = document.getElementById('videoWrapper') || videoContainer.querySelector('.ratio');
-                if (data.video_title && videoTitleText) {
-                    videoTitleText.textContent = data.video_title;
-                }
-
-                if (videoWrapper) {
-                    if (data.video_url.endsWith('.mp4') || data.video_url.endsWith('.webm') || data.video_url.includes('/vids/')) {
-                        videoWrapper.innerHTML = `
-                            <video controls controlsList="nodownload" class="w-100 h-100 object-fit-contain bg-black">
-                                <source src="${data.video_url}" type="video/mp4">
-                                Seu navegador não suporta a reprodução de vídeos HTML5.
-                            </video>
-                        `;
-                    } else {
-                        videoWrapper.innerHTML = `
-                            <iframe class="w-100 h-100 border-0" src="${data.video_url}" title="Vídeo Aula" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-                        `;
-                    }
-                }
+                videoContainer.innerHTML = `
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between p-3.5 rounded-3 bg-emerald-50 border border-emerald-200 gap-3 mb-2 shadow-sm">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-2.5 rounded-3 bg-white text-emerald-600 shadow-sm border border-emerald-200 fs-3 flex-shrink-0">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                            </div>
+                            <div>
+                                <span class="badge bg-emerald-600 text-white font-monospace text-xs mb-1 px-2 py-0.5">TODA MATÉRIA</span>
+                                <h6 class="fw-bold font-outfit text-dark mb-0 fs-6">${data.video_title || 'Artigo Teórico Completo'}</h6>
+                                <p class="text-muted small mb-0">Consulte o conteúdo completo no Toda Matéria para aprofundar seus estudos.</p>
+                            </div>
+                        </div>
+                        <a href="${data.video_url}" target="_blank" rel="noopener noreferrer" class="btn btn-sm font-outfit fw-bold px-3.5 py-2 text-xs rounded-pill flex-shrink-0 text-white shadow-sm" style="background-color: #059669;">
+                            Ler no Toda Matéria <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                    </div>
+                `;
                 videoContainer.style.display = 'block';
                 hasHeaderContent = true;
             }
@@ -226,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof sounds !== 'undefined') sounds.playCorrect();
             correctAnswersCount++;
             feedbackDrawer.className = 'feedback-drawer show success';
-            feedbackTitle.innerHTML = `<i class="bi bi-check-circle-fill text-success me-2"></i> Resposta Correta!`;
+            feedbackTitle.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-check-circle-fill fs-3 text-success"></i><span class="text-success fw-bold">Resposta Correta!</span></div>`;
 
             if (hideResolution) {
                 explanationBox.innerHTML = `<em class="text-muted"><i class="bi bi-shield-lock-fill text-danger me-1"></i> Desafio Boss: A resolução detalhada fica oculta para manter o desafio!</em>`;
@@ -236,12 +234,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             if (typeof sounds !== 'undefined') sounds.playError();
             feedbackDrawer.className = 'feedback-drawer show error';
-            feedbackTitle.innerHTML = `<i class="bi bi-x-circle-fill text-danger me-2"></i> Resposta Incorreta (Gabarito: Opção ${currentQ.correct_option.toUpperCase()})`;
+            feedbackTitle.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-x-circle-fill fs-3 text-danger"></i><span class="text-danger fw-bold">Resposta Incorreta (Gabarito: Opção ${currentQ.correct_option.toUpperCase()})</span></div>`;
 
             if (hideResolution) {
                 explanationBox.innerHTML = `<em class="text-muted"><i class="bi bi-shield-lock-fill text-danger me-1"></i> Desafio Boss: A resolução detalhada fica oculta para manter o desafio!</em>`;
             } else {
-                explanationBox.innerHTML = `<strong>Explicação:</strong><br>${currentQ.explanation_text}`;
+                explanationBox.innerHTML = `<strong>Dica & Explicação:</strong><br>${currentQ.explanation_text}`;
             }
         }
     }
@@ -256,9 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadQuestion(currentIndex);
     });
 
-    // Conclusão da Lição com Card de Recompensa de XP e Notificação de Level Up
+    // Conclusão da Lição com Validação de Aprovação (>= 75%), Mascote Hipo (Feliz/Triste) e Recompensas
     function finishLesson() {
-        if (typeof sounds !== 'undefined') sounds.playComplete();
         const scorePercent = Math.round((correctAnswersCount / questions.length) * 100);
 
         if (feedbackDrawer) {
@@ -282,9 +279,17 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.json())
         .then(res => {
             const body = document.getElementById('lessonBody');
-            
+            const passed = (res.passed !== undefined) ? res.passed : (scorePercent >= 75);
+            const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
+
+            if (passed) {
+                if (typeof sounds !== 'undefined') sounds.playComplete();
+            } else {
+                if (typeof sounds !== 'undefined') sounds.playError();
+            }
+
             let levelUpHtml = '';
-            if (res.leveled_up) {
+            if (passed && res.leveled_up) {
                 levelUpHtml = `
                     <div class="alert alert-warning border-warning shadow-sm rounded-3 py-3 mb-4 text-center">
                         <i class="bi bi-stars text-warning fs-3 d-block mb-1"></i>
@@ -294,56 +299,94 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
-                    const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
+            if (passed) {
+                // TELA DE VITÓRIA / APROVADO (>= 75%)
+                body.innerHTML = `
+                    ${levelUpHtml}
+                    <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 border-emerald-200">
+                        <div class="mb-3">
+                            <i class="bi bi-emoji-laughing fs-1 text-success"></i>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-success-subtle text-success border border-success fw-bold px-3 py-1.5 fs-6 rounded-pill">
+                                <i class="bi bi-check-circle-fill me-1"></i> APROVADO (${scorePercent}%)
+                            </span>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-1">${isBossChallenge ? 'Desafio Boss Superado!' : 'Fase Concluída com Sucesso!'}</h3>
+                        <p class="text-secondary small mb-4">Parabéns! Você alcançou a nota de corte mínima de 75% e dominou esta etapa!</p>
 
-                    body.innerHTML = `
-                        ${levelUpHtml}
-                        <div class="card card-aprova text-center p-5 my-3 shadow-lg border-2">
-                            <div class="mb-3">
-                                <i class="bi ${isBossChallenge ? 'bi-fire text-danger' : 'bi-trophy-fill text-warning'} display-3"></i>
-                            </div>
-                            <h3 class="fw-bold text-dark mb-1">${isBossChallenge ? 'Desafio Boss Superado!' : 'Fase Concluída!'}</h3>
-                            <p class="text-secondary small mb-4">Você completou os exercícios desta etapa!</p>
-                            
-                            <div class="row g-3 mb-4">
-                                <div class="col-4">
-                                    <div class="p-3 bg-light border rounded-3">
-                                        <span class="d-block small text-muted font-monospace">XP BASE</span>
-                                        <span class="fs-5 fw-bold text-primary">+${res.base_xp || 35}</span>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="p-3 bg-light border rounded-3">
-                                        <span class="d-block small text-muted font-monospace">BÔNUS</span>
-                                        <span class="fs-5 fw-bold text-success">+${res.accuracy_bonus || 0}</span>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="p-3 bg-indigo-subtle border border-indigo-subtle rounded-3">
-                                        <span class="d-block small text-primary font-monospace fw-bold">TOTAL XP</span>
-                                        <span class="fs-4 fw-extrabold text-primary">+${res.xp_gained}</span>
-                                    </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <div class="p-3 bg-light border rounded-3">
+                                    <span class="d-block small text-muted font-monospace">XP BASE</span>
+                                    <span class="fs-5 fw-bold text-primary">+${res.base_xp || 35}</span>
                                 </div>
                             </div>
-
-                            <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 border mb-4">
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-fire text-warning fs-4"></i>
-                                    <span class="fw-bold text-dark">Ofensiva Diária</span>
+                            <div class="col-4">
+                                <div class="p-3 bg-light border rounded-3">
+                                    <span class="d-block small text-muted font-monospace">BÔNUS</span>
+                                    <span class="fs-5 fw-bold text-success">+${res.accuracy_bonus || 0}</span>
                                 </div>
-                                <span class="badge bg-warning text-dark font-monospace px-3 py-1.5 fs-6">${res.streak_days} DIAS</span>
                             </div>
+                            <div class="col-4">
+                                <div class="p-3 bg-indigo-subtle border border-indigo-subtle rounded-3">
+                                    <span class="d-block small text-primary font-monospace fw-bold">TOTAL XP</span>
+                                    <span class="fs-4 fw-extrabold text-primary">+${res.xp_gained}</span>
+                                </div>
+                            </div>
+                        </div>
 
-                            <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-aprova-primary py-3 fw-bold w-100 fs-6 shadow">
-                                VOLTAR À TRILHA DE ESTUDOS
+                        <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 border mb-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-fire text-warning fs-4"></i>
+                                <span class="fw-bold text-dark">Ofensiva Diária</span>
+                            </div>
+                            <span class="badge bg-warning text-dark font-monospace px-3 py-1.5 fs-6">${res.streak_days} DIAS</span>
+                        </div>
+
+                        <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-aprova-primary py-3 fw-bold w-100 fs-6 shadow">
+                            VOLTAR À TRILHA DE ESTUDOS
+                        </button>
+                    </div>
+                `;
+            } else {
+                // TELA DE DERROTA / REPROVADO (< 75%)
+                body.innerHTML = `
+                    <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 border-rose-200">
+                        <div class="mb-3">
+                            <i class="bi bi-emoji-frown fs-1 text-danger"></i>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge bg-danger-subtle text-danger border border-danger fw-bold px-3 py-1.5 fs-6 rounded-pill">
+                                <i class="bi bi-x-circle-fill me-1"></i> REPROVADO (${scorePercent}%)
+                            </span>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-1">Não foi desta vez!</h3>
+                        <p class="text-secondary small mb-4">Você teve <strong>${scorePercent}%</strong> de acertos. É necessário acertar no mínimo <strong>75%</strong> das questões para ser aprovado nesta atividade.</p>
+
+                        <div class="p-3 bg-rose-50 border border-rose-200 rounded-3 mb-4 text-start">
+                            <div class="d-flex align-items-center gap-2 text-rose-700 fw-bold small mb-1">
+                                <i class="bi bi-lightbulb-fill fs-5"></i> Dica de Estudo:
+                            </div>
+                            <p class="text-rose-900 small mb-0">Revise o material teórico e os vídeos explicativos no topo da lição antes de tentar novamente!</p>
+                        </div>
+
+                        <div class="d-flex flex-column flex-sm-row gap-2">
+                            <button type="button" onclick="window.location.reload()" class="btn btn-aprova-primary py-3 fw-bold flex-fill fs-6 shadow">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Tentar Novamente
+                            </button>
+                            <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-light border py-3 fw-bold flex-fill fs-6 text-secondary">
+                                Voltar à Trilha
                             </button>
                         </div>
-                    `;
-                })
-                .catch(err => {
-                    console.error('Erro ao enviar progresso:', err);
-                    const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
-                    window.location.href = redirectUrl;
-                });
+                    </div>
+                `;
             }
+        })
+        .catch(err => {
+            console.error('Erro ao enviar progresso:', err);
+            const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
+            window.location.href = redirectUrl;
+        });
+    }
         });

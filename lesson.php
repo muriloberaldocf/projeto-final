@@ -33,8 +33,8 @@ $subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Custom CSS AprovaQuest -->
-    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- Custom CSS HipoGabarito -->
+    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
     <link rel="stylesheet" href="assets/css/lesson.css">
     <script>
         window.LESSON_ID = <?= $lessonId ?>;
@@ -63,7 +63,7 @@ $subjectSlug = $lessonInfo['subject_slug'] ?? 'matematica';
             <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-indigo-100">
                 <div class="d-flex align-items-center gap-2 text-indigo-900 fw-bold">
                     <i class="bi bi-journal-bookmark-fill text-indigo-600 fs-5"></i>
-                    <span>Explicação Teórica & Vídeo-Aula em Português</span>
+                    <span>Explicação Teórica & Leitura Recomendada</span>
                 </div>
                 <button type="button" id="btnToggleIntro" class="btn btn-sm btn-light border text-indigo-700 fw-semibold py-1 px-3.5 text-xs rounded-pill">
                     <i class="bi bi-chevron-up me-1"></i> Ocultar

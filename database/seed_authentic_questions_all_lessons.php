@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * RECONSTRUTOR DEFINITIVO DO BANCO DE QUESTÕES DO APROVAQUEST
  * 100% Livre de meta-textos, enrolações ou textos genéricos.

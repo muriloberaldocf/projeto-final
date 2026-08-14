@@ -1,36 +1,29 @@
 /* ============================================================
-   APROVAQUEST — DESIGN SISTEMA DE EXERCÍCIOS & SIMULADOS INDEPENDENTE
-   Background Dinâmico Suave, Mesh Gradients, Glassmorphism & Paleta Indigo/Ciano
+   HIPOGABARITO — DESIGN SYSTEM INDEPENDENTE & GAMIFICADO (DUOLINGO STYLE 3D)
+   Solidez, Bordas Marcadas 3D, Cores Vibrantes & Tipografia Outfit
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
-    /* Paleta da Marca AprovaQuest */
-    --brand-primary: #4f46e5;
-    --brand-primary-hover: #4338ca;
-    --brand-primary-soft: #eef2ff;
-    --brand-primary-border: #c7d2fe;
+    /* Paleta Oficial HipoGabarito */
+    --brand-primary: #6842C2;
+    --brand-primary-hover: #5832b2;
+    --brand-primary-dark: #3D256B;
+    --brand-primary-soft: #f1eff5;
+    --brand-primary-border: #d8cef2;
 
-    --brand-accent: #06b6d4;
-    --brand-accent-soft: #ecfeff;
-
+    --brand-accent: #A98BE0;
     --brand-gold: #f59e0b;
-    --brand-gold-soft: #fffbeb;
-
     --brand-green: #10b981;
     --brand-red: #ef4444;
 
-    /* Neutros Modernos */
-    --bg-main: #f8fafc;
+    --bg-main: #F1EFF5;
     --card-bg: #ffffff;
     --border-color: #e2e8f0;
-    --text-primary: #0f172a;
-    --text-muted: #64748b;
+    --text-primary: #17151C;
 
-    --bs-font-sans-serif: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --bs-body-bg: var(--bg-main);
-    --bs-body-color: var(--text-primary);
+    --bs-font-sans-serif: 'Plus Jakarta Sans', sans-serif;
 }
 
 body {
@@ -41,351 +34,87 @@ body {
     min-height: 100vh;
 }
 
-/* BACKGROUND DINÂMICO & MESH GRADIENT (DEIXA O FUNDO RICO E MODERNO) */
-.bg-mesh-gradient {
-    background-color: #f8fafc;
-    background-image: 
-        radial-gradient(at 10% 10%, rgba(79, 70, 229, 0.07) 0px, transparent 50%),
-        radial-gradient(at 90% 15%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
-        radial-gradient(at 50% 80%, rgba(99, 102, 241, 0.06) 0px, transparent 50%),
-        radial-gradient(at 80% 90%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
-    background-attachment: fixed;
-    position: relative;
+/* CARDS PADRÃO COM SOMBRA 3D DUOLINGO */
+.card-3d {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 0 0 #e2e8f0;
+    transition: all 0.15s ease-in-out;
 }
 
-/* PADRÃO DE GRID DECORATIVO DE FUNDO */
-.bg-grid-pattern {
-    background-size: 32px 32px;
-    background-image: 
-        linear-gradient(to right, rgba(226, 232, 240, 0.4) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.4) 1px, transparent 1px);
-}
-
-/* NAVBAR INDEPENDENTE E GLASSMORPHIC */
-.navbar-aprova {
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-color);
-    padding: 8px 0;
-}
-
-.brand-logo-aprova {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+/* BOTÃO 3D GAMIFICADO */
+.btn-3d {
+    background-color: var(--brand-primary);
+    color: white;
+    font-family: 'Outfit', sans-serif;
     font-weight: 800;
-    font-size: 1.15rem;
-    color: var(--text-primary);
-    text-decoration: none;
-    letter-spacing: -0.5px;
-}
-
-.brand-icon-box {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--brand-primary) 0%, #6366f1 100%);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
-}
-
-.brand-badge-aprova {
-    background-color: var(--brand-primary-soft);
-    color: var(--brand-primary);
-    border: 1px solid var(--brand-primary-border);
-    font-weight: 700;
-    font-size: 0.6rem;
-    padding: 2px 6px;
-    border-radius: 5px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-/* CARDS GLASSMORPHISM & SOFT SHADOWS */
-.card-aprova {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.card-aprova:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-    border-color: #cbd5e1;
-}
-
-/* BOTÕES ESTILIZADOS E HARMONIZADOS (SEM CONFLITO DE CORES) */
-.btn-aprova-primary {
-    background: linear-gradient(135deg, var(--brand-primary) 0%, #4338ca 100%);
-    color: #ffffff;
-    font-weight: 600;
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 0 0 var(--brand-primary-dark);
+    transition: all 0.15s ease-in-out;
     border: none;
-    padding: 0.5rem 1.1rem;
-    border-radius: 8px;
-    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
-    transition: all 0.15s ease;
-}
-
-.btn-aprova-primary:hover, .btn-aprova-primary:focus {
-    background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
-    transform: translateY(-1px);
-}
-
-.btn-aprova-soft {
-    background-color: var(--brand-primary-soft);
-    color: var(--brand-primary);
-    border: 1px solid var(--brand-primary-border);
-    font-weight: 600;
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    transition: all 0.15s ease;
-}
-
-.btn-aprova-soft:hover {
-    background-color: #e0e7ff;
-    color: var(--brand-primary-hover);
-}
-
-.btn-aprova-light {
-    background-color: #ffffff;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    font-weight: 600;
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    transition: all 0.15s ease;
-}
-
-.btn-aprova-light:hover {
-    background-color: #f8fafc;
-    border-color: #cbd5e1;
-}
-
-/* INPUTS DE FORMULÁRIO LIMPOS */
-.form-control-aprova {
-    padding: 0.5rem 0.85rem;
-    border-radius: 8px;
-    border: 1.5px solid var(--border-color);
-    background-color: #ffffff;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.form-control-aprova:focus {
-    border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    background-color: #ffffff;
-    outline: none;
-}
-
-/* PILLS DE ESTATÍSTICA */
-.stat-pill-aprova {
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-weight: 600;
-    font-size: 0.8rem;
-    padding: 4px 10px;
-    border-radius: 16px;
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-/* ABAS DE MATÉRIAS SUAVES */
-.subject-pill-aprova {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    text-decoration: none;
-    transition: all 0.15s ease;
-}
-
-.subject-pill-aprova:hover {
-    color: var(--text-primary);
-    border-color: #cbd5e1;
-}
-
-.subject-pill-aprova.active {
-    background-color: var(--brand-primary);
-    color: #ffffff;
-    border-color: var(--brand-primary);
-    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
-}
-
-/* LISTA DE EXERCÍCIOS */
-.lesson-row-aprova {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: border-color 0.15s ease, transform 0.15s ease;
-}
-
-.lesson-row-aprova:hover {
-    border-color: #cbd5e1;
-    transform: translateX(2px);
-}
-
-.lesson-row-aprova.completed {
-    border-left: 4px solid var(--brand-green);
-}
-
-.lesson-row-aprova.unlocked {
-    border-left: 4px solid var(--brand-primary);
-}
-
-/* CARTÕES DE OPÇÃO DE QUIZ (5 ALTERNATIVAS A-E) */
-.quiz-card-aprova {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 14px;
-    border: 1.5px solid var(--border-color);
-    border-radius: 8px;
-    background-color: #ffffff;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: all 0.15s ease;
-    user-select: none;
-    margin-bottom: 6px;
-    color: var(--text-primary);
-}
-
-.quiz-card-aprova:hover {
-    border-color: #cbd5e1;
-    background-color: #f8fafc;
-}
-
-.quiz-card-aprova.selected {
-    border-color: var(--brand-primary);
-    background-color: var(--brand-primary-soft);
-    color: var(--brand-primary-hover);
-}
-
-.quiz-badge-aprova {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    background-color: #ffffff;
-    flex-shrink: 0;
+    gap: 0.5rem;
 }
 
-.quiz-card-aprova.selected .quiz-badge-aprova {
-    border-color: var(--brand-primary);
-    background-color: var(--brand-primary);
-    color: #ffffff;
+.btn-3d:hover {
+    background-color: var(--brand-primary-hover);
+    transform: translateY(1px);
+    box-shadow: 0 3px 0 0 var(--brand-primary-dark);
 }
 
-/* DRAWER DE FEEDBACK */
-.feedback-drawer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 24px;
-    z-index: 100;
-    transform: translateY(100%);
-    transition: transform 0.25s ease-out;
-    border-top: 1px solid var(--border-color);
-    background-color: #ffffff;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+.btn-3d:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 0 var(--brand-primary-dark);
 }
 
-.feedback-drawer.show {
-    transform: translateY(0);
-}
+/* SCROLLBAR MODERNO */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-.feedback-drawer.success {
-    border-top-color: var(--brand-green);
-}
-
-.feedback-drawer.error {
-    border-top-color: var(--brand-red);
-}
-
-/* ============================================================
-   MOLDURAS DE AVATAR (AVATAR FRAMES — OUTLINE & GLOW IMPERDÍVEL)
-   ============================================================ */
-
-html body img.frame-indigo,
-html body .frame-indigo,
-img.frame-indigo {
-    outline: 4px solid #4f46e5 !important;
+/* MOLDURAS DE AVATAR (OUTLINE & GLOW IMPERDÍVEL) */
+img.frame-indigo, .frame-indigo {
+    outline: 4px solid #6842C2 !important;
     outline-offset: -2px !important;
-    box-shadow: 0 0 14px rgba(79, 70, 229, 0.7) !important;
+    box-shadow: 0 0 14px rgba(104, 66, 194, 0.7) !important;
     border-radius: 9999px !important;
 }
 
-html body img.frame-emerald,
-html body .frame-emerald,
-img.frame-emerald {
+img.frame-emerald, .frame-emerald {
     outline: 4px solid #10b981 !important;
     outline-offset: -2px !important;
     box-shadow: 0 0 14px rgba(16, 185, 129, 0.7) !important;
     border-radius: 9999px !important;
 }
 
-html body img.frame-cyan,
-html body .frame-cyan,
-img.frame-cyan {
+img.frame-cyan, .frame-cyan {
     outline: 4px solid #06b6d4 !important;
     outline-offset: -2px !important;
     box-shadow: 0 0 16px rgba(6, 182, 212, 0.75) !important;
     border-radius: 9999px !important;
 }
 
-html body img.frame-purple,
-html body .frame-purple,
-img.frame-purple {
+img.frame-purple, .frame-purple {
     outline: 4px solid #a855f7 !important;
     outline-offset: -2px !important;
     box-shadow: 0 0 16px rgba(168, 85, 247, 0.75) !important;
     border-radius: 9999px !important;
 }
 
-html body img.frame-rose,
-html body .frame-rose,
-img.frame-rose {
+img.frame-rose, .frame-rose {
     outline: 4px solid #f43f5e !important;
     outline-offset: -2px !important;
     box-shadow: 0 0 18px rgba(244, 63, 94, 0.8) !important;
     border-radius: 9999px !important;
 }
 
-/* 1000 XP - MOLDURA ARCO-ÍRIS LENDÁRIA (ANIMADA RAINBOW RGB VIBRANTE) */
-html body img.frame-rainbow,
-html body .frame-rainbow,
-img.frame-rainbow {
+img.frame-rainbow, .frame-rainbow {
     outline: 4.5px solid #ff0055 !important;
     outline-offset: -2px !important;
     border-radius: 9999px !important;
@@ -403,10 +132,7 @@ img.frame-rainbow {
     100% { outline-color: #ff0055 !important; box-shadow: 0 0 18px #ff0055, 0 0 32px rgba(255,0,85,0.85) !important; }
 }
 
-/* 1500 XP - MOLDURA DOURADA SUPREMA (ANIMADA) */
-html body img.frame-gold,
-html body .frame-gold,
-img.frame-gold {
+img.frame-gold, .frame-gold {
     outline: 4px solid #f59e0b !important;
     outline-offset: -2px !important;
     border-radius: 9999px !important;

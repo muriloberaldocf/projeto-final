@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFMG (UNIVERSIDADE FEDERAL DE MINAS GERAIS)
  * Adiciona todas as opções de graduação da UFMG (Belo Horizonte e Montes Claros).

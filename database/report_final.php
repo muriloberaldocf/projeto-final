@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 require_once __DIR__ . '/../config/db.php';
 
 echo "=== RELATÓRIO FINAL DO BANCO DE QUESTÕES ===\n\n";

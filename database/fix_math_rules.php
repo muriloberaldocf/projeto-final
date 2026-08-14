@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR ESPECIALIZADO DE QUESTÕES DE PORCENTAGEM E REGRA DE TRÊS - APROVAQUEST
  * Regras reais, matemática exata e enunciados autênticos de vestibulares.

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFSC (UNIVERSIDADE FEDERAL DE SANTA CATARINA)
  * Adiciona todas as opções de graduação da UFSC (Florianópolis, Joinville, Araranguá, Blumenau, Curitibanos).

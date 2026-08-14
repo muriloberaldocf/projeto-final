@@ -6,15 +6,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
-    /* Paleta da Sua Marca AprovaQuest com Acabamento 3D Duolingo */
-    --duo-brand: #4f46e5;
-    --duo-brand-hover: #4338ca;
-    --duo-brand-shadow: #312e81;
-    --duo-brand-soft: #eef2ff;
+    /* Paleta de 5 Cores Oficial HipoGabarito com Acabamento 3D Duolingo */
+    --duo-brand: #6842C2;
+    --duo-brand-hover: #5832b2;
+    --duo-brand-shadow: #3D256B;
+    --duo-brand-soft: #f1eff5;
 
-    --duo-cyan: #06b6d4;
-    --duo-cyan-hover: #0891b2;
-    --duo-cyan-shadow: #0e7490;
+    --duo-cyan: #A98BE0;
+    --duo-cyan-hover: #9576cd;
+    --duo-cyan-shadow: #3D256B;
 
     --duo-emerald: #10b981;
     --duo-emerald-hover: #059669;
@@ -28,15 +28,15 @@
     --duo-red-hover: #dc2626;
     --duo-red-shadow: #b91c1c;
 
-    --duo-locked-bg: #e2e8f0;
-    --duo-locked-border: #cbd5e1;
-    --duo-locked-shadow: #94a3b8;
-    --duo-locked-text: #94a3b8;
+    --duo-locked-bg: #e4ddf7;
+    --duo-locked-border: #d8cef2;
+    --duo-locked-shadow: #a98be0;
+    --duo-locked-text: #645c73;
 }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #f8fafc;
+    background-color: #F1EFF5;
 }
 
 /* ============================================================

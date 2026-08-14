@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * SCRIPT DE SEEDING DO GUIA DE CURSOS E NOTAS DE CORTE DO BRASIL - APROVAQUEST
  * Popula centenas de cursos e universidades brasileiras com notas de corte reais do SISU/Vestibulares.

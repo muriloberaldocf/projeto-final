@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * ATUALIZADOR DE BANCAS DE VESTIBULARES DE NORTE A SUL DO BRASIL - APROVAQUEST
  * Cobre vestibulares de todas as regiões brasileiras (UFAM, UFPA, UnB, UFPE, UFC, UFBA, FUVEST, UNICAMP, VUNESP, UERJ, UFMG, UFPR, UFSC, UFRGS, ENEM).

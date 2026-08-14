@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFCAT (UNIVERSIDADE FEDERAL DE CATALÃO - GO)
  * Adiciona todas as opções de graduação da UFCAT e suas notas de corte.

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * MIGRAÇÃO: ADICIONAR VÍDEO-AULA (VIDEO_URL / VIDEO_TITLE) EM LESSONS
  */

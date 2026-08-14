@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFES (UNIVERSIDADE FEDERAL DO ESPÍRITO SANTO)
  * Adiciona todas as opções de graduação da UFES (Vitória, Alegre, São Mateus).

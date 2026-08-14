@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * MIGRATION PARA SUPORTE A QUESTÕES BOSS / CHEFÃO (COM CADEADO, VARIAÇÃO A CADA 50 E SEM RESOLUÇÃO)
  */

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFCG (UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - PB)
  * Adiciona todas as opções de graduação da UFCG (Campina Grande, Cajazeiras, Sousa, Patos, Cuité, Pombal, Sumé).

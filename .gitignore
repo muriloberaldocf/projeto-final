@@ -1,0 +1,26 @@
+# HipoGabarito - Git Ignore Rules
+
+# Pastas de uploads dinâmicos de usuários
+/uploads/
+
+# Arquivos pesados de vídeo (removidos em favor dos artigos Toda Matéria)
+*.mp4
+/assets/vids/
+
+# Logs e arquivos de execução
+*.log
+*.sqlite
+
+# Dependências PHP (Composer)
+vendor/
+
+# Arquivos de ambiente e credenciais de produção
+.env
+.env.local
+.env.*.local
+
+# IDEs e configurações locais
+.vscode/
+.idea/
+*.swp
+*.DS_Store

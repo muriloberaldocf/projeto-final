@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * MIGRAÇÃO COMPLETA: EXPLICACÕES TEÓRICAS APROFUNDADAS E VÍDEO-AULAS EM PORTUGUÊS (YOUTUBE EMBEDS REAIS)
  */

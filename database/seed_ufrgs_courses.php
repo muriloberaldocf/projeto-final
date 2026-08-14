@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFRGS (UNIVERSIDADE FEDERAL DO RIO GRANDE DO SUL)
  * Adiciona todas as opções de graduação da UFRGS e suas notas de corte.

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * BANCO DE QUESTÕES DE ALTO NÍVEL DIFICULDADE (FUVEST, UNICAMP, ITA, IME, ENEM HARD, VUNESP MED)
  * Todas as questões com enunciados desafiadores, ricas em detalhes técnicos, cálculos exigentes e raciocínio crítico.

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFAL (UNIVERSIDADE FEDERAL DE ALAGOAS)
  * Adiciona todas as opções de graduação da UFAL (Maceió, Arapiraca, Viçosa, Delmiro Gouveia).

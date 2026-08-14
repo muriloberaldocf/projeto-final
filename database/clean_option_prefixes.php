@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * RECONSTRUTOR E FORMATADOR DE QUESTÕES REAIS DE VESTIBULARES (ENEM, FUVEST, UNICAMP, VUNESP, SENAI, UERJ)
  * Remove prefixos duplicados ("A) A)") e garante enunciados limpos e fiéis aos vestibulares.

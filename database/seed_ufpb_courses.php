@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFPB (UNIVERSIDADE FEDERAL DA PARAÍBA)
  * Adiciona todas as opções de graduação da UFPB (João Pessoa, Areia, Bananeiras, Rio Tinto, Mamanguape).

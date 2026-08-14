@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * RECONSTRUTOR DE BANCO DE QUESTÕES REAIS DE VESTIBULARES (ENEM, FUVEST, UNICAMP, VUNESP, SENAI, UERJ)
  * Substitui todas as questões genéricas por questões autênticas com enunciados completos e explicações pedagógicas.

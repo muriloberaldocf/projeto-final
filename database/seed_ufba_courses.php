@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFBA (UNIVERSIDADE FEDERAL DA BAHIA)
  * Adiciona todas as opções de graduação da UFBA (Salvador, Vitória da Conquista, Camaçari).

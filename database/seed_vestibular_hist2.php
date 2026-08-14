@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 require_once __DIR__ . '/../config/db.php';
 echo "=== Inserindo questões de História e Geografia 2 ===\n\n";
 

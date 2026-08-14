@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * SCRIPT SEEDER DE 600+ QUESTÕES (100+ POR MATÉRIA) - SENAI PREP
  * Popula o MySQL com mais de 100 questões por matéria estilo ENEM, FUVEST, UNICAMP, VUNESP e SENAI.

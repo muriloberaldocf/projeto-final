@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA USP (UNIVERSIDADE DE SÃO PAULO)
  * Adiciona todas as opções de graduação da USP (São Paulo, Ribeirão Preto, São Carlos, Piracicaba, Bauru, Lorena, Pirassununga).

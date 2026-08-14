@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * SCRIPT MEGA SEEDER COM VESTIBULARES DE NORTE A SUL DO BRASIL - APROVAQUEST
  */

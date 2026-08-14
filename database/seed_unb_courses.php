@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UnB (UNIVERSIDADE DE BRASÍLIA)
  * Adiciona todas as opções de graduação da UnB (Darcy Ribeiro, FGA Gama, FCE Ceilândia, FUP Planaltina).

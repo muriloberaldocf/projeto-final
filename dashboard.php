@@ -2,71 +2,10 @@
 require_once __DIR__ . '/config/db.php';
 checkAuth();
 
-$userId = $_SESSION['user_id'];
-
-// Buscar dados atualizados do usuário
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-$stmt->execute([$userId]);
-$user = $stmt->fetch();
-$userAvatar = !empty($user['avatar']) ? $user['avatar'] : 'assets/img/default_avatar.jpg';
-$userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
-
-$userBadgeMap = [
-    'bi-person-circle' => 'Estudante Padrão',
-    'bi-backpack' => 'Mochileiro Focado',
-    'bi-mortarboard' => 'Formando Vestibulando',
-    'bi-rocket-takeoff' => 'Foguete da Aprovação',
-    'bi-lightning-charge' => 'Mago do Conhecimento',
-    'bi-award' => 'Campeão de Simulados',
-    'bi-gem' => 'Diamante Medicina',
-    'bi-incognito' => 'Mestre Misterioso',
-    'bi-crown' => 'Rei da Aprovação',
-    'bi-emoji-smile-fill' => '🦛 Hipopótamo Lendário'
-];
-$userBadgeIcon = $user['avatar_icon'] ?? 'bi-person-circle';
-$userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
+$pageTitle = 'Trilha de Aprendizado — HipoGabarito';
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-slate-50">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trilha de Aprendizado — HipoGabarito</title>
-
-    <!-- TAILWIND CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            800: '#3730a3',
-                            900: '#312e81',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        outfit: ['Outfit', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- GOOGLE FONTS & BOOTSTRAP ICONS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
     <link rel="stylesheet" href="assets/css/dashboard.css">
-
     <style>
         /* SCROLLBAR MODERNO */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -74,144 +13,42 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* ANIMAÇÃO DO BALÃO DE FALA FLUTUANTE */
         @keyframes floatBubble {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
-        .animate-float-bubble {
-            animation: floatBubble 2s infinite ease-in-out;
-        }
+        .animate-float-bubble { animation: floatBubble 2s infinite ease-in-out; }
 
-        /* ANIMAÇÃO DE PULSO DO BOTÃO ATIVO */
         @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 8px 0 0 #312e81, 0 0 0 0 rgba(79, 70, 229, 0.4); }
-            50% { box-shadow: 0 8px 0 0 #312e81, 0 0 0 16px rgba(79, 70, 229, 0); }
+            0%, 100% { box-shadow: 0 8px 0 0 #3D256B, 0 0 0 0 rgba(104, 66, 194, 0.4); }
+            50% { box-shadow: 0 8px 0 0 #3D256B, 0 0 0 16px rgba(104, 66, 194, 0); }
         }
-        .animate-pulse-node {
-            animation: pulseGlow 2.2s infinite ease-in-out;
-        }
+        .animate-pulse-node { animation: pulseGlow 2.2s infinite ease-in-out; }
     </style>
-</head>
-<body class="min-h-full font-sans antialiased text-slate-800 bg-slate-50 selection:bg-indigo-500 selection:text-white">
 
-    <!-- TOP HEADER / HUD DE JOGADOR TAILWIND -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-slate-200 py-2 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-            <!-- LOGO DA MARCA -->
-            <a href="dashboard.php" class="flex items-center gap-2 group text-decoration-none">
-                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
-            </a>
-
-            <!-- HUD STATUS DO ALUNO -->
-            <?php
-            $streakCount = (int)($user['streak_days'] ?? 1);
-            $isStreakActive = ($streakCount >= 2);
-            ?>
-            <div class="flex items-center gap-2.5">
-                <!-- SININHO DE NOTIFICAÇÕES NA NAVBAR -->
-                <div class="relative">
-                    <button id="notifBellBtn" onclick="toggleNotifDropdown()" class="relative p-2 rounded-2xl bg-white border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0] hover:bg-slate-50 text-slate-600 hover:text-indigo-600 transition-all flex items-center justify-center" title="Notificações">
-                        <i class="bi bi-bell-fill text-base"></i>
-                        <span id="notifBadge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center shadow-sm animate-pulse">0</span>
-                    </button>
-
-                    <!-- DROPDOWN DE NOTIFICAÇÕES -->
-                    <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-3xl border-2 border-slate-200 shadow-2xl z-50 p-4 animate-in fade-in zoom-in-95 duration-150">
-                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-                            <div class="flex items-center gap-2">
-                                <i class="bi bi-bell-fill text-indigo-600"></i>
-                                <h4 class="font-outfit font-extrabold text-slate-900 text-sm mb-0">Central de Notificações</h4>
-                            </div>
-                            <span id="notifCountText" class="text-[11px] font-bold text-slate-400">0 notificações</span>
-                        </div>
-
-                        <div id="notifListContainer" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-                            <div class="text-center py-6 text-slate-400 text-xs">
-                                <i class="bi bi-arrow-repeat animate-spin text-xl block mb-1"></i> Carregando...
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-1.5 <?= $isStreakActive ? 'bg-amber-50 border-amber-300 shadow-[0_2px_0_0_#f59e0b]' : 'bg-white border-slate-200 shadow-[0_2px_0_0_#e2e8f0]' ?> px-3 py-1 rounded-2xl border-2 transition-all" title="<?= $isStreakActive ? 'Ofensiva Ativa! (2+ dias consecutivos)' : 'Fogo apagado: estude amanhã novamente para acender!' ?>">
-                    <svg class="w-4 h-4 <?= $isStreakActive ? 'text-amber-500 animate-pulse' : 'text-slate-300' ?>" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="font-outfit font-extrabold <?= $isStreakActive ? 'text-amber-700' : 'text-slate-400' ?> text-xs"><?= $streakCount ?>d</span>
-                </div>
-
-                <div class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-2xl border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0]" title="XP Acumulado">
-                    <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="font-outfit font-extrabold text-indigo-600 text-xs"><?= htmlspecialchars($user['xp'] ?? 0) ?> XP</span>
-                </div>
-
-                <a href="profile.php" class="ml-0.5 group" title="Meu Perfil">
-                    <img src="<?= htmlspecialchars($userAvatar) ?>" alt="Avatar" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-8 h-8 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover group-hover:scale-105 transition-transform">
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <!-- LAYOUT PRINCIPAL (GRID 3 COLUNAS) -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <!-- LAYOUT PRINCIPAL DA TRILHA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <!-- BARRA DE SELEÇÃO DE MATÉRIAS (LARGURA INTEGRAL CENTRALIZADA) -->
         <div class="mb-4 flex items-center justify-center gap-2.5 flex-wrap sm:flex-nowrap overflow-x-auto pb-1 scrollbar-none" id="subjectSelector"></div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-            <!-- SIDEBAR ESQUERDA -->
-            <aside class="lg:col-span-3 sticky top-20 space-y-3.5">
-                <div class="bg-white rounded-3xl border-2 border-slate-200 p-3.5 shadow-[0_3px_0_0_#e2e8f0]">
-                    <div class="flex items-center gap-3 p-2.5 mb-2.5 bg-slate-50 rounded-2xl border border-slate-200">
-                        <img src="<?= htmlspecialchars($userAvatar) ?>" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-10 h-10 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover">
-                        <div class="min-w-0 flex-1">
-                            <h3 class="font-outfit font-bold text-slate-900 text-sm truncate"><?= htmlspecialchars($user['name'] ?? 'Estudante') ?></h3>
-                            <div class="flex items-center gap-1 text-[11px] font-bold text-indigo-600 truncate mt-0.5" title="Título Equipado">
-                                <i class="bi <?= htmlspecialchars($userBadgeIcon) ?>"></i>
-                                <span class="truncate"><?= htmlspecialchars($userBadgeName) ?></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <nav class="space-y-1.5">
-                        <a href="dashboard.php" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl font-outfit font-extrabold text-xs bg-indigo-600 text-white shadow-[0_3px_0_0_#312e81] hover:bg-indigo-700 transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                            </svg>
-                            Trilha de Estudos
-                        </a>
-
-                        <a href="leaderboard.php" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
-                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4m6 17v-5m0 0a2 2 0 100-4 2 2 0 000 4zm0 5a2 2 0 100-4 2 2 0 000 4zM6 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4zM18 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4z"/>
-                            </svg>
-                            Ranking Arcade
-                        </a>
-
-                        <a href="profile.php" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-xs text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
-                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            Meu Perfil
-                        </a>
-
-                        <div class="pt-2 border-t border-slate-200 mt-2">
-                            <a href="api/auth.php?action=logout" class="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl font-outfit font-bold text-xs text-slate-400 hover:text-rose-600 transition-all">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                </svg>
-                                Sair
-                            </a>
-                        </div>
-                    </nav>
-                </div>
-            </aside>
+            <!-- SIDEBAR MODULAR COM DESTAQUE NA PÁGINA ATIVA -->
+            <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
 
             <!-- COLUNA CENTRAL: MAPA EM ONDA DA TRILHA -->
             <section class="lg:col-span-6 space-y-4">
+                <!-- BANNER BOAS-VINDAS HIPÓ -->
+                <div class="bg-gradient-to-r from-[#6842C2] to-[#5832b2] rounded-3xl p-5 text-white shadow-[0_4px_0_0_#3D256B] flex items-center justify-between relative overflow-hidden border-2 border-[#d8cef2]">
+                    <div class="z-10">
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/20 text-white backdrop-blur-sm mb-2">
+                            <i class="bi bi-rocket-takeoff-fill text-amber-300"></i> Bora Praticar!
+                        </span>
+                        <h2 class="font-outfit font-black text-xl sm:text-2xl mb-1">Olá, <?= htmlspecialchars(explode(' ', $user['name'] ?? 'Estudante')[0]) ?>!</h2>
+                        <p class="text-xs sm:text-sm text-indigo-100 font-medium mb-0">Escolha um tópico na trilha abaixo e arrase nos vestibulares!</p>
+                    </div>
+                </div>
+
                 <div id="roadmapMapTree" class="space-y-4">
                     <div class="flex flex-col items-center justify-center py-10 bg-white rounded-3xl border-2 border-slate-200 shadow-sm">
                         <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
@@ -293,7 +130,9 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 </svg>
             </button>
 
-            <img src="assets/img/logo_mascot.png" alt="Mascote Hipó" class="w-16 h-16 mx-auto mb-2 object-contain drop-shadow-md animate-bounce">
+            <div class="w-16 h-16 mx-auto mb-2 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl">
+                <i class="bi bi-book-half"></i>
+            </div>
 
             <span id="modalStageBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-600 border border-indigo-200 mb-2">
                 FASE 1
@@ -314,10 +153,10 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                     Ler Teoria & Conceitos
                 </button>
 
-                <!-- BOTÃO DE VÍDEO AULA -->
-                <button type="button" id="btnVideoStage" class="w-full py-2 px-4 rounded-2xl font-outfit font-bold text-xs bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 transition-all flex items-center justify-center gap-2">
-                    <i class="bi bi-play-btn-fill text-amber-600 text-sm"></i>
-                    Assistir Vídeo-Aula
+                <!-- BOTÃO DE ARTIGO TODA MATÉRIA -->
+                <button type="button" id="btnVideoStage" class="w-full py-2 px-4 rounded-2xl font-outfit font-bold text-xs bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 transition-all flex items-center justify-center gap-2">
+                    <i class="bi bi-box-arrow-up-right text-emerald-600 text-sm"></i>
+                    Ler no Toda Matéria
                 </button>
 
                 <button type="button" id="btnPlayStage" class="w-full py-2.5 px-4 rounded-2xl font-outfit font-extrabold text-sm bg-emerald-500 text-white shadow-[0_4px_0_0_#047857] hover:bg-emerald-600 active:translate-y-0.5 active:shadow-[0_1px_0_0_#047857] transition-all flex items-center justify-center gap-2">
@@ -343,11 +182,11 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             <button onclick="closeTheoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
             <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
                 <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">
-                    <i class="bi bi-book-half"></i>
+                    <i class="bi bi-journal-text"></i>
                 </div>
                 <div>
                     <h3 id="theoryModalTitle" class="font-outfit font-extrabold text-slate-900 text-lg leading-tight">Teoria do Conteúdo</h3>
-                    <span class="text-xs text-indigo-600 font-bold">Resumo Prático dos Conceitos</span>
+                    <span class="text-xs text-indigo-600 font-bold">Resumo Prático & Dicas de Estudo</span>
                 </div>
             </div>
             <div id="theoryModalBody" class="text-slate-700 text-xs sm:text-sm leading-relaxed max-h-72 overflow-y-auto pr-1"></div>
@@ -359,31 +198,7 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
         </div>
     </div>
 
-    <!-- MODAL DE VÍDEO-AULA DA FASE -->
-    <div id="videoModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl w-full max-w-2xl p-6 relative transform scale-95 transition-transform duration-200" id="videoModalCard">
-            <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
-            <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
-                    <i class="bi bi-play-btn-fill"></i>
-                </div>
-                <div>
-                    <h3 id="videoModalTitle" class="font-outfit font-extrabold text-slate-900 text-base leading-tight">Vídeo-Aula Explicativa</h3>
-                    <span class="text-xs text-amber-600 font-bold">Assista antes de resolver os exercícios</span>
-                </div>
-            </div>
-            
-            <div id="videoModalPlayerContainer" class="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-inner mb-4">
-                <iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
 
-            <div class="flex justify-end">
-                <button onclick="closeVideoModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition">
-                    Fechar Vídeo
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- JAVASCRIPT DO MAPA E RASTRO CONTÍNUO S-CURVE BEZIER -->
     <script src="assets/js/sound_effects.js"></script>
@@ -634,11 +449,12 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 openTheoryModal(lesson);
             };
 
-            // Configurar Botão de Vídeo-Aula da Fase
+            // Configurar Botão do Toda Matéria (Abre diretamente o artigo no site oficial)
             const btnVideo = document.getElementById('btnVideoStage');
             btnVideo.onclick = () => {
                 if (typeof sounds !== 'undefined') sounds.playClick();
-                openVideoModal(lesson);
+                const targetUrl = lesson.video_url || ('https://www.todamateria.com.br/?s=' + encodeURIComponent(lesson.title));
+                window.open(targetUrl, '_blank', 'noopener,noreferrer');
             };
 
             const btnBoss = document.getElementById('btnBossStage');
@@ -696,55 +512,13 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
             card.classList.add('scale-95');
         }
 
-        // CONTROLADORES DO MODAL DE VÍDEO-AULA (SUPORTA MP4 LOCAL E YOUTUBE EMBED)
-        function openVideoModal(lesson) {
-            document.getElementById('videoModalTitle').textContent = lesson.video_title || `Vídeo-Aula: ${lesson.title}`;
-            const videoUrl = lesson.video_url || 'assets/vids/Porcentagem_nos_Exames.mp4';
-            const container = document.getElementById('videoModalPlayerContainer');
-
-            if (videoUrl.endsWith('.mp4') || videoUrl.endsWith('.webm') || videoUrl.includes('/vids/')) {
-                container.innerHTML = `
-                    <video controls controlsList="nodownload" class="w-full h-full object-contain bg-black" autoplay>
-                        <source src="${videoUrl}" type="video/mp4">
-                        Seu navegador não suporta a reprodução de vídeos HTML5.
-                    </video>
-                `;
-            } else {
-                container.innerHTML = `
-                    <iframe id="videoIframe" class="w-full h-full border-0" src="${videoUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                `;
-            }
-
-            const modal = document.getElementById('videoModal');
-            const card = document.getElementById('videoModalCard');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-95');
-            card.classList.add('scale-100');
-        }
-
-        function closeVideoModal() {
-            if (typeof sounds !== 'undefined') sounds.playClick();
-            const container = document.getElementById('videoModalPlayerContainer');
-            if (container) container.innerHTML = ''; // Parar o vídeo ao fechar
-            const modal = document.getElementById('videoModal');
-            const card = document.getElementById('videoModalCard');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-100');
-            card.classList.add('scale-95');
-        }
-
         document.getElementById('stageModal').addEventListener('click', function(e) {
             if (e.target === this) closeStageModal();
         });
         document.getElementById('theoryModal').addEventListener('click', function(e) {
             if (e.target === this) closeTheoryModal();
         });
-        document.getElementById('videoModal').addEventListener('click', function(e) {
-            if (e.target === this) closeVideoModal();
-        });
 
         document.addEventListener('DOMContentLoaded', () => loadRoadmap(currentSubject));
     </script>
-    <script src="assets/js/notifications.js"></script>
-</body>
-</html>
+    <?php require_once __DIR__ . '/includes/footer.php'; ?>

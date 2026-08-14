@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * CORREÇÃO DAS QUESTÕES DE PORCENTAGEM E MATEMÁTICA - APROVAQUEST
  * Gera enunciados 100% reais, cálculos exatos de porcentagem e opções monetárias formatadas.

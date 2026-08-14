@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFMS (UNIVERSIDADE FEDERAL DE MATO GROSSO DO SUL)
  * Adiciona todas as opções de graduação da UFMS (Campo Grande, Três Lagoas, Ponta Porã, Chapadão do Sul).

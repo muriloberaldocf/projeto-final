@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * SCRIPT DE LIMPEZA DE FORMATOS DE QUESTÕES - APROVAQUEST
  * - Remove numerações como 'Questão #134' ou 'Questão #5' dos enunciados.

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR DEDICADO DE CURSOS DE EDUCAÇÃO FÍSICA NO BRASIL - APROVAQUEST
  */

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFRB (UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA)
  * Adiciona todas as opções de graduação da UFRB (Santo Antônio de Jesus, Cruz das Almas, Feira de Santana, Cachoeira, Amargosa).

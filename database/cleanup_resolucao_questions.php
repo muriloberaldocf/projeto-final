@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * Script de Limpeza: Remove todas as questões com o padrão
  * "Qual a resolução correta para a questão sobre '...'"

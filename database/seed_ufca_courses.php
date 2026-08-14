@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UFCA (UNIVERSIDADE FEDERAL DO CARIRI - CE)
  * Adiciona todas as opções de graduação da UFCA (Barbalha, Juazeiro do Norte, Crato, Brejo Santo).

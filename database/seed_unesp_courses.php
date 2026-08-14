@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/_guard.php';
 /**
  * GERADOR COMPLETO DE CURSOS DA UNESP (UNIVERSIDADE ESTADUAL PAULISTA "JÚLIO DE MESQUITA FILHO")
  * Adiciona todas as opções de graduação da UNESP nos seus diversos câmpus.
