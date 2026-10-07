@@ -50,7 +50,8 @@ if ($action === 'search') {
         echo json_encode(['success' => true, 'users' => $results]);
         exit;
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro ao buscar usuários: ' . $e->getMessage()]);
+        error_log("Erro ao buscar usuários: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao processar a busca de estudantes.']);
         exit;
     }
 }
@@ -106,7 +107,8 @@ if ($action === 'send_request' || $action === 'add_friend') {
         ]);
         exit;
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro ao enviar solicitação: ' . $e->getMessage()]);
+        error_log("Erro ao enviar solicitação: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao enviar solicitação de amizade.']);
         exit;
     }
 }
@@ -143,7 +145,8 @@ if ($action === 'accept_request') {
         ]);
         exit;
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro ao aceitar solicitação: ' . $e->getMessage()]);
+        error_log("Erro ao aceitar solicitação: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao aceitar solicitação de amizade.']);
         exit;
     }
 }
@@ -170,7 +173,8 @@ if ($action === 'reject_request' || $action === 'cancel_request' || $action === 
         echo json_encode(['success' => true, 'message' => $msg]);
         exit;
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro ao processar ação: ' . $e->getMessage()]);
+        error_log("Erro ao processar ação de amizade: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao processar a ação solicitada.']);
         exit;
     }
 }
@@ -208,7 +212,8 @@ if ($action === 'list_pending') {
         ]);
         exit;
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro ao listar solicitações: ' . $e->getMessage()]);
+        error_log("Erro ao listar solicitações: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao listar solicitações pendentes.']);
         exit;
     }
 }
@@ -230,7 +235,8 @@ if ($action === 'list_friends') {
         echo json_encode(['success' => true, 'friends' => $friends]);
         exit;
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Erro ao listar amigos: ' . $e->getMessage()]);
+        error_log("Erro ao listar amigos: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao listar amigos cadastrados.']);
         exit;
     }
 }

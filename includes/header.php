@@ -45,6 +45,7 @@ $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= htmlspecialchars(getCsrfToken()) ?>">
     <title><?= htmlspecialchars($pageTitle) ?></title>
 
     <!-- ANTI-FLICKER: Aplicar tema salvo ANTES de qualquer renderização -->

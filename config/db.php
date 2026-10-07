@@ -80,6 +80,14 @@ try {
         FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+    // Garantir tabela para rate limiting contra ataques de força bruta
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `login_attempts` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `ip_address` VARCHAR(45) NOT NULL,
+        `attempted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX `idx_ip_time` (`ip_address`, `attempted_at`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     // Autoseed automático desativado para preservar o banco oficial de questões reais dos vestibulares.
     
 } catch (\PDOException $e) {
@@ -118,8 +126,86 @@ try {
     </html>");
 }
 
+// Configurações avançadas de segurança de sessão
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.cookie_samesite', 'Lax');
+    ini_set('session.use_strict_mode', '1');
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        ini_set('session.cookie_secure', '1');
+    }
     session_start();
+}
+
+/**
+ * Funções de Proteção CSRF (Cross-Site Request Forgery)
+ */
+function getCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function validateCsrfToken($token) {
+    if (empty($token) || empty($_SESSION['csrf_token'])) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], (string)$token);
+}
+
+/**
+ * Rate Limiting e Prevenção de Ataques de Força Bruta
+ */
+function getClientIp() {
+    $headers = ['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];
+    foreach ($headers as $h) {
+        if (!empty($_SERVER[$h])) {
+            $ip = trim(explode(',', $_SERVER[$h])[0]);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+}
+
+function checkLoginRateLimit($pdo, $ipAddress, $maxAttempts = 5, $decayMinutes = 10) {
+    try {
+        // Limpar tentativas antigas com mais de 24 horas
+        $pdo->exec("DELETE FROM login_attempts WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 1 DAY)");
+
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) FROM login_attempts 
+            WHERE ip_address = ? 
+              AND attempted_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+        ");
+        $stmt->execute([$ipAddress, $decayMinutes]);
+        $attempts = (int) $stmt->fetchColumn();
+
+        return [
+            'blocked' => ($attempts >= $maxAttempts),
+            'attempts' => $attempts,
+            'remaining' => max(0, $maxAttempts - $attempts)
+        ];
+    } catch (Exception $e) {
+        return ['blocked' => false, 'attempts' => 0, 'remaining' => $maxAttempts];
+    }
+}
+
+function recordFailedLogin($pdo, $ipAddress) {
+    try {
+        $stmt = $pdo->prepare("INSERT INTO login_attempts (ip_address, attempted_at) VALUES (?, NOW())");
+        $stmt->execute([$ipAddress]);
+    } catch (Exception $e) {}
+}
+
+function clearLoginAttempts($pdo, $ipAddress) {
+    try {
+        $stmt = $pdo->prepare("DELETE FROM login_attempts WHERE ip_address = ?");
+        $stmt->execute([$ipAddress]);
+    } catch (Exception $e) {}
 }
 
 /**

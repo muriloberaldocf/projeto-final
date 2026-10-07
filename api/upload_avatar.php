@@ -29,11 +29,22 @@ if (isset($_FILES['avatar_file']) && $_FILES['avatar_file']['error'] === UPLOAD_
         exit;
     }
     
-    // Validar tipo de imagem real
+    // Validar tipo de imagem real via getimagesize
     $imageInfo = @getimagesize($file['tmp_name']);
     if (!$imageInfo) {
         echo json_encode(['success' => false, 'message' => 'O arquivo enviado não é uma imagem válida.']);
         exit;
+    }
+
+    // Validar tipo MIME real pelo conteúdo binário do arquivo (Anti-MIME Spoofing)
+    if (class_exists('finfo')) {
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $realMime = $finfo->file($file['tmp_name']);
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!in_array($realMime, $allowedMimes)) {
+            echo json_encode(['success' => false, 'message' => 'Tipo MIME de arquivo não permitido por segurança.']);
+            exit;
+        }
     }
     
     // Criar diretório se não existir
@@ -77,11 +88,13 @@ $inputData = json_decode(file_get_contents('php://input'), true);
 if (!empty($inputData['avatar_url'])) {
     $avatarUrl = trim($inputData['avatar_url']);
     
-    $isValidUrl = filter_var($avatarUrl, FILTER_VALIDATE_URL);
-    $isLocalAsset = (strpos($avatarUrl, 'assets/') === 0 || strpos($avatarUrl, 'uploads/') === 0 || file_exists(__DIR__ . '/../' . $avatarUrl));
+    $parsed = parse_url($avatarUrl);
+    $scheme = strtolower($parsed['scheme'] ?? '');
+    $isHttpUrl = filter_var($avatarUrl, FILTER_VALIDATE_URL) && in_array($scheme, ['http', 'https']);
+    $isLocalAsset = (str_starts_with($avatarUrl, 'assets/') || str_starts_with($avatarUrl, 'uploads/avatars/')) && !str_contains($avatarUrl, '..');
     
-    if (!$isValidUrl && !$isLocalAsset) {
-        echo json_encode(['success' => false, 'message' => 'URL de imagem inválida.']);
+    if (!$isHttpUrl && !$isLocalAsset) {
+        echo json_encode(['success' => false, 'message' => 'URL de imagem inválida ou protocolo não permitido.']);
         exit;
     }
     

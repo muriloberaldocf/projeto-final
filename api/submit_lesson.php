@@ -9,15 +9,22 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../config/db.php';
 
-$userId = $_SESSION['user_id'] ?? 1;
+if (!isLoggedIn()) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
+    exit;
+}
+
+$userId = (int)$_SESSION['user_id'];
 $data = json_decode(file_get_contents('php://input'), true);
 
 $lessonId = filter_var($data['lesson_id'] ?? 0, FILTER_VALIDATE_INT);
 $scorePercent = filter_var($data['score_percent'] ?? 0, FILTER_VALIDATE_INT);
+$scorePercent = max(0, min(100, (int)$scorePercent));
 $mode = trim($data['mode'] ?? '');
 
 if (!$lessonId) {
-    echo json_encode(['success' => false, 'message' => 'Dados inválidos']);
+    echo json_encode(['success' => false, 'message' => 'Dados de lição inválidos']);
     exit;
 }
 
