@@ -117,6 +117,19 @@ CREATE TABLE IF NOT EXISTS `user_achievements` (
     FOREIGN KEY (`achievement_id`) REFERENCES `achievements`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 10. Tabela de Atividade Diária (Meta Diária e Desafios Diários)
+CREATE TABLE IF NOT EXISTS `user_daily_activity` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `activity_date` DATE NOT NULL,
+    `xp_earned` INT DEFAULT 0,
+    `lessons_completed` INT DEFAULT 0,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY `unique_user_date` (`user_id`, `activity_date`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================================
 -- CARGA DE DADOS INICIAIS (SEEDS)
 -- ============================================================

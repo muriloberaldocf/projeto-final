@@ -8,34 +8,7 @@ require_once __DIR__ . '/../config/db.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
-// Função Auxiliar para atualizar a Ofensiva (Streak) no Login
-function updateStreakOnLogin($pdo, $userId) {
-    $stmt = $pdo->prepare("SELECT streak_days, last_active_date FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
-    $user = $stmt->fetch();
-    if (!$user) return;
-
-    $today = date('Y-m-d');
-    $lastActive = $user['last_active_date'];
-    $streak = $user['streak_days'] ?? 1;
-
-    if (empty($lastActive)) {
-        $newStreak = 1;
-    } else if ($lastActive !== $today) {
-        $yesterday = date('Y-m-d', strtotime('-1 day'));
-        if ($lastActive === $yesterday) {
-            $newStreak = max(1, $streak) + 1;
-        } else {
-            $newStreak = 1; // Reseta se pulou um dia
-        }
-    } else {
-        $newStreak = max(1, $streak);
-    }
-
-    $update = $pdo->prepare("UPDATE users SET streak_days = ?, last_active_date = ? WHERE id = ?");
-    $update->execute([$newStreak, $today, $userId]);
-}
-
+// Login
 if ($action === 'login') {
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
@@ -54,7 +27,8 @@ if ($action === 'login') {
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['user_role'] = $user['role'];
         
-        updateStreakOnLogin($pdo, $user['id']);
+        // Apenas sincroniza (zera se ficou dias sem entrar; NÃO incrementa streak no login)
+        syncUserStreak($pdo, $user['id']);
 
         echo json_encode(['success' => true, 'redirect' => 'dashboard.php']);
     } else {
@@ -82,8 +56,8 @@ if ($action === 'register') {
 
     $today = date('Y-m-d');
     $hash = password_hash($password, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role, streak_days, last_active_date) VALUES (?, ?, ?, 'student', 1, ?)");
-    $stmt->execute([$name, $email, $hash, $today]);
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role, streak_days, last_active_date) VALUES (?, ?, ?, 'student', 0, NULL)");
+    $stmt->execute([$name, $email, $hash]);
 
     $_SESSION['user_id'] = $pdo->lastInsertId();
     $_SESSION['user_name'] = $name;
@@ -109,7 +83,7 @@ if ($action === 'demo_login') {
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['user_role'] = $user['role'];
 
-        updateStreakOnLogin($pdo, $user['id']);
+        syncUserStreak($pdo, $user['id']);
 
         echo json_encode(['success' => true, 'redirect' => 'dashboard.php']);
     } else {

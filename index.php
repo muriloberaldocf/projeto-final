@@ -56,7 +56,7 @@ if (isset($_SESSION['user_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/dark-mode.css">
+    <link rel="stylesheet" href="assets/css/dark-mode.css?v=<?= time() ?>">
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
@@ -72,7 +72,7 @@ if (isset($_SESSION['user_id'])) {
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-[#d8cef2] py-2.5 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <a href="index.php" class="flex items-center gap-3 group text-decoration-none">
-                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-11 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform">
+                <img src="assets/img/hipogabarito_logo.png?v=5" alt="HipoGabarito Logo" class="hipo-brand-logo h-11 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform">
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#f1eff5] text-[#6842C2] border border-[#d8cef2] uppercase">PRO</span>
             </a>
 
@@ -133,7 +133,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="lg:col-span-5">
                 <div class="bg-white rounded-3xl border-4 border-[#d8cef2] p-7 shadow-2xl space-y-5">
                     <div class="text-center pb-2 border-b border-slate-100 flex flex-col items-center">
-                        <img src="assets/img/hipogabarito_logo.png?v=4" alt="HipoGabarito Logo" class="h-10 mx-auto w-auto object-contain mb-1">
+                        <img src="assets/img/hipogabarito_logo.png?v=5" alt="HipoGabarito Logo" class="hipo-brand-logo h-10 mx-auto w-auto object-contain mb-1">
                         <p class="text-xs font-bold text-slate-400 mb-0">Acesse sua conta para continuar praticando</p>
                     </div>
 
@@ -254,6 +254,7 @@ if (isset($_SESSION['user_id'])) {
             const isDark = html.classList.toggle('dark');
             localStorage.setItem('hipogabarito_theme', isDark ? 'dark' : 'light');
             updateThemeIcon();
+            updateLogos();
         }
         function updateThemeIcon() {
             const icon = document.getElementById('themeIcon');
@@ -261,7 +262,16 @@ if (isset($_SESSION['user_id'])) {
             const isDark = document.documentElement.classList.contains('dark');
             icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
         }
-        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+        function updateLogos() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.querySelectorAll('.hipo-brand-logo, img[src*="hipogabarito_logo"]').forEach(function(img) {
+                img.src = isDark ? 'assets/img/hipogabarito_logo_dark.png?v=5' : 'assets/img/hipogabarito_logo.png?v=5';
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            updateThemeIcon();
+            updateLogos();
+        });
     </script>
 </body>
 </html>

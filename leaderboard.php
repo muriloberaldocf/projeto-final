@@ -172,7 +172,7 @@ require_once __DIR__ . '/includes/header.php';
 
                         const badgeIcon = r.avatar_icon || 'bi-person-circle';
                         const badgeName = BADGE_MAP[badgeIcon] || 'Estudante Padrão';
-                        const isStreakActive = (r.streak_days >= 2);
+                        const isStreakActive = !!r.is_streak_active;
 
                         const actionBtn = isMe ? `
                             <span class="text-[11px] font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-xl">Você</span>

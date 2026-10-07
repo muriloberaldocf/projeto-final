@@ -67,16 +67,13 @@ try {
     }
 
     // 3. Notificação de Ofensiva (Streak)
-    $stmtUser = $pdo->prepare("SELECT streak_days, xp, level FROM users WHERE id = ?");
-    $stmtUser->execute([$userId]);
-    $userData = $stmtUser->fetch();
-
-    if ($userData && $userData['streak_days'] >= 1) {
+    $streakStatus = syncUserStreak($pdo, $userId);
+    if ($streakStatus['is_active_today'] && $streakStatus['streak_days'] >= 1) {
         $notifications[] = [
             'id' => 'streak_active',
             'type' => 'streak',
             'title' => 'Ofensiva Diária Ativa! 🔥',
-            'message' => "Você está há {$userData['streak_days']} dia(s) consecutivos estudando sem parar! Continue assim.",
+            'message' => "Você está há {$streakStatus['streak_days']} dia(s) consecutivos estudando sem parar! Continue assim.",
             'icon' => 'bi-fire',
             'badge_color' => 'bg-amber-100 text-amber-500',
             'time' => 'Hoje'

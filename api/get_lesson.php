@@ -8,7 +8,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../config/db.php';
 
 $userId = $_SESSION['user_id'] ?? 1;
-$lessonId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$lessonId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT) ?: (int)($_GET['id'] ?? 0);
 $requestedMode = $_GET['mode'] ?? '';
 
 if (!$lessonId) {
@@ -84,8 +84,23 @@ if ($isBossMode) {
     }
 }
 
-// Buscar informações da lição (título, explicação detalhada e vídeo-aula)
-$stmtLInfo = $pdo->prepare("SELECT title, intro_text, video_url, video_title FROM lessons WHERE id = ?");
+// Buscar informações ricas da lição (título, explicação detalhada, vídeo-aula, matéria e unidade)
+$stmtLInfo = $pdo->prepare("
+    SELECT 
+        l.title, 
+        l.intro_text, 
+        l.video_url, 
+        l.video_title, 
+        l.xp_reward, 
+        u.title AS unit_title, 
+        s.name AS subject_name, 
+        s.slug AS subject_slug,
+        s.color_hex AS subject_color
+    FROM lessons l
+    JOIN units u ON l.unit_id = u.id
+    JOIN subjects s ON u.subject_id = s.id
+    WHERE l.id = ?
+");
 $stmtLInfo->execute([$lessonId]);
 $lessonDetails = $stmtLInfo->fetch(PDO::FETCH_ASSOC);
 
@@ -98,5 +113,11 @@ echo json_encode([
     'intro_text' => $lessonDetails['intro_text'] ?? null,
     'video_url' => $lessonDetails['video_url'] ?? null,
     'video_title' => $lessonDetails['video_title'] ?? null,
+    'xp_reward' => (int)($lessonDetails['xp_reward'] ?? 35),
+    'unit_title' => $lessonDetails['unit_title'] ?? 'Unidade de Estudos',
+    'subject_name' => $lessonDetails['subject_name'] ?? 'Geral',
+    'subject_slug' => $lessonDetails['subject_slug'] ?? 'matematica',
+    'subject_color' => $lessonDetails['subject_color'] ?? '#6842c2',
+    'total_questions' => count($questions),
     'questions' => $questions
 ]);

@@ -7,9 +7,17 @@ checkAuth();
 
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
+    $streakStatus = syncUserStreak($pdo, $userId);
+
     $stmtUser = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmtUser->execute([$userId]);
     $user = $stmtUser->fetch();
+
+    $userStreakDays = $streakStatus['streak_days'];
+    $isStreakActive = $streakStatus['is_active_today'];
+} else {
+    $userStreakDays = 0;
+    $isStreakActive = false;
 }
 
 $userAvatar = (!empty($user['avatar']) && trim($user['avatar']) !== '') ? $user['avatar'] : 'assets/img/default_avatar.jpg';
@@ -100,7 +108,7 @@ $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b-2 border-slate-200 py-3 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <a href="dashboard.php" class="flex items-center gap-2 group text-decoration-none">
-                <img src="assets/img/hipogabarito_logo.png" alt="HipoGabarito Logo" class="h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
+                <img src="assets/img/hipogabarito_logo.png?v=<?= time() ?>" alt="HipoGabarito Logo" class="hipo-brand-logo h-9 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform">
             </a>
 
             <!-- HUD STATUS DO ALUNO -->
@@ -135,12 +143,23 @@ $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 bg-amber-50 px-4 py-1.5 rounded-2xl border-2 border-amber-300 shadow-[0_2px_0_0_#f59e0b]">
-                    <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <?php if ($isStreakActive): ?>
+                <!-- Ofensiva Acesa (tarefa realizada hoje) -->
+                <div class="flex items-center gap-2 bg-amber-50 px-4 py-1.5 rounded-2xl border-2 border-amber-300 shadow-[0_2px_0_0_#f59e0b]" title="Ofensiva ativa hoje! <?= $userStreakDays ?> dia(s) consecutivo(s)">
+                    <svg class="w-5 h-5 text-amber-500 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
                     </svg>
-                    <span class="font-outfit font-extrabold text-amber-700 text-sm"><?= (int)($user['streak_days'] ?? 1) ?> dias</span>
+                    <span class="font-outfit font-extrabold text-amber-700 text-sm"><?= $userStreakDays ?> dias</span>
                 </div>
+                <?php else: ?>
+                <!-- Ofensiva Apagada (nenhuma tarefa realizada hoje ainda) -->
+                <div class="flex items-center gap-2 bg-slate-100/90 px-4 py-1.5 rounded-2xl border-2 border-slate-200 shadow-[0_2px_0_0_#cbd5e1] opacity-75 hover:opacity-100 transition" title="Complete uma lição ou simulado hoje para acender a sua ofensiva!">
+                    <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-1.048c-2.5 1.6-4.5 4.5-4.5 7.5 0 .285.021.564.062.836A4.99 4.99 0 014 6.5a1 1 0 00-1.92.4C2.5 9.5 4.5 12 7 12c.3 0 .59-.03.873-.087.6.93 1.556 1.6 2.685 1.776A5.002 5.002 0 0015 9c0-3.5-1.5-5.5-2.605-6.447z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-outfit font-extrabold text-slate-500 text-sm"><?= $userStreakDays ?> dias</span>
+                </div>
+                <?php endif; ?>
 
                 <div class="flex items-center gap-2 bg-white px-4 py-1.5 rounded-2xl border-2 border-slate-200 shadow-[0_2px_0_0_#e2e8f0]">
                     <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">

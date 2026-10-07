@@ -67,6 +67,19 @@ try {
         }
     }
 
+    // Garantir tabela de atividade diária
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `user_daily_activity` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `user_id` INT NOT NULL,
+        `activity_date` DATE NOT NULL,
+        `xp_earned` INT DEFAULT 0,
+        `lessons_completed` INT DEFAULT 0,
+        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY `unique_user_date` (`user_id`, `activity_date`),
+        FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     // Autoseed automático desativado para preservar o banco oficial de questões reais dos vestibulares.
     
 } catch (\PDOException $e) {
@@ -121,4 +134,76 @@ function checkAuth() {
 
 function isLoggedIn() {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+}
+
+/**
+ * Sincroniza a Ofensiva Diária (Streak):
+ * - Se o usuário ficou sem concluir tarefas (last_active_date anterior a ontem), a sequência é zerada (0).
+ * - Retorna array com streak_days atualizado e se a sequência está ativa/acesa hoje (last_active_date === hoje).
+ */
+function syncUserStreak($pdo, $userId) {
+    if (!$userId) {
+        return ['streak_days' => 0, 'is_active_today' => false];
+    }
+
+    $stmt = $pdo->prepare("SELECT streak_days, last_active_date FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch();
+    if (!$user) {
+        return ['streak_days' => 0, 'is_active_today' => false];
+    }
+
+    $today = date('Y-m-d');
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    $lastActive = $user['last_active_date'];
+    $streak = (int)($user['streak_days'] ?? 0);
+
+    // Se nunca fez tarefa ou a última tarefa foi antes de ontem, a sequência quebrou e vai para 0
+    if (empty($lastActive) || ($lastActive !== $today && $lastActive !== $yesterday)) {
+        if ($streak !== 0) {
+            $streak = 0;
+            $up = $pdo->prepare("UPDATE users SET streak_days = 0 WHERE id = ?");
+            $up->execute([$userId]);
+        }
+    }
+
+    $isActiveToday = (!empty($lastActive) && $lastActive === $today && $streak > 0);
+
+    return [
+        'streak_days' => $streak,
+        'is_active_today' => $isActiveToday
+    ];
+}
+
+/**
+ * Incrementa a Ofensiva Diária ao concluir uma atividade/tarefa válida (lição ou simulado):
+ * - Se já fez atividade hoje, mantém a sequência atual (já acesa).
+ * - Se a última atividade foi ontem, incrementa a sequência (+1).
+ * - Se a última atividade foi antes de ontem ou nunca, inicia em 1.
+ */
+function recordUserActivityStreak($pdo, $userId) {
+    if (!$userId) return 0;
+
+    $stmt = $pdo->prepare("SELECT streak_days, last_active_date FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch();
+    if (!$user) return 0;
+
+    $today = date('Y-m-d');
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    $lastActive = $user['last_active_date'];
+    $currentStreak = (int)($user['streak_days'] ?? 0);
+
+    if ($lastActive === $today && $currentStreak > 0) {
+        $newStreak = $currentStreak;
+    } else if ($lastActive === $yesterday && $currentStreak > 0) {
+        $newStreak = $currentStreak + 1;
+    } else {
+        $newStreak = 1;
+    }
+
+    $up = $pdo->prepare("UPDATE users SET streak_days = ?, last_active_date = ? WHERE id = ?");
+    $up->execute([$newStreak, $today, $userId]);
+
+    return $newStreak;
 }

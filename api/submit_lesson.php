@@ -21,8 +21,8 @@ if (!$lessonId) {
     exit;
 }
 
-// REGRA DE APROVAÇÃO (Mínimo de 75% de acertos)
-$passed = ($scorePercent >= 75);
+// REGRA DE APROVAÇÃO (Mínimo de 60% de acertos)
+$passed = ($scorePercent >= 60);
 
 $xpGained = 0;
 $baseXp = 0;
@@ -40,8 +40,10 @@ $currentStreak = (int)($user['streak_days'] ?? 0);
 $newStreak = $currentStreak;
 
 if ($passed) {
-    // 1. Registrar Progresso da Lição (apenas se passou com >= 75%)
-    $stmtProg = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, score_percent) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE score_percent = GREATEST(score_percent, VALUES(score_percent))");
+    $today = date('Y-m-d');
+
+    // 1. Registrar Progresso da Lição (apenas se passou com >= 60%)
+    $stmtProg = $pdo->prepare("INSERT INTO user_progress (user_id, lesson_id, score_percent, completed_at) VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE score_percent = GREATEST(score_percent, VALUES(score_percent)), completed_at = NOW()");
     $stmtProg->execute([$userId, $lessonId, $scorePercent]);
 
     // 2. Buscar recompensas da lição
@@ -56,7 +58,7 @@ if ($passed) {
         $accuracyBonus = 25; // Bônus Perfeito
     } else if ($scorePercent >= 80) {
         $accuracyBonus = 15; // Bônus Excelente
-    } else if ($scorePercent >= 75) {
+    } else if ($scorePercent >= 60) {
         $accuracyBonus = 10; // Bônus de Aprovação
     }
 
@@ -67,23 +69,25 @@ if ($passed) {
     $leveledUp = ($newLevel > $oldLevel);
 
     // 4. LÓGICA DA OFENSIVA DIÁRIA (DAILY STREAK)
-    $today = date('Y-m-d');
-    $lastActive = $user['last_active_date'];
-
-    if (empty($lastActive)) {
-        $newStreak = 1;
-    } else if ($lastActive !== $today) {
-        $yesterday = date('Y-m-d', strtotime('-1 day'));
-        if ($lastActive === $yesterday) {
-            $newStreak = max(2, $currentStreak + 1);
-        } else {
-            $newStreak = 1;
-        }
-    }
-
     // Atualizar Usuário no Banco de Dados
-    $stmtUpdate = $pdo->prepare("UPDATE users SET xp = ?, level = ?, streak_days = ?, last_active_date = ? WHERE id = ?");
-    $stmtUpdate->execute([$newXp, $newLevel, $newStreak, $today, $userId]);
+    $stmtUpdate = $pdo->prepare("UPDATE users SET xp = ?, level = ? WHERE id = ?");
+    $stmtUpdate->execute([$newXp, $newLevel, $userId]);
+
+    $newStreak = recordUserActivityStreak($pdo, $userId);
+
+    // 5. REGISTRAR ATIVIDADE DIÁRIA REAL (Meta Diária de XP e Desafio de Lição Concluída)
+    try {
+        $stmtDaily = $pdo->prepare("
+            INSERT INTO user_daily_activity (user_id, activity_date, xp_earned, lessons_completed)
+            VALUES (?, ?, ?, 1)
+            ON DUPLICATE KEY UPDATE
+                xp_earned = xp_earned + VALUES(xp_earned),
+                lessons_completed = lessons_completed + 1
+        ");
+        $stmtDaily->execute([$userId, $today, $xpGained]);
+    } catch (Exception $e) {
+        // Fallback silencioso
+    }
 } else {
     $newXp = $oldXp;
     $newLevel = $oldLevel;

@@ -483,18 +483,30 @@ body.lesson-page {
 }
 
 .drawer-content {
-    max-width: 860px;
+    max-width: 980px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
-@media (min-width: 640px) {
-    .drawer-content {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+.drawer-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+}
+
+@media (max-width: 575.98px) {
+    .drawer-header-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .drawer-header-row #btnContinue {
+        width: 100%;
     }
 }
 
@@ -502,15 +514,684 @@ body.lesson-page {
     font-family: 'Outfit', sans-serif;
     font-size: 1.25rem;
     font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 0;
 }
 
 .explanation-box {
-    font-size: 0.925rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #1e293b;
+    padding: 18px 20px;
+    border-radius: 1.25rem;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    max-height: 52vh;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.exp-header-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+
+.exp-header-pill.success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1.5px solid #a7f3d0;
+}
+
+.exp-header-pill.error {
+    background-color: #fff1f2;
+    color: #9f1239;
+    border: 1.5px solid #fecdd3;
+}
+
+.exp-step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+.exp-step-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 18px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.exp-step-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.exp-step-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.exp-step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.785rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.exp-step-content {
+    width: 100%;
+    font-size: 0.975rem;
+    line-height: 1.65;
+    word-break: break-word;
+}
+
+/* 1. Cálculo & Resolução Matemática */
+.exp-step-calc {
+    background: #f0f7ff;
+    border-color: #bfdbfe;
+}
+
+.exp-step-calc .exp-step-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.exp-step-calc .exp-step-content {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1rem;
     font-weight: 600;
-    line-height: 1.55;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 12px 16px;
+    color: #1e3a8a;
+    letter-spacing: 0.015em;
+}
+
+/* 2. Análise Teórica & Conceitual */
+.exp-step-concept {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.exp-step-concept .exp-step-badge {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.exp-step-concept .exp-step-content {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* 3. Conclusão & Resposta Final */
+.exp-step-conclusion {
+    background: #f0fdf4;
+    border-color: #86efac;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+}
+
+.exp-step-conclusion .exp-step-badge {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.exp-step-conclusion .exp-step-content {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #14532d;
+}
+
+/* 4. Gabarito Oficial (Destaque Provas e ENEM) */
+.exp-step-official {
+    background: #fefce8;
+    border-color: #fde047;
+}
+
+.exp-step-official .exp-step-badge {
+    background: #fef08a;
+    color: #854d0e;
+    border: 1px solid #facc15;
+}
+
+.exp-step-official .exp-step-content {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #713f12;
+}
+
+/* 5. Diagnóstico de Erro (Onde o Usuário Errou com base na resposta) */
+.exp-step-mistake {
+    background: linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%);
+    border: 2px solid #fed7aa;
+    border-left: 6px solid #f97316;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.08);
+}
+
+.exp-step-mistake .exp-step-badge {
+    background: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fdba74;
+    font-size: 0.82rem;
+}
+
+.exp-step-badge-sub {
+    font-size: 0.825rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.02em;
+}
+
+.exp-mistake-comparison {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1.5px dashed #fed7aa;
+}
+
+.exp-mistake-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+.exp-mistake-tag.user-pick {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1.5px solid #fca5a5;
+}
+
+.exp-mistake-tag.correct-pick {
+    background: #dcfce7;
+    color: #166534;
+    border: 1.5px solid #86efac;
+}
+
+.exp-mistake-explanation {
+    font-size: 0.985rem;
+    line-height: 1.65;
+    color: #431407;
+    font-weight: 500;
+}
+
+.exp-mistake-explanation code {
+    background: #fed7aa;
+    color: #7c2d12;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+/* ============================================================
+   TELA DEDICADA DE TEORIA & EXPLICAÇÕES (PRÉ-LIÇÃO)
+   Design Gamificado, Tipografia de Alto Destaque & Cards 3D
+   ============================================================ */
+
+.theory-screen {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 24px 20px 140px 20px;
+    animation: fadeInTheory 0.3s ease-out;
+}
+
+@keyframes fadeInTheory {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero Header da Teoria */
+.theory-hero-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f6fc 100%);
+    border: 2px solid #d8cef2;
+    border-radius: 1.75rem;
+    box-shadow: 0 6px 0 0 #c4b5fd, 0 10px 25px -5px rgba(104, 66, 194, 0.08);
+    padding: 28px 32px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.theory-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #6842C2 0%, #a855f7 50%, #06b6d4 100%);
+}
+
+.theory-subject-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: #f1eff5;
+    color: #6842C2;
+    border: 1.5px solid #d8cef2;
+    margin-bottom: 12px;
+}
+
+.theory-lesson-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #17151C;
+    line-height: 1.25;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.theory-unit-subtitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 18px;
+}
+
+.theory-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.theory-meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.825rem;
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+    box-shadow: 0 2px 0 0 #e2e8f0;
+}
+
+.theory-meta-badge.xp-badge {
+    background: #f5f3ff;
+    border-color: #ddd6fe;
+    color: #6d28d9;
+}
+
+.theory-meta-badge.time-badge {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #15803d;
+}
+
+.theory-meta-badge.todamateria-badge {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #047857;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.theory-meta-badge.todamateria-badge:hover {
+    background: #059669;
+    color: #ffffff;
+    border-color: #047857;
+    transform: translateY(-1px);
+}
+
+/* Grade de Cards da Teoria */
+.theory-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Card Base de Seção da Teoria */
+.theory-card {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 0 0 #e2e8f0;
+    padding: 24px 28px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theory-card:hover {
+    box-shadow: 0 6px 0 0 #cbd5e1;
+    transform: translateY(-2px);
+}
+
+.theory-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.theory-card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+}
+
+.theory-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0;
+    color: #0f172a;
+    letter-spacing: -0.3px;
+}
+
+.theory-card-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #334155;
+    font-weight: 500;
+}
+
+.theory-card-body strong,
+.theory-card-body b {
+    color: #0f172a;
+    font-weight: 800;
+}
+
+/* Card 1: Definição / O que é */
+.theory-card.card-definition {
+    border-color: #d8cef2;
+    background: linear-gradient(180deg, #ffffff 0%, #faf8fe 100%);
+    box-shadow: 0 4px 0 0 #d8cef2;
+}
+.theory-card.card-definition .theory-card-icon {
+    background: #f3effc;
+    color: #6842c2;
+    border: 1.5px solid #d8cef2;
+}
+
+/* Card 2: Conceitos Fundamentais */
+.theory-card.card-concepts {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 0 0 #c7d2fe;
+}
+.theory-card.card-concepts .theory-card-icon {
+    background: #eef2ff;
+    color: #4f46e5;
+    border: 1.5px solid #c7d2fe;
+}
+
+/* Itens em Lista / Bullets da Teoria */
+.theory-bullet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.theory-bullet-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 14px 18px;
+    font-size: 1.025rem;
+    line-height: 1.65;
+    color: #334155;
+}
+
+.theory-bullet-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    color: #4338ca;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* Card 3: Fórmulas Essenciais / Passo a Passo */
+.theory-card.card-formulas {
+    border-color: #bae6fd;
+    background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+    box-shadow: 0 4px 0 0 #bae6fd;
+}
+.theory-card.card-formulas .theory-card-icon {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1.5px solid #bae6fd;
+}
+
+.theory-formula-block {
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 1rem;
+    padding: 16px 20px;
+    font-family: 'Outfit', monospace;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 2px solid #334155;
+    box-shadow: 0 4px 0 0 #1e293b;
+    margin: 8px 0;
+}
+
+.theory-formula-pill {
+    display: block;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-left: 5px solid #0284c7;
     border-radius: 0.85rem;
-    border: 1.5px solid rgba(0, 0, 0, 0.06);
+    padding: 12px 16px;
+    font-family: 'Outfit', monospace;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #0369a1;
+    margin-bottom: 10px;
+}
+
+/* Card 4: Exemplo Prático */
+.theory-card.card-example {
+    border-color: #cbd5e1;
+    background: #ffffff;
+    box-shadow: 0 4px 0 0 #cbd5e1;
+}
+.theory-card.card-example .theory-card-icon {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1.5px solid #cbd5e1;
+}
+.theory-example-content {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 18px 20px;
+    font-size: 1.025rem;
+    line-height: 1.7;
+}
+
+/* Card 5: Pegadinhas de Vestibular */
+.theory-card.card-traps {
+    border: 2px solid #fecdd3;
+    background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%);
+    box-shadow: 0 4px 0 0 #fda4af;
+}
+.theory-card.card-traps .theory-card-header {
+    border-bottom-color: #fee2e2;
+}
+.theory-card.card-traps .theory-card-icon {
+    background: #ffe4e6;
+    color: #e11d48;
+    border: 1.5px solid #fecdd3;
+}
+.theory-card.card-traps .theory-card-title {
+    color: #9f1239;
+}
+.theory-trap-item {
+    background: #fff1f2;
+    border: 1.5px solid #fecdd3;
+    border-left: 4px solid #e11d48;
+    border-radius: 0.85rem;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    color: #881337;
+    font-size: 1.025rem;
+    line-height: 1.65;
+}
+
+/* Card 6: Dica de Ouro */
+.theory-card.card-golden {
+    border: 2.5px solid #fde68a;
+    background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+    box-shadow: 0 5px 0 0 #fcd34d, 0 10px 20px -5px rgba(245, 158, 11, 0.15);
+}
+.theory-card.card-golden .theory-card-header {
+    border-bottom-color: #fef3c7;
+}
+.theory-card.card-golden .theory-card-icon {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1.5px solid #fde68a;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+}
+.theory-card.card-golden .theory-card-title {
+    color: #92400e;
+}
+.theory-golden-content {
+    background: #fffbeb;
+    border: 1.5px solid #fde68a;
+    border-radius: 1rem;
+    padding: 18px 22px;
+    color: #78350f;
+    font-weight: 600;
+    font-size: 1.075rem;
+    line-height: 1.7;
+}
+
+/* Sticky Action Bar no Rodapé da Teoria */
+.theory-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border-top: 2px solid #e2e8f0;
+    padding: 16px 20px;
+    z-index: 45;
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.theory-bottom-bar-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.btn-start-exercises {
+    background-color: var(--brand-primary);
+    color: #ffffff !important;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    padding: 14px 32px;
+    border-radius: 1.15rem;
+    box-shadow: 0 5px 0 0 var(--brand-primary-dark);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+
+.btn-start-exercises:hover {
+    background-color: var(--brand-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 0 var(--brand-primary-dark);
+}
+
+.btn-start-exercises:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 0 var(--brand-primary-dark);
+}
+
+/* Modal de Revisão da Teoria durante o Quiz */
+.theory-modal-dialog {
+    max-width: 850px;
+}
+
+.theory-modal-content {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 1.75rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.theory-modal-header {
+    background: #ffffff;
+    border-bottom: 2px solid #e2e8f0;
+    border-radius: 1.75rem 1.75rem 0 0;
+    padding: 20px 24px;
+}
+
+.theory-modal-body {
+    padding: 24px;
+    max-height: 75vh;
+    overflow-y: auto;
 }

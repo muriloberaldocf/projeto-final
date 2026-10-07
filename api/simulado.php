@@ -142,6 +142,22 @@ try {
         $stmtLevel = $pdo->prepare("UPDATE users SET level = ? WHERE id = ?");
         $stmtLevel->execute([$newLevel, $userId]);
 
+        // Registrar XP na atividade diária
+        try {
+            $stmtDaily = $pdo->prepare("
+                INSERT INTO user_daily_activity (user_id, activity_date, xp_earned, lessons_completed)
+                VALUES (?, CURDATE(), ?, 0)
+                ON DUPLICATE KEY UPDATE
+                    xp_earned = xp_earned + VALUES(xp_earned)
+            ");
+            $stmtDaily->execute([$userId, $xpGained]);
+        } catch (Exception $e) {
+            // Ignora se der erro
+        }
+
+        // Atualizar streak diária com a conclusão do simulado
+        recordUserActivityStreak($pdo, $userId);
+
         $pdo->commit();
 
         // Remover dificuldades com 0 questões do breakdown

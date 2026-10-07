@@ -1,16 +1,14 @@
 /**
- * Dark Mode Stylesheet
+ * Dark Mode Stylesheet — HipoGabarito
  * 
- * Provides dark mode overrides for Tailwind CSS utility classes and custom components.
- * Activated by adding the 'dark' class to the <html> element.
- * 
- * Design Philosophy:
- * - Background base: #0f172a (slate-900)
- * - Card/surface bg: #1e293b (slate-800)
- * - Elevated surface: #334155 (slate-700)
- * - Border color: #475569 (slate-600)
- * - Primary text: #f1f5f9 (slate-100)
- * - Secondary text: #94a3b8 (slate-400)
+ * Design Moderno, Suave e Equilibrado (Dimmed Slate/Navy):
+ * - Fundo Global: #181f2c (macio, confortável para os olhos, sem escuridão excessiva de breu)
+ * - Cards & Superfícies: #253147 (elevado, nítido e distinto do fundo)
+ * - Subcards & Insets: #1d2535 (reentrâncias com ótimo contraste interno)
+ * - Bordas: #384660 e #445474 (suaves e definidas)
+ * - Títulos: #ffffff (branco puro e nítido)
+ * - Texto Principal: #e2e8f0 (alta legibilidade)
+ * - Texto Secundário: #94a3b8 (ardósia suave e legível)
  */
 
 /* ==========================================================================
@@ -19,10 +17,9 @@
 html.dark *,
 html.dark *::before,
 html.dark *::after {
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.15s ease, box-shadow 0.3s ease;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease, box-shadow 0.25s ease;
 }
 
-/* Disable transition on page load to prevent flash */
 html.no-transition *,
 html.no-transition *::before,
 html.no-transition *::after {
@@ -33,59 +30,92 @@ html.no-transition *::after {
    2. ROOT VARIABLES
    ========================================================================== */
 html.dark {
-    --bg-main: #0f172a;
-    --card-bg: #1e293b;
-    --border-color: #475569;
-    --text-primary: #f1f5f9;
-    --brand-primary-soft: rgba(99, 102, 241, 0.15);
+    --bg-main: #181f2c;
+    --card-bg: #253147;
+    --card-elevated: #2c3852;
+    --card-inset: #1d2535;
+    --border-color: #384660;
+    --border-light: #445474;
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --brand-primary-soft: rgba(99, 102, 241, 0.2);
 }
 
 /* ==========================================================================
    3. GLOBAL BODY & HTML
    ========================================================================== */
 html.dark {
-    background-color: #0f172a;
+    background-color: #181f2c !important;
 }
+
 html.dark body {
-    background-color: #0f172a;
-    color: #f1f5f9;
+    background-color: #181f2c !important;
+    color: #e2e8f0 !important;
 }
 
 /* ==========================================================================
    4. TAILWIND BACKGROUND UTILITY OVERRIDES
    ========================================================================== */
 html.dark .bg-white {
-    background-color: #1e293b !important;
+    background-color: #253147 !important;
 }
+
 html.dark .bg-white\/95 {
-    background-color: rgba(30, 41, 59, 0.95) !important;
+    background-color: rgba(37, 49, 71, 0.95) !important;
 }
+
 html.dark .bg-slate-50 {
-    background-color: #1e293b !important;
+    background-color: #1d2535 !important;
 }
+
 html.dark .bg-slate-100 {
-    background-color: #334155 !important;
+    background-color: #2c3852 !important;
 }
+
 html.dark .bg-slate-200 {
-    background-color: #475569 !important;
+    background-color: #384660 !important;
 }
-html.dark .bg-\[\#F1EFF5\] {
-    background-color: #0f172a !important;
+
+html.dark .bg-\[\#F1EFF5\],
+html.dark .bg-\[\#f1eff5\] {
+    background-color: #181f2c !important;
 }
+
 html.dark .bg-indigo-50 {
-    background-color: rgba(99, 102, 241, 0.15) !important;
+    background-color: rgba(99, 102, 241, 0.2) !important;
 }
+
 html.dark .bg-amber-50 {
-    background-color: rgba(245, 158, 11, 0.15) !important;
+    background-color: rgba(245, 158, 11, 0.2) !important;
 }
+
 html.dark .bg-emerald-50 {
-    background-color: rgba(16, 185, 129, 0.15) !important;
+    background-color: rgba(16, 185, 129, 0.2) !important;
 }
+
 html.dark .bg-rose-50 {
-    background-color: rgba(244, 63, 94, 0.12) !important;
+    background-color: rgba(244, 63, 94, 0.18) !important;
 }
+
 html.dark .bg-slate-50\/80 {
-    background-color: rgba(30, 41, 59, 0.8) !important;
+    background-color: rgba(29, 37, 53, 0.85) !important;
+}
+
+html.dark .bg-indigo-100 {
+    background-color: rgba(99, 102, 241, 0.25) !important;
+}
+
+html.dark .bg-emerald-100 {
+    background-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+html.dark .bg-rose-100 {
+    background-color: rgba(244, 63, 94, 0.2) !important;
+}
+
+html.dark .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.25) !important;
 }
 
 /* ==========================================================================
@@ -94,347 +124,654 @@ html.dark .bg-slate-50\/80 {
 html.dark .text-slate-900,
 html.dark .text-slate-800,
 html.dark .text-\[\#17151C\] {
-    color: #f1f5f9 !important;
+    color: #ffffff !important;
 }
+
 html.dark .text-slate-700 {
+    color: #e2e8f0 !important;
+}
+
+html.dark .text-slate-600 {
     color: #cbd5e1 !important;
 }
-html.dark .text-slate-600 {
-    color: #94a3b8 !important;
-}
+
 html.dark .text-slate-500 {
     color: #94a3b8 !important;
 }
+
 html.dark .text-slate-400 {
-    color: #64748b !important;
+    color: #8391a7 !important;
 }
 
 /* ==========================================================================
-   6. TAILWIND BORDER UTILITY OVERRIDES
+   6. TAILWIND BORDER & SHADOW OVERRIDES
    ========================================================================== */
 html.dark .border-slate-200,
 html.dark .border-slate-100,
 html.dark .border-slate-300 {
-    border-color: #475569 !important;
+    border-color: #384660 !important;
 }
+
 html.dark .border-2.border-slate-200 {
-    border-color: #475569 !important;
+    border-color: #384660 !important;
 }
+
 html.dark .border-amber-300 {
-    border-color: rgba(245, 158, 11, 0.4) !important;
+    border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+html.dark .border-indigo-200 {
+    border-color: rgba(99, 102, 241, 0.4) !important;
+}
+
+html.dark .border-emerald-200 {
+    border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+html.dark .shadow-\[0_2px_0_0_\#e2e8f0\],
+html.dark .shadow-\[0_3px_0_0_\#e2e8f0\],
+html.dark .shadow-\[0_4px_0_0_\#e2e8f0\],
+html.dark .shadow-\[0_4px_0_0_\#d8cef2\] {
+    box-shadow: 0 3px 0 0 #1b2333, 0 6px 16px rgba(0, 0, 0, 0.22) !important;
 }
 
 /* ==========================================================================
-   7. FORM INPUTS
+   7. FORM INPUTS & INTERACTIVE ELEMENTS
    ========================================================================== */
 html.dark input,
 html.dark select,
 html.dark textarea {
-    background-color: #0f172a;
-    color: #f1f5f9;
-    border-color: #475569;
+    background-color: #1d2535 !important;
+    color: #ffffff !important;
+    border-color: #384660 !important;
 }
+
 html.dark input::placeholder,
 html.dark select::placeholder,
 html.dark textarea::placeholder {
-    color: #64748b;
+    color: #8391a7 !important;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
 }
 
 /* ==========================================================================
    8. SCROLLBAR & SELECTION
    ========================================================================== */
 html.dark ::-webkit-scrollbar-track {
-    background: #1e293b;
+    background: #181f2c;
 }
+
 html.dark ::-webkit-scrollbar-thumb {
-    background: #475569;
+    background: #384660;
+    border-radius: 4px;
 }
+
 html.dark ::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
+    background: #4e5e7e;
 }
 
 html.dark ::selection {
-    background: #6842C2;
-    color: white;
+    background: #6366f1;
+    color: #ffffff;
 }
 
 /* ==========================================================================
-   9. COMPONENT OVERRIDES
+   9. HEADER, NAVBAR & HUD SUPERIOR
    ========================================================================== */
-
-/* Top Header */
+html.dark .duo-navbar,
 html.dark header.sticky {
-    background: rgba(15, 23, 42, 0.95);
-    border-color: #334155;
+    background-color: rgba(27, 35, 50, 0.96) !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(12px);
 }
 
-/* Cards */
+html.dark .duo-brand-title {
+    color: #a5b4fc !important;
+}
+
+html.dark .duo-stat-pill {
+    background-color: #27344a !important;
+    border-color: #3e4e6d !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 2px 0 0 #1b2333 !important;
+}
+
+html.dark .duo-stat-pill:hover {
+    background-color: #31405b !important;
+    border-color: #4b5e82 !important;
+}
+
+html.dark .theme-toggle-btn {
+    background: #27344a !important;
+    border-color: #3e4e6d !important;
+    box-shadow: 0 2px 0 0 #1b2333 !important;
+    color: #fbbf24 !important;
+}
+
+html.dark .theme-toggle-btn:hover {
+    background: #31405b !important;
+    border-color: #4b5e82 !important;
+    color: #fde68a !important;
+}
+
+html.dark #notifBellBtn {
+    background-color: #27344a !important;
+    border-color: #3e4e6d !important;
+    color: #cbd5e1 !important;
+    box-shadow: 0 2px 0 0 #1b2333 !important;
+}
+
+html.dark #notifBellBtn:hover {
+    background-color: #31405b !important;
+    color: #a5b4fc !important;
+}
+
+html.dark .bg-slate-100\/90 {
+    background-color: #27344a !important;
+    border-color: #3e4e6d !important;
+}
+
+/* ============================================================
+   10. ABAS DE SELEÇÃO DE MATÉRIAS (DASHBOARD)
+   ============================================================ */
+html.dark #subjectSelector a.bg-white {
+    background-color: #253147 !important;
+    color: #cbd5e1 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 2px 0 0 #1b2333 !important;
+}
+
+html.dark #subjectSelector a.bg-white:hover {
+    background-color: #2e3c55 !important;
+    color: #ffffff !important;
+    border-color: #4a5b7c !important;
+}
+
+html.dark #subjectSelector a.bg-indigo-600 {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+    border-color: #4f46e5 !important;
+    box-shadow: 0 3px 0 0 #3730a3 !important;
+}
+
+/* ==========================================================================
+   11. SIDEBAR LATERAL & PERFIL DO USUÁRIO
+   ========================================================================== */
+html.dark #mainSidebar > div {
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 0 0 #1b2333, 0 8px 22px rgba(0, 0, 0, 0.22) !important;
+}
+
+html.dark .sidebar-user-card {
+    background-color: #1d2535 !important;
+    border-color: #333f54 !important;
+}
+
+html.dark .sidebar-user-card h3,
+html.dark .sidebar-user-card .font-extrabold {
+    color: #ffffff !important;
+}
+
+html.dark #mainSidebar nav a:not([class*='bg-indigo-600']) {
+    color: #cbd5e1 !important;
+}
+
+html.dark #mainSidebar nav a:not([class*='bg-indigo-600']):hover {
+    background-color: #2e3c55 !important;
+    color: #ffffff !important;
+}
+
+html.dark #mainSidebar .border-t {
+    border-color: #384660 !important;
+}
+
+/* ==========================================================================
+   12. WIDGETS DA DIREITA (META DIÁRIA & DESAFIOS)
+   ========================================================================== */
+html.dark aside .bg-white {
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 0 0 #1b2333, 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.dark aside .bg-slate-50 {
+    background-color: #1d2535 !important;
+    border-color: #333f54 !important;
+}
+
+html.dark aside .bg-slate-50:hover {
+    background-color: #222c3f !important;
+}
+
+html.dark aside .w-full.h-2\.5.bg-slate-100 {
+    background-color: #1d2535 !important;
+    border-color: #333f54 !important;
+}
+
+/* ==========================================================================
+   13. BANNERS DA TRILHA & MAPA DE FASES
+   ========================================================================== */
+html.dark .bg-gradient-to-r.from-\[\#6842C2\] {
+    background: linear-gradient(135deg, #5b3ba8 0%, #46288c 100%) !important;
+    border-color: #7c58d4 !important;
+    box-shadow: 0 4px 0 0 #2c185a, 0 8px 24px rgba(91, 59, 168, 0.3) !important;
+}
+
+html.dark .duo-unit-banner {
+    border-color: #7c58d4 !important;
+    box-shadow: 0 6px 0 0 #2c185a, 0 10px 24px rgba(79, 70, 229, 0.25) !important;
+}
+
+html.dark .duo-unit-banner.cyan-theme {
+    border-color: #0891b2 !important;
+    box-shadow: 0 6px 0 0 #164e63, 0 10px 24px rgba(6, 182, 212, 0.25) !important;
+}
+
+html.dark .duo-unit-banner.emerald-theme {
+    border-color: #059669 !important;
+    box-shadow: 0 6px 0 0 #064e3b, 0 10px 24px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Nós bloqueados da trilha */
+html.dark .duo-trail-node.locked .duo-trail-btn {
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 0 0 #1b2333 !important;
+    color: #8391a7 !important;
+}
+
+/* Nós da trilha e anel de borda */
+html.dark .border-4.border-white {
+    border-color: #181f2c !important;
+}
+
+/* Linha pontilhada cinza da trilha em SVG */
+html.dark svg path[stroke="#cbd5e1"] {
+    stroke: #384660 !important;
+}
+
+/* Cards gerais 3D */
 html.dark .card-3d,
 html.dark .card-aprova {
-    background-color: #1e293b;
-    border-color: #475569;
-    box-shadow: 0 4px 0 0 #334155;
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 0 0 #1b2333, 0 8px 20px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Buttons */
 html.dark .btn-aprova-light {
-    background-color: #334155;
-    color: #cbd5e1;
-    border-color: #475569;
-    box-shadow: 0 3px 0 0 #1e293b;
+    background-color: #2c3852 !important;
+    color: #e2e8f0 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 3px 0 0 #1b2333 !important;
 }
+
 html.dark .btn-aprova-light:hover {
-    background-color: #475569;
-}
-
-/* Notification Dropdown */
-html.dark #notifDropdown {
-    background: #1e293b;
-    border-color: #475569;
-}
-
-/* Sidebar */
-html.dark #mainSidebar > div {
-    background-color: #1e293b;
-    border-color: #475569;
-    box-shadow: 0 4px 0 0 #334155;
-}
-html.dark .sidebar-user-card {
-    background-color: #0f172a;
-    border-color: #334155;
-}
-html.dark #mainSidebar nav a:not([class*='bg-indigo-600']) {
-    color: #94a3b8;
-}
-html.dark #mainSidebar nav a:not([class*='bg-indigo-600']):hover {
-    background-color: #334155;
-    color: #f1f5f9;
-}
-html.dark #mainSidebar .border-t {
-    border-color: #334155;
-}
-
-/* SweetAlert2 */
-html.dark .swal2-popup {
-    background: #1e293b;
-    color: #f1f5f9;
-    border: 1px solid #475569;
-}
-html.dark .swal2-title {
-    color: #f1f5f9;
-}
-html.dark .swal2-html-container {
-    color: #94a3b8;
-}
-
-/* Theme Toggle Button */
-.theme-toggle-btn {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    border-radius: 1rem;
-    border: 2px solid #e2e8f0;
-    background: #ffffff;
-    box-shadow: 0 2px 0 0 #e2e8f0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    color: #64748b;
-    font-size: 1.1rem;
-    padding: 0;
-}
-.theme-toggle-btn:hover {
-    background: #f8fafc;
-    color: #f59e0b;
-}
-html.dark .theme-toggle-btn {
-    background: #334155;
-    border-color: #475569;
-    box-shadow: 0 2px 0 0 #1e293b;
-    color: #fbbf24;
-}
-html.dark .theme-toggle-btn:hover {
-    background: #475569;
-    color: #fde68a;
-}
-
-/* Dashboard-specific: Duolingo trail */
-html.dark .unit-banner-aprova {
-    border-color: #475569;
-}
-html.dark .trail-node-btn {
-    border-color: #475569;
-}
-
-/* Simulado-specific */
-html.dark .simulado-option-card {
-    background-color: #1e293b;
-    border-color: #475569;
-}
-html.dark .simulado-option-card:hover {
-    background-color: #334155;
-    border-color: #6366f1;
-}
-html.dark .simulado-option-card.selected {
-    background-color: rgba(99, 102, 241, 0.15);
-    border-color: #6366f1;
-}
-
-/* Exam selector cards (simulado) */
-html.dark .exam-card {
-    background: #1e293b;
-    border-color: #475569;
-}
-html.dark .exam-card:hover {
-    border-color: #6366f1;
-}
-html.dark .exam-card.selected {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: #6366f1;
+    background-color: #364462 !important;
+    color: #ffffff !important;
 }
 
 /* ==========================================================================
-   10. FOOTER
+   14. MODAIS DO SISTEMA
    ========================================================================== */
-html.dark footer {
-    background-color: #0f172a !important;
-    border-color: #334155 !important;
+html.dark #stageModalCard,
+html.dark #theoryModalCard {
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55) !important;
 }
-html.dark footer a {
-    color: #64748b;
+
+html.dark #stageModalCard .border-b,
+html.dark #theoryModalCard .border-b,
+html.dark #stageModalCard .border-t,
+html.dark #theoryModalCard .border-t {
+    border-color: #384660 !important;
 }
-html.dark footer a:hover {
-    color: #818cf8;
+
+html.dark #notifDropdown {
+    background: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .swal2-popup {
+    background: #253147 !important;
+    color: #ffffff !important;
+    border: 1px solid #384660 !important;
+}
+
+html.dark .swal2-title {
+    color: #ffffff !important;
+}
+
+html.dark .swal2-html-container {
+    color: #cbd5e1 !important;
 }
 
 /* ==========================================================================
-   11. LESSON PAGE (lesson.css overrides)
+   15. TELA DE EXERCÍCIOS / QUIZ (LESSON & SIMULADO)
    ========================================================================== */
 html.dark body.lesson-page {
-    background-color: #0f172a;
+    background-color: #181f2c !important;
 }
+
 html.dark .lesson-header {
-    background: #1e293b;
-    border-color: #475569;
+    background: #253147 !important;
+    border-color: #384660 !important;
 }
+
 html.dark .progress-bar-container {
-    background-color: #334155;
+    background-color: #1d2535 !important;
+    border-color: #333f54 !important;
 }
+
 html.dark .question-container-card {
-    background-color: #1e293b;
-    border-color: #475569;
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 0 0 #1b2333, 0 8px 24px rgba(0, 0, 0, 0.22) !important;
 }
+
+html.dark .question-title-text {
+    color: #ffffff !important;
+}
+
 html.dark .quiz-card-aprova {
-    background-color: #1e293b;
-    border-color: #475569;
+    background-color: #253147 !important;
+    border-color: #3b4964 !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 3px 0 0 #1b2333 !important;
 }
+
 html.dark .quiz-card-aprova:hover {
-    border-color: #6366f1;
-    background-color: #334155;
+    border-color: #818cf8 !important;
+    background-color: #2e3c55 !important;
+    color: #ffffff !important;
 }
+
 html.dark .quiz-card-aprova.selected {
-    background: rgba(99, 102, 241, 0.12);
-    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.22) !important;
+    border-color: #818cf8 !important;
+    color: #ffffff !important;
 }
-html.dark .quiz-card-aprova.correct {
-    background: rgba(16, 185, 129, 0.12);
-    border-color: #10b981;
+
+html.dark .quiz-card-aprova.is-correct {
+    background: rgba(16, 185, 129, 0.22) !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
 }
-html.dark .quiz-card-aprova.wrong {
-    background: rgba(239, 68, 68, 0.12);
-    border-color: #ef4444;
+
+html.dark .quiz-card-aprova.is-wrong {
+    background: rgba(239, 68, 68, 0.22) !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
 }
-html.dark .feedback-bar-aprova {
-    background-color: #1e293b;
-    border-color: #475569;
+
+html.dark .quiz-card-aprova.is-disabled {
+    opacity: 0.65;
+    background-color: #1d2535 !important;
+    border-color: #333f54 !important;
+}
+
+html.dark .feedback-drawer.success {
+    background-color: #13241d !important;
+    border-color: #10b981 !important;
+    color: #a7f3d0 !important;
+}
+
+html.dark .feedback-drawer.error {
+    background-color: #291519 !important;
+    border-color: #ef4444 !important;
+    color: #fecdd3 !important;
+}
+
+html.dark .explanation-box {
+    background: #1d2535 !important;
+    border-color: #384660 !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Cards das Etapas da Explicação */
+html.dark .exp-step-card {
+    background: #253147 !important;
+    border-color: #384660 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark .exp-step-card:hover {
+    border-color: #4a5c7e !important;
+    background: #2a3750 !important;
+}
+
+html.dark .exp-step-calc {
+    background: #17273d !important;
+    border-color: #1d4ed8 !important;
+}
+
+html.dark .exp-step-calc .exp-step-badge {
+    background: #1e3a8a !important;
+    color: #93c5fd !important;
+    border-color: #2563eb !important;
+}
+
+html.dark .exp-step-calc .exp-step-content {
+    color: #bfdbfe !important;
+}
+
+html.dark .exp-step-concept {
+    background: #222d3f !important;
+    border-color: #384660 !important;
+}
+
+html.dark .exp-step-concept .exp-step-badge {
+    background: #2c3950 !important;
+    color: #cbd5e1 !important;
+    border-color: #3d4f70 !important;
+}
+
+html.dark .exp-step-conclusion {
+    background: #142820 !important;
+    border-color: #059669 !important;
+}
+
+html.dark .exp-step-conclusion .exp-step-badge {
+    background: #064e3b !important;
+    color: #6ee7b7 !important;
+    border-color: #10b981 !important;
+}
+
+html.dark .exp-step-conclusion .exp-step-content {
+    color: #a7f3d0 !important;
+}
+
+html.dark .exp-step-official {
+    background: #2e2612 !important;
+    border-color: #ca8a04 !important;
+}
+
+html.dark .exp-step-official .exp-step-badge {
+    background: #713f12 !important;
+    color: #fef08a !important;
+    border-color: #eab308 !important;
+}
+
+html.dark .exp-step-official .exp-step-content {
+    color: #fef08a !important;
+}
+
+html.dark .exp-step-mistake {
+    background: linear-gradient(135deg, #2f1d18 0%, #291519 100%) !important;
+    border-color: #ea580c !important;
+    border-left-color: #f97316 !important;
+}
+
+html.dark .exp-step-mistake .exp-step-badge {
+    background: #7c2d12 !important;
+    color: #fed7aa !important;
+    border-color: #ea580c !important;
+}
+
+html.dark .exp-mistake-explanation {
+    color: #ffedd5 !important;
+}
+
+html.dark .exp-mistake-explanation code {
+    background: #431407 !important;
+    color: #fdba74 !important;
+}
+
+/* ============================================================
+   16. TELA DEDICADA DE TEORIA (PRÉ-LIÇÃO)
+   ============================================================ */
+html.dark .theory-hero-card {
+    background: linear-gradient(135deg, #253147 0%, #1d2535 100%) !important;
+    border-color: #384660 !important;
+    box-shadow: 0 6px 0 0 #1b2333 !important;
+}
+
+html.dark .theory-lesson-title {
+    color: #ffffff !important;
+}
+
+html.dark .theory-unit-subtitle {
+    color: #cbd5e1 !important;
+}
+
+html.dark .theory-subject-pill {
+    background: rgba(99, 102, 241, 0.25) !important;
+    border-color: #4f46e5 !important;
+    color: #c7d2fe !important;
+}
+
+html.dark .theory-meta-badge {
+    background: #253147 !important;
+    border-color: #384660 !important;
+    color: #cbd5e1 !important;
+    box-shadow: 0 2px 0 0 #1b2333 !important;
+}
+
+html.dark .theory-card {
+    background: #253147 !important;
+    border-color: #384660 !important;
+    box-shadow: 0 4px 0 0 #1b2333 !important;
+}
+
+html.dark .theory-card-title {
+    color: #ffffff !important;
+}
+
+html.dark .theory-card-body {
+    color: #e2e8f0 !important;
+}
+
+html.dark .theory-card-body strong,
+html.dark .theory-card-body b {
+    color: #ffffff !important;
+}
+
+html.dark .theory-card-header {
+    border-bottom-color: #333f54 !important;
+}
+
+html.dark .theory-bullet-item {
+    background: #1d2535 !important;
+    border-color: #333f54 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark .theory-bullet-dot {
+    background: #312e81 !important;
+    color: #c7d2fe !important;
+}
+
+html.dark .theory-formula-pill {
+    background: #1d2535 !important;
+    border-color: #333f54 !important;
+    color: #38bdf8 !important;
+    border-left-color: #0284c7 !important;
+}
+
+html.dark .theory-example-content {
+    background: #1d2535 !important;
+    border-color: #333f54 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark .theory-trap-item {
+    background: #23141a !important;
+    border-color: #881337 !important;
+    border-left-color: #e11d48 !important;
+    color: #fecdd3 !important;
+}
+
+html.dark .theory-golden-content {
+    background: #241a0b !important;
+    border-color: #78350f !important;
+    color: #fef08a !important;
+}
+
+html.dark .theory-bottom-bar {
+    background: rgba(27, 35, 50, 0.96) !important;
+    border-top-color: #384660 !important;
+}
+
+html.dark .theory-modal-content {
+    background: #1d2535 !important;
+    border-color: #384660 !important;
+}
+
+html.dark .theory-modal-header {
+    background: #253147 !important;
+    border-bottom-color: #384660 !important;
 }
 
 /* ==========================================================================
-   12. DASHBOARD PAGE (dashboard.css overrides)
+   17. TABELAS & LEADERBOARD
    ========================================================================== */
-html.dark .duo-navbar {
-    background-color: #0f172a;
-    border-color: #334155;
-}
-html.dark .duo-stat-pill {
-    background-color: #1e293b;
-    border-color: #475569;
-    box-shadow: 0 2px 0 #334155;
-}
-/* Trail node buttons - keep locked nodes dimmer */
-html.dark .duo-trail-node.locked .duo-trail-btn {
-    background-color: #1e293b !important;
-    border-color: #475569 !important;
-    box-shadow: 0 4px 0 0 #334155 !important;
-}
-
-/* ==========================================================================
-   13. INDEX / LOGIN PAGE
-   ========================================================================== */
-html.dark .border-\[\#d8cef2\] {
-    border-color: #475569 !important;
-}
-html.dark .bg-\[\#f1eff5\] {
-    background-color: #0f172a !important;
-}
-html.dark .text-\[\#6842C2\] {
-    color: #818cf8 !important;
-}
-html.dark .bg-\[\#6842C2\] {
-    background-color: #6842C2 !important;
-}
-html.dark .shadow-2xl {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-}
-html.dark .border-4.border-\[\#d8cef2\] {
-    border-color: #475569 !important;
-}
-html.dark .shadow-\[0_4px_0_0_\#d8cef2\] {
-    box-shadow: 0 4px 0 0 #334155 !important;
-}
-html.dark .shadow-\[0_6px_0_0_\#3D256B\] {
-    box-shadow: 0 6px 0 0 #1e1b4b !important;
-}
-html.dark .shadow-\[0_2px_0_0_\#e2e8f0\] {
-    box-shadow: 0 2px 0 0 #334155 !important;
-}
-html.dark .shadow-\[0_4px_0_0_\#e2e8f0\] {
-    box-shadow: 0 4px 0 0 #334155 !important;
-}
-
-/* ==========================================================================
-   14. MISCELLANEOUS OVERRIDES
-   ========================================================================== */
-/* Profile page cards */
-html.dark .bg-gradient-to-br {
-    opacity: 0.9;
-}
-
-/* Leaderboard table rows */
 html.dark tr:hover td {
-    background-color: #334155 !important;
+    background-color: #2c3852 !important;
 }
+
 html.dark table thead th {
-    background-color: #1e293b !important;
-    border-color: #475569 !important;
+    background-color: #253147 !important;
+    border-color: #384660 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark table tbody td {
+    border-color: #333f54 !important;
+}
+
+/* ==========================================================================
+   18. FOOTER
+   ========================================================================== */
+html.dark footer {
+    background-color: #181f2c !important;
+    border-color: #384660 !important;
+}
+
+html.dark footer a {
     color: #94a3b8 !important;
 }
-html.dark table tbody td {
-    border-color: #334155 !important;
+
+html.dark footer a:hover {
+    color: #818cf8 !important;
 }
 
-/* Badge/tag overrides */
-html.dark .bg-indigo-100 {
-    background-color: rgba(99, 102, 241, 0.2) !important;
+/* ==========================================================================
+   19. LOGO ADAPTATIVO (MODO ESCURO)
+   ========================================================================== */
+html.dark .hipo-brand-logo,
+html.dark header img[src*="hipogabarito_logo"],
+html.dark footer img[src*="hipogabarito_logo"],
+html.dark .lesson-header img[src*="hipogabarito_logo"] {
+    content: url("../img/hipogabarito_logo_dark.png?v=5") !important;
 }
-html.dark .bg-emerald-100 {
-    background-color: rgba(16, 185, 129, 0.2) !important;
-}
-html.dark .bg-rose-100 {
-    background-color: rgba(244, 63, 94, 0.15) !important;
-}
-html.dark .bg-amber-100 {
-    background-color: rgba(245, 158, 11, 0.2) !important;
-}
+
+

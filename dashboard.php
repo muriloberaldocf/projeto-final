@@ -2,10 +2,48 @@
 require_once __DIR__ . '/config/db.php';
 checkAuth();
 
+$userId = $_SESSION['user_id'] ?? null;
+$today = date('Y-m-d');
+
+// Buscar progresso diário REAL do usuário
+$dailyXpEarned = 0;
+$dailyLessonsCompleted = 0;
+
+if ($userId) {
+    // 1. Tentar pegar da tabela de atividade diária
+    try {
+        $stmtDaily = $pdo->prepare("SELECT xp_earned, lessons_completed FROM user_daily_activity WHERE user_id = ? AND activity_date = ?");
+        $stmtDaily->execute([$userId, $today]);
+        $dailyActivity = $stmtDaily->fetch();
+        if ($dailyActivity) {
+            $dailyXpEarned = (int)$dailyActivity['xp_earned'];
+            $dailyLessonsCompleted = (int)$dailyActivity['lessons_completed'];
+        }
+    } catch (Exception $e) {}
+
+    // 2. Fallback de lições caso a tabela tenha sido criada hoje
+    if ($dailyLessonsCompleted === 0) {
+        try {
+            $stmtProg = $pdo->prepare("SELECT COUNT(*) FROM user_progress WHERE user_id = ? AND DATE(completed_at) = ?");
+            $stmtProg->execute([$userId, $today]);
+            $progCount = (int)$stmtProg->fetchColumn();
+            if ($progCount > 0) {
+                $dailyLessonsCompleted = $progCount;
+            }
+        } catch (Exception $e) {}
+    }
+}
+
+$dailyGoalTarget = 50;
+$dailyGoalPercent = min(100, round(($dailyXpEarned / $dailyGoalTarget) * 100));
+$isGoalCompleted = ($dailyXpEarned >= $dailyGoalTarget);
+$isLessonCompleted = ($dailyLessonsCompleted >= 1);
+
 $pageTitle = 'Trilha de Aprendizado — HipoGabarito';
 require_once __DIR__ . '/includes/header.php';
 ?>
     <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/lesson.css?v=<?= time() ?>">
     <style>
         /* SCROLLBAR MODERNO */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -59,31 +97,45 @@ require_once __DIR__ . '/includes/header.php';
 
             <!-- SIDEBAR DIREITA -->
             <aside class="lg:col-span-3 sticky top-20 space-y-3.5">
-                <!-- META DIÁRIA -->
+                <!-- META DIÁRIA (50 XP REAL) -->
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-3.5 shadow-[0_3px_0_0_#e2e8f0]">
                     <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-outfit font-extrabold text-slate-900 text-sm">Meta Diária</h4>
-                        <div class="w-7 h-7 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-200">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                            </svg>
+                        <div class="flex items-center gap-1.5">
+                            <h4 class="font-outfit font-extrabold text-slate-900 text-sm mb-0">Meta Diária</h4>
+                            <?php if ($isGoalCompleted): ?>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 border border-emerald-300">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Batida!
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="w-7 h-7 rounded-xl <?= $isGoalCompleted ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-amber-50 text-amber-500 border border-amber-200' ?> flex items-center justify-center">
+                            <?php if ($isGoalCompleted): ?>
+                                <i class="bi bi-trophy-fill text-xs"></i>
+                            <?php else: ?>
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-500 mb-2 font-medium">Conquiste 50 XP hoje para manter sua sequência ativa!</p>
+                    
+                    <p class="text-[11px] text-slate-500 mb-2 font-medium">
+                        <?= $isGoalCompleted ? 'Parabéns! Você alcançou sua meta diária de 50 XP!' : 'Conquiste 50 XP hoje para manter sua ofensiva ativa!' ?>
+                    </p>
 
                     <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-1.5 border border-slate-200">
-                        <div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full transition-all duration-500" style="width: <?= min(100, (($user['xp'] ?? 0) % 50) * 2) ?>%;"></div>
+                        <div class="h-full <?= $isGoalCompleted ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-indigo-500 to-indigo-600' ?> rounded-full transition-all duration-500" style="width: <?= $dailyGoalPercent ?>%;"></div>
                     </div>
                     <div class="flex justify-between items-center text-[11px] font-extrabold font-outfit text-slate-600">
-                        <span>Progresso</span>
-                        <span class="text-indigo-600"><?= (($user['xp'] ?? 0) % 50) ?> / 50 XP</span>
+                        <span>Progresso de Hoje</span>
+                        <span class="<?= $isGoalCompleted ? 'text-emerald-600 font-extrabold' : 'text-indigo-600' ?>"><?= $dailyXpEarned ?> / <?= $dailyGoalTarget ?> XP</span>
                     </div>
                 </div>
 
-                <!-- DESAFIOS DO DIA -->
+                <!-- DESAFIOS DO DIA (REAL) -->
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-3.5 shadow-[0_3px_0_0_#e2e8f0]">
                     <div class="flex items-center justify-between mb-2.5">
-                        <h4 class="font-outfit font-extrabold text-slate-900 text-sm">Desafios Diários</h4>
+                        <h4 class="font-outfit font-extrabold text-slate-900 text-sm mb-0">Desafios Diários</h4>
                         <div class="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-200">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
@@ -92,27 +144,59 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="space-y-2">
-                        <div class="flex items-center gap-2.5 p-2 bg-slate-50 rounded-2xl border border-slate-200">
-                            <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                </svg>
+                        <!-- DESAFIO 1: CONCLUIR UMA LIÇÃO POR DIA -->
+                        <div class="flex items-center gap-2.5 p-2 bg-slate-50 rounded-2xl border <?= $isLessonCompleted ? 'border-emerald-300 bg-emerald-50/40' : 'border-slate-200' ?>">
+                            <div class="w-7 h-7 rounded-full <?= $isLessonCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400' ?> flex items-center justify-center flex-shrink-0">
+                                <?php if ($isLessonCompleted): ?>
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                <?php else: ?>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                        <circle cx="12" cy="12" r="9"/>
+                                    </svg>
+                                <?php endif; ?>
                             </div>
-                            <div>
-                                <h5 class="font-outfit font-bold text-xs text-slate-900 mb-0">Conclua 1 Fase</h5>
-                                <span class="text-[10px] font-extrabold text-indigo-600">+10 XP Bônus</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-1">
+                                    <h5 class="font-outfit font-bold text-xs text-slate-900 mb-0 truncate">Concluir 1 Lição</h5>
+                                    <?php if ($isLessonCompleted): ?>
+                                        <span class="text-[10px] font-extrabold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-md shrink-0">Concluído</span>
+                                    <?php else: ?>
+                                        <span class="text-[10px] font-extrabold text-indigo-600 shrink-0">+35 XP</span>
+                                    <?php endif; ?>
+                                </div>
+                                <span class="text-[10px] font-medium <?= $isLessonCompleted ? 'text-emerald-700' : 'text-slate-500' ?> block">
+                                    <?= $dailyLessonsCompleted ?> / 1 lição concluída hoje
+                                </span>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2.5 p-2 bg-slate-50 rounded-2xl border border-slate-200">
-                            <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-                                    <circle cx="12" cy="12" r="9"/>
-                                </svg>
+                        <!-- DESAFIO 2: ALCANÇAR A META DE 50 XP -->
+                        <div class="flex items-center gap-2.5 p-2 bg-slate-50 rounded-2xl border <?= $isGoalCompleted ? 'border-emerald-300 bg-emerald-50/40' : 'border-slate-200' ?>">
+                            <div class="w-7 h-7 rounded-full <?= $isGoalCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400' ?> flex items-center justify-center flex-shrink-0">
+                                <?php if ($isGoalCompleted): ?>
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                <?php else: ?>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                        <circle cx="12" cy="12" r="9"/>
+                                    </svg>
+                                <?php endif; ?>
                             </div>
-                            <div>
-                                <h5 class="font-outfit font-bold text-xs text-slate-900 mb-0">Pontuação Maior que 80%</h5>
-                                <span class="text-[10px] font-extrabold text-amber-600">+20 XP Bônus</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-1">
+                                    <h5 class="font-outfit font-bold text-xs text-slate-900 mb-0 truncate">Bater 50 XP Diários</h5>
+                                    <?php if ($isGoalCompleted): ?>
+                                        <span class="text-[10px] font-extrabold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-md shrink-0">Concluído</span>
+                                    <?php else: ?>
+                                        <span class="text-[10px] font-extrabold text-amber-600 shrink-0">+Ofensiva</span>
+                                    <?php endif; ?>
+                                </div>
+                                <span class="text-[10px] font-medium <?= $isGoalCompleted ? 'text-emerald-700' : 'text-slate-500' ?> block">
+                                    <?= min(50, $dailyXpEarned) ?> / 50 XP acumulados hoje
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -178,21 +262,24 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- MODAL DE TEORIA / LEITURA DO CONTEXTO DA FASE -->
     <div id="theoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl w-full max-w-lg p-6 relative transform scale-95 transition-transform duration-200" id="theoryModalCard">
+        <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl w-full max-w-3xl p-6 sm:p-7 relative transform scale-95 transition-transform duration-200" id="theoryModalCard">
             <button onclick="closeTheoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
             <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-                <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl">
-                    <i class="bi bi-journal-text"></i>
+                <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl shadow-sm border border-indigo-200 flex-shrink-0">
+                    <i class="bi bi-book-half"></i>
                 </div>
                 <div>
-                    <h3 id="theoryModalTitle" class="font-outfit font-extrabold text-slate-900 text-lg leading-tight">Teoria do Conteúdo</h3>
-                    <span class="text-xs text-indigo-600 font-bold">Resumo Prático & Dicas de Estudo</span>
+                    <h3 id="theoryModalTitle" class="font-outfit font-extrabold text-slate-900 text-xl leading-tight">Teoria do Conteúdo</h3>
+                    <span class="text-xs text-indigo-600 font-bold">Guia Teórico Completo & Resumo de Alto Rendimento</span>
                 </div>
             </div>
-            <div id="theoryModalBody" class="text-slate-700 text-xs sm:text-sm leading-relaxed max-h-72 overflow-y-auto pr-1"></div>
-            <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end">
-                <button onclick="closeTheoryModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+            <div id="theoryModalBody" class="text-slate-700 leading-relaxed max-h-[60vh] overflow-y-auto pr-1"></div>
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <button onclick="closeTheoryModal()" class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition">
                     Fechar Leitura
+                </button>
+                <button id="btnStartFromTheoryModal" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+                    <span>Praticar Esta Lição</span> <i class="bi bi-arrow-right"></i>
                 </button>
             </div>
         </div>
@@ -202,6 +289,7 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- JAVASCRIPT DO MAPA E RASTRO CONTÍNUO S-CURVE BEZIER -->
     <script src="assets/js/sound_effects.js"></script>
+    <script src="assets/js/theory_parser.js?v=<?= time() ?>"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         let currentSubject = urlParams.get('subject') || 'matematica';
@@ -488,13 +576,26 @@ require_once __DIR__ . '/includes/header.php';
         function openTheoryModal(lesson) {
             document.getElementById('theoryModalTitle').textContent = lesson.title || 'Teoria do Conteúdo';
             
-            const rawText = lesson.intro_text || `📌 **Resumo Prático:** Neta fase de **${lesson.title}**, revise os conceitos essenciais para garantir um excelente desempenho nas questões!\n\n💡 **Dica:** Preste atenção aos detalhes das fórmulas e grandezas envolvidas.`;
-            const formattedHtml = rawText
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>');
+            const rawText = lesson.intro_text || `📌 **Resumo Prático:** Nesta fase de **${lesson.title}**, revise os conceitos essenciais para garantir um excelente desempenho nas questões!\n\n💡 **Dica:** Preste atenção aos detalhes das fórmulas e grandezas envolvidas.`;
             
-            document.getElementById('theoryModalBody').innerHTML = formattedHtml;
+            if (typeof parseTheoryCardsToHTML === 'function') {
+                document.getElementById('theoryModalBody').innerHTML = parseTheoryCardsToHTML(rawText, lesson);
+            } else {
+                const formattedHtml = rawText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '<br><br>')
+                    .replace(/\n/g, '<br>');
+                document.getElementById('theoryModalBody').innerHTML = formattedHtml;
+            }
+
+            // Botão para iniciar lição direto do modal de teoria
+            const btnStart = document.getElementById('btnStartFromTheoryModal');
+            if (btnStart) {
+                btnStart.onclick = () => {
+                    if (typeof sounds !== 'undefined') sounds.playClick();
+                    window.location.href = `lesson.php?id=${lesson.id}`;
+                };
+            }
 
             const modal = document.getElementById('theoryModal');
             const card = document.getElementById('theoryModalCard');

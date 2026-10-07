@@ -733,7 +733,18 @@ require_once __DIR__ . '/includes/header.php';
                 diffBadgeEl.innerHTML = `<i class="bi ${diffInfo.icon}"></i> ${diffInfo.label}`;
             }
 
-            document.getElementById('qText').innerHTML = q.question_text;
+            let cleanText = (q.question_text || '')
+                .replace(/!\[.*?\]\(.*?\)/gi, '')
+                .replace(/\[(.*?)\]\((?:https?:\/\/.*?)\)/gi, '$1')
+                .replace(/https?:\/\/[^\s\)\"]+/gi, '')
+                .replace(/www\.[^\s\)\"]+/gi, '')
+                .replace(/(?:Disponível em|Acesso em)[\:\.\,\s]*/gi, '')
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+
+            const qTextEl = document.getElementById('qText');
+            qTextEl.textContent = cleanText;
+            qTextEl.style.whiteSpace = 'pre-line';
 
             const optionsContainer = document.getElementById('qOptions');
             optionsContainer.innerHTML = '';
