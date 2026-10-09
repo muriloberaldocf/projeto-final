@@ -67,14 +67,24 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 <span class="sidebar-text truncate">Simulados Cronometrados</span>
             </a>
 
-            <!-- 4. GUIA DE CURSOS & NOTAS -->
+            <!-- 4. REDAÇÃO COM IA (NOVO) -->
+            <?php $isRedacao = ($currentPage === 'redacao.php' || $currentPage === 'redacao_resultado.php'); ?>
+            <a href="redacao.php" title="Corretor de Redação com IA" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isRedacao ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="flex items-center gap-3 truncate">
+                    <i class="bi bi-pen-fill text-lg shrink-0 <?= $isRedacao ? 'text-amber-300' : 'text-purple-600' ?>"></i>
+                    <span class="sidebar-text truncate">Redação com IA</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isRedacao ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-purple-100 text-purple-700' ?>">IA</span>
+            </a>
+
+            <!-- 5. GUIA DE CURSOS & NOTAS -->
             <?php $isCourseGuide = ($currentPage === 'course_guide.php'); ?>
             <a href="course_guide.php" title="Guia de Cursos & Notas" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isCourseGuide ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
                 <i class="bi bi-mortarboard-fill text-lg shrink-0 <?= $isCourseGuide ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
                 <span class="sidebar-text truncate">Guia de Cursos & Notas</span>
             </a>
 
-            <!-- 5. MEU PERFIL -->
+            <!-- 6. MEU PERFIL -->
             <?php $isProfile = ($currentPage === 'profile.php'); ?>
             <a href="profile.php" title="Meu Perfil" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isProfile ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
                 <svg class="w-5 h-5 shrink-0 <?= $isProfile ? 'text-amber-300' : 'text-indigo-600' ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">

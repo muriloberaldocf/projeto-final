@@ -174,9 +174,9 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
         </div>
 
         <!-- DICA DE ATALHO -->
-        <div class="text-muted small mt-2 d-flex align-items-center gap-2">
-            <i class="bi bi-keyboard text-secondary fs-6"></i>
-            <span>Atalho: use as teclas <kbd class="px-1.5 py-0.5 bg-white text-dark border rounded fw-bold shadow-sm">1-5</kbd> ou <kbd class="px-1.5 py-0.5 bg-white text-dark border rounded fw-bold shadow-sm">A-E</kbd> e pressione <kbd class="px-2 py-0.5 bg-white text-dark border rounded fw-bold shadow-sm">Enter ↵</kbd></span>
+        <div class="quiz-shortcut-bar small mt-2 d-flex align-items-center gap-2">
+            <i class="bi bi-keyboard fs-6"></i>
+            <span>Atalho: use as teclas <kbd class="quiz-kbd px-1.5 py-0.5 border rounded fw-bold shadow-sm">1-5</kbd> ou <kbd class="quiz-kbd px-1.5 py-0.5 border rounded fw-bold shadow-sm">A-E</kbd> e pressione <kbd class="quiz-kbd px-2 py-0.5 border rounded fw-bold shadow-sm">Enter ↵</kbd></span>
         </div>
     </main>
 

@@ -166,7 +166,7 @@ require_once __DIR__ . '/includes/header.php';
                         }
 
                         const isMe = r.is_me;
-                        const rowClass = isMe ? 'bg-indigo-50/70 hover:bg-indigo-50 font-bold' : 'hover:bg-slate-50/80';
+                        const rowClass = isMe ? 'rank-row-me bg-indigo-50/70 hover:bg-indigo-50 font-bold' : 'rank-row hover:bg-slate-50/80';
                         const userPhoto = (r.avatar && r.avatar.trim() !== '') ? r.avatar : 'assets/img/default_avatar.jpg';
                         const userFrame = r.avatar_frame || 'frame-indigo';
 
