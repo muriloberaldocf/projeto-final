@@ -189,6 +189,9 @@ require_once __DIR__ . '/includes/header.php';
                                 <button type="button" onclick="filtrarBanca('TODOS')" class="banca-pill active px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-indigo-600 text-white shadow-sm">
                                     Todos (<?= count($temas) ?>)
                                 </button>
+                                <button type="button" onclick="filtrarBanca('REDIGIR')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
+                                    📚 Plataforma Redigir (<?= $temasPorBanca['REDIGIR'] ?? 0 ?>)
+                                </button>
                                 <button type="button" onclick="filtrarBanca('ENEM')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
                                     🟡 ENEM (<?= $temasPorBanca['ENEM'] ?? 0 ?>)
                                 </button>
@@ -203,12 +206,6 @@ require_once __DIR__ . '/includes/header.php';
                                 </button>
                                 <button type="button" onclick="filtrarBanca('UERJ')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
                                     🟣 UERJ (<?= $temasPorBanca['UERJ'] ?? 0 ?>)
-                                </button>
-                                <button type="button" onclick="filtrarBanca('SIMULADO')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    ⚡ SIMULADOS (<?= $temasPorBanca['SIMULADO'] ?? 0 ?>)
-                                </button>
-                                <button type="button" onclick="filtrarBanca('REDIGIR')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    📚 REDIGIR (<?= $temasPorBanca['REDIGIR'] ?? 0 ?>)
                                 </button>
                             </div>
 
@@ -259,7 +256,7 @@ require_once __DIR__ . '/includes/header.php';
                                 'REDIGIR' => 'bg-red-100 text-red-900 border-red-300 dark:bg-red-950/40 dark:text-red-300 dark:border-red-700'
                             ][$bancaUpper] ?? 'bg-indigo-100 text-indigo-900 border-indigo-300';
                             ?>
-                            <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>">
+                            <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col justify-between gap-4 cursor-pointer group" onclick="verPropostaCompleta(<?= $t['id'] ?>)" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>">
                                 <div class="space-y-2.5">
                                     <div class="flex items-center justify-between gap-2">
                                         <div class="flex items-center gap-1.5">
@@ -275,7 +272,7 @@ require_once __DIR__ . '/includes/header.php';
                                         </span>
                                     </div>
 
-                                    <h3 class="font-outfit font-extrabold text-base text-slate-900 dark:text-white leading-snug">
+                                    <h3 class="font-outfit font-extrabold text-base text-slate-900 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                         <?= htmlspecialchars($t['titulo']) ?>
                                     </h3>
 
@@ -284,53 +281,22 @@ require_once __DIR__ . '/includes/header.php';
                                     </p>
                                 </div>
 
-                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2">
-                                    <button type="button" id="btnToggleColetanea-<?= $t['id'] ?>" onclick="toggleColetaneaInline(<?= $t['id'] ?>)" class="btn-coletanea-toggle px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs transition-all flex items-center gap-1.5" title="Ver textos motivadores desta proposta">
-                                        <i class="bi bi-file-text" id="iconColetanea-<?= $t['id'] ?>"></i>
-                                        <span id="txtColetanea-<?= $t['id'] ?>">Ler Coletânea</span>
-                                    </button>
+                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2" onclick="event.stopPropagation()">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="visualizar_pdf.php?id=<?= $t['id'] ?>&download=1" target="_blank" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs transition-all flex items-center gap-1.5 shadow-sm" title="Baixar arquivo da proposta">
+                                            <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i>
+                                            <span>Baixar PDF</span>
+                                        </a>
+                                        <button type="button" onclick="verPropostaCompleta(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs transition-all flex items-center gap-1.5" title="Abrir textos motivadores em tela cheia">
+                                            <i class="bi bi-book-half"></i>
+                                            <span>Ler Proposta</span>
+                                        </button>
+                                    </div>
 
                                     <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-sm transition-all flex items-center gap-1.5">
-                                        <span>Escrever Agora</span>
-                                        <i class="bi bi-arrow-right"></i>
+                                        <span>Escrever</span>
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                </div>
-
-                                <!-- GAVETA INLINE DA COLETÂNEA (EXPANDE DIRETO NO CARD SEM NADA SUMIR DA TELA!) -->
-                                <div id="drawerColetanea-<?= $t['id'] ?>" class="hidden mt-3 pt-3 border-t-2 border-indigo-100 dark:border-indigo-900/40 space-y-3">
-                                    <!-- Cabeçalho da gaveta -->
-                                    <div class="flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-200 dark:border-indigo-900/50">
-                                        <div class="flex items-center gap-2 text-indigo-900 dark:text-indigo-300 font-outfit font-black text-xs">
-                                            <i class="bi bi-book-half text-sm text-indigo-600 dark:text-indigo-400"></i>
-                                            <span>Coletânea Oficial & Orientações</span>
-                                        </div>
-                                        <div class="flex items-center gap-1.5">
-                                            <button type="button" onclick="verPropostaCompleta(<?= $t['id'] ?>)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-indigo-200 dark:border-slate-700 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 text-[11px] font-bold transition flex items-center gap-1" title="Abrir em Janela Cheia">
-                                                <i class="bi bi-arrows-fullscreen text-[10px]"></i>
-                                                <span class="hidden sm:inline">Tela Cheia</span>
-                                            </button>
-                                            <button type="button" onclick="toggleColetaneaInline(<?= $t['id'] ?>)" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs" title="Recolher">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Conteúdo dos textos motivadores com scroll controlado -->
-                                    <div id="conteudoDrawer-<?= $t['id'] ?>" class="max-h-96 overflow-y-auto pr-1 space-y-3 text-xs">
-                                        <!-- Renderizado dinamicamente via JS ao expandir -->
-                                    </div>
-
-                                    <!-- Rodapé da gaveta -->
-                                    <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-700/60">
-                                        <button type="button" onclick="toggleColetaneaInline(<?= $t['id'] ?>)" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-outfit font-bold text-xs flex items-center gap-1">
-                                            <i class="bi bi-chevron-up"></i>
-                                            <span>Recolher</span>
-                                        </button>
-                                        <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-sm flex items-center gap-1.5">
-                                            <span>Redigir Este Tema</span>
-                                            <i class="bi bi-arrow-right"></i>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -384,23 +350,52 @@ require_once __DIR__ . '/includes/header.php';
                             </div>
                         </div>
 
-                        <!-- PAINEL SPLIT: COLETÂNEA DE TEXTOS MOTIVADORES (COLAPSÁVEL OU FIXO) -->
-                        <div id="cardMotivadores" class="bg-indigo-50/50 dark:bg-indigo-950/20 border-2 border-indigo-200 dark:border-indigo-900/50 rounded-2xl p-4 sm:p-5 transition-all">
-                            <div class="flex items-center justify-between gap-3 mb-3 cursor-pointer select-none" onclick="toggleMotivadores()">
-                                <div class="flex items-center gap-2 text-indigo-800 dark:text-indigo-300 font-outfit font-extrabold text-xs uppercase tracking-wide">
-                                    <i class="bi bi-book-half text-base"></i>
-                                    <span>Textos Motivadores Oficiais & Orientações da Prova</span>
+                        <!-- PAINEL SPLIT: COLETÂNEA DE TEXTOS MOTIVADORES / FOLHA EM PDF OFICIAL -->
+                        <div id="cardMotivadores" class="bg-indigo-50/50 dark:bg-indigo-950/20 border-2 border-indigo-200 dark:border-indigo-900/50 rounded-2xl p-4 sm:p-5 transition-all space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-indigo-100 dark:border-indigo-900/50">
+                                <div class="flex items-center gap-2">
+                                    <div class="inline-flex p-1 bg-white dark:bg-slate-800 rounded-xl border border-indigo-200 dark:border-indigo-900 shadow-sm">
+                                        <button type="button" id="btnModoPdfBancada" onclick="setVisualizadorModo('pdf')" class="px-3 py-1.5 rounded-lg text-xs font-outfit font-black transition bg-indigo-600 text-white shadow-sm flex items-center gap-1.5">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                                            <span>Folha Oficial em PDF</span>
+                                        </button>
+                                        <button type="button" id="btnModoTextoBancada" onclick="setVisualizadorModo('texto')" class="px-3 py-1.5 rounded-lg text-xs font-outfit font-bold transition text-slate-600 dark:text-slate-300 hover:text-indigo-600 flex items-center gap-1.5">
+                                            <i class="bi bi-fonts"></i>
+                                            <span>Texto Transcrito</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <button type="button" onclick="event.stopPropagation(); toggleMotivadores();" class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1.5">
-                                    <i class="bi bi-eye-slash-fill" id="iconBtnMotivadores"></i>
-                                    <span id="txtBtnMotivadores">Ocultar Coletânea</span>
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="expandirColetaneaAtual()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs transition-all flex items-center gap-1.5 shadow-sm" title="Expandir textos motivadores em tela cheia">
+                                        <i class="bi bi-arrows-fullscreen"></i>
+                                        <span>Tela Cheia</span>
+                                    </button>
+                                    <a id="btnBancadaDownloadPdf" href="#" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 font-outfit font-bold text-xs transition-all flex items-center gap-1.5 shadow-sm" title="Baixar arquivo da proposta">
+                                        <i class="bi bi-download"></i>
+                                        <span>Baixar</span>
+                                    </a>
+                                    <a id="btnBancadaAbrirNovaAba" href="#" target="_blank" class="p-2 rounded-xl bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs transition flex items-center justify-center" title="Abrir PDF em nova aba">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                    <button type="button" onclick="toggleMotivadores();" class="text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1.5 ps-2">
+                                        <i class="bi bi-eye-slash-fill" id="iconBtnMotivadores"></i>
+                                        <span id="txtBtnMotivadores">Ocultar</span>
+                                    </button>
+                                </div>
                             </div>
 
                             <div id="conteudoMotivadores" class="space-y-3">
-                                <div id="boxOrientacoesBanca" class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-xs text-amber-900 dark:text-amber-200 font-medium"></div>
-                                <div id="descTemaText" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed italic"></div>
-                                <div id="textosMotivadoresText" class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-900 p-4 rounded-xl border border-indigo-100 dark:border-slate-700 max-h-[36rem] overflow-y-auto"></div>
+                                <!-- 1. VISUALIZADOR DE PDF DIRETO NA TELA (LOGO DE CARA) -->
+                                <div id="viewBancadaPdf" class="w-full h-[640px] rounded-2xl overflow-hidden border-2 border-indigo-200 dark:border-indigo-900/60 shadow-inner bg-slate-100 dark:bg-slate-900 relative">
+                                    <iframe id="iframeBancadaPdf" src="" class="w-full h-full border-0 bg-transparent"></iframe>
+                                </div>
+
+                                <!-- 2. MODO TEXTO TRANSCRITO ALTERNATIVO -->
+                                <div id="viewBancadaTexto" class="hidden space-y-3">
+                                    <div id="boxOrientacoesBanca" class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-xs text-amber-900 dark:text-amber-200 font-medium"></div>
+                                    <div id="descTemaText" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed italic"></div>
+                                    <div id="textosMotivadoresText" class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-900 p-4 rounded-xl border border-indigo-100 dark:border-slate-700 max-h-[36rem] overflow-y-auto"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -629,31 +624,38 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </main>
 
-    <!-- MODAL: VISUALIZADOR DA PROPOSTA COMPLETA & TEXTOS MOTIVADORES -->
-    <div id="modalProposta" onclick="if(event.target === this) fecharModalProposta()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4 transition-all" style="z-index: 9999;">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-7 border-2 border-slate-200 dark:border-slate-700 shadow-2xl relative max-h-[85vh] flex flex-col">
-            <button type="button" onclick="fecharModalProposta()" class="absolute right-5 top-5 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Fechar (ESC)">
-                <i class="bi bi-x-lg text-base"></i>
+    <!-- MODAL: VISUALIZADOR DA PROPOSTA OFICIAL EM PDF (LOGO DE CARA) -->
+    <div id="modalProposta" onclick="if(event.target === this) fecharModalProposta()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4 transition-all" style="z-index: 9999;">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-5xl w-full p-4 sm:p-6 border-2 border-slate-200 dark:border-slate-700 shadow-2xl relative max-h-[95vh] flex flex-col gap-3">
+            <button type="button" onclick="fecharModalProposta()" class="absolute right-4 top-4 p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Fechar (ESC)">
+                <i class="bi bi-x-lg text-lg"></i>
             </button>
 
-            <div class="space-y-1 pb-4 border-b border-slate-100 dark:border-slate-700 pr-10">
-                <span id="modalPropostaBanca" class="px-2.5 py-0.5 rounded-md text-[11px] font-black uppercase bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300"></span>
-                <h3 id="modalPropostaTitulo" class="font-outfit font-black text-lg text-slate-900 dark:text-white leading-snug"></h3>
+            <!-- CABEÇALHO DO MODAL -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-700 pr-10">
+                <div class="space-y-1">
+                    <span id="modalPropostaBanca" class="px-2.5 py-0.5 rounded-md text-[11px] font-black uppercase bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300"></span>
+                    <h3 id="modalPropostaTitulo" class="font-outfit font-black text-base sm:text-lg text-slate-900 dark:text-white leading-snug line-clamp-1"></h3>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a id="btnModalDownloadPdf" href="#" target="_blank" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs transition flex items-center gap-1.5 shadow-sm" title="Baixar arquivo da proposta">
+                        <i class="bi bi-download"></i>
+                        <span>Baixar</span>
+                    </a>
+                    <a id="btnModalNovaAba" href="#" target="_blank" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs transition flex items-center justify-center" title="Abrir em Nova Aba">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                    <button type="button" id="btnModalPraticar" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 transform active:scale-95" title="Minimizar leitura e começar a escrever na folha">
+                        <i class="bi bi-pencil-square"></i>
+                        <span>Minimizar e Escrever ✍️</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="overflow-y-auto py-4 space-y-4 flex-1 pr-1">
-                <div id="modalPropostaOrientacoes" class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-xs text-amber-900 dark:text-amber-200 font-medium"></div>
-                <div id="modalPropostaTextos" class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 font-sans"></div>
-            </div>
-
-            <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3">
-                <button type="button" onclick="fecharModalProposta()" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-outfit font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition">
-                    Fechar
-                </button>
-                <button type="button" id="btnModalPraticar" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-sm transition-all flex items-center gap-2">
-                    <span>Praticar Esta Redação</span>
-                    <i class="bi bi-arrow-right"></i>
-                </button>
+            <!-- CORPO DO MODAL: IFRAME COM ALTURA FIXA E FUNDO NEUTRO -->
+            <div class="w-full h-[75vh] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 relative">
+                <iframe id="modalPdfFrame" src="" class="w-full h-full border-0 bg-transparent"></iframe>
             </div>
         </div>
     </div>
@@ -932,15 +934,29 @@ require_once __DIR__ . '/includes/header.php';
             }
         }
 
-        // Ações de Proposta em Tela Cheia (Modal)
+        // Ações de Proposta em Tela Cheia (Modal com PDF Direto)
         function verPropostaCompleta(id) {
             const tema = TODOS_TEMAS.find(t => parseInt(t.id) === parseInt(id));
             if (!tema) return;
 
             document.getElementById('modalPropostaBanca').textContent = `${tema.banca} ${tema.ano || ''} • ${tema.eixo_tematico || ''}`;
             document.getElementById('modalPropostaTitulo').textContent = tema.titulo;
-            document.getElementById('modalPropostaOrientacoes').innerHTML = `<strong>Orientações da Prova:</strong> ${escapeHtml(tema.orientacoes_especificas || tema.descricao || '')}`;
-            document.getElementById('modalPropostaTextos').innerHTML = renderizarTextosMotivadores(tema.textos_motivadores);
+
+            // Carregar PDF diretamente no iframe do modal (LOGO DE CARA)
+            const modalFrame = document.getElementById('modalPdfFrame');
+            if (modalFrame) {
+                modalFrame.src = 'visualizar_pdf.php?id=' + id;
+            }
+
+            const btnDownloadPdf = document.getElementById('btnModalDownloadPdf');
+            if (btnDownloadPdf) {
+                btnDownloadPdf.href = 'visualizar_pdf.php?id=' + id + '&download=1';
+            }
+
+            const btnNovaAba = document.getElementById('btnModalNovaAba');
+            if (btnNovaAba) {
+                btnNovaAba.href = 'visualizar_pdf.php?id=' + id;
+            }
 
             const btnPraticar = document.getElementById('btnModalPraticar');
             btnPraticar.onclick = () => {
@@ -956,6 +972,10 @@ require_once __DIR__ . '/includes/header.php';
 
         function fecharModalProposta() {
             const m = document.getElementById('modalProposta');
+            const modalFrame = document.getElementById('modalPdfFrame');
+            if (modalFrame) {
+                modalFrame.src = ''; // Limpar para poupar memória
+            }
             m.classList.add('hidden');
             m.classList.remove('flex');
             document.body.style.overflow = '';
@@ -970,11 +990,40 @@ require_once __DIR__ . '/includes/header.php';
         });
 
         function iniciarEscritaComTema(id) {
+            fecharModalProposta();
             const select = document.getElementById('temaSelect');
-            select.value = id;
+            if (id) {
+                select.value = id;
+            }
             aoMudarTema();
             switchPortalTab('escrever');
-            window.scrollTo({ top: 350, behavior: 'smooth' });
+
+            // Focar suavemente na folha de redação para escrita imediata
+            setTimeout(() => {
+                const folha = document.getElementById('textoRedacao');
+                if (folha && !document.getElementById('containerTexto').classList.contains('hidden')) {
+                    folha.focus();
+                }
+                const topoBancada = document.getElementById('tabContentEscrever');
+                if (topoBancada) {
+                    topoBancada.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 250);
+        }
+
+        function expandirColetaneaAtual() {
+            const select = document.getElementById('temaSelect');
+            const val = select.value;
+            if (val && val !== 'custom') {
+                verPropostaCompleta(val);
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tema Personalizado',
+                    text: 'Selecione uma proposta oficial da lista para visualizar a coletânea completa em tela cheia.',
+                    confirmButtonColor: '#4f46e5'
+                });
+            }
         }
 
         function aoMudarTema() {
@@ -986,6 +1035,9 @@ require_once __DIR__ . '/includes/header.php';
             const textosMotivadoresText = document.getElementById('textosMotivadoresText');
             const boxOrientacoes = document.getElementById('boxOrientacoesBanca');
             const inputBanca = document.getElementById('inputBancaAtiva');
+            const btnBancadaDownload = document.getElementById('btnBancadaDownloadPdf');
+            const btnBancadaNovaAba = document.getElementById('btnBancadaAbrirNovaAba');
+            const iframeBancada = document.getElementById('iframeBancadaPdf');
 
             if (val === 'custom') {
                 divCustom.classList.remove('hidden');
@@ -996,6 +1048,19 @@ require_once __DIR__ . '/includes/header.php';
                 const tema = TODOS_TEMAS.find(t => parseInt(t.id) === parseInt(val));
                 if (tema) {
                     inputBanca.value = tema.banca || 'ENEM';
+
+                    // Carregar PDF direto no iframe da bancada (LOGO DE CARA)
+                    if (iframeBancada) {
+                        iframeBancada.src = 'visualizar_pdf.php?id=' + tema.id;
+                    }
+
+                    if (btnBancadaDownload) {
+                        btnBancadaDownload.href = 'visualizar_pdf.php?id=' + tema.id + '&download=1';
+                    }
+
+                    if (btnBancadaNovaAba) {
+                        btnBancadaNovaAba.href = 'visualizar_pdf.php?id=' + tema.id;
+                    }
 
                     if (tema.orientacoes_especificas) {
                         boxOrientacoes.innerHTML = `<strong>Orientações ${escapeHtml(tema.banca)}:</strong> ${escapeHtml(tema.orientacoes_especificas)}`;
@@ -1012,6 +1077,25 @@ require_once __DIR__ . '/includes/header.php';
                         cardMotivadores.classList.add('hidden');
                     }
                 }
+            }
+        }
+
+        function setVisualizadorModo(modo) {
+            const viewPdf = document.getElementById('viewBancadaPdf');
+            const viewTexto = document.getElementById('viewBancadaTexto');
+            const btnPdf = document.getElementById('btnModoPdfBancada');
+            const btnTexto = document.getElementById('btnModoTextoBancada');
+
+            if (modo === 'texto') {
+                viewPdf.classList.add('hidden');
+                viewTexto.classList.remove('hidden');
+                btnTexto.className = "px-3 py-1.5 rounded-lg text-xs font-outfit font-black transition bg-indigo-600 text-white shadow-sm flex items-center gap-1.5";
+                btnPdf.className = "px-3 py-1.5 rounded-lg text-xs font-outfit font-bold transition text-slate-600 dark:text-slate-300 hover:text-indigo-600 flex items-center gap-1.5";
+            } else {
+                viewTexto.classList.add('hidden');
+                viewPdf.classList.remove('hidden');
+                btnPdf.className = "px-3 py-1.5 rounded-lg text-xs font-outfit font-black transition bg-indigo-600 text-white shadow-sm flex items-center gap-1.5";
+                btnTexto.className = "px-3 py-1.5 rounded-lg text-xs font-outfit font-bold transition text-slate-600 dark:text-slate-300 hover:text-indigo-600 flex items-center gap-1.5";
             }
         }
 
@@ -1275,7 +1359,13 @@ require_once __DIR__ . '/includes/header.php';
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
-            aoMudarTema();
+            const urlParams = new URLSearchParams(window.location.search);
+            const temaParam = urlParams.get('tema_id');
+            if (temaParam) {
+                iniciarEscritaComTema(temaParam);
+            } else {
+                aoMudarTema();
+            }
             atualizarContadoresRedacao();
             aplicarFiltrosTemas();
         });

@@ -24,3 +24,6 @@ vendor/
 .idea/
 *.swp
 *.DS_Store
+
+# Arquivos compactados e temporários
+*.zip
