@@ -202,8 +202,14 @@ h1, h2, h3, h4, h5, h6, .outfit-font {
 /* Question Grid */
 .question-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
-  gap: 0.5rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 0.625rem;
+}
+
+.question-grid > .col-span-full,
+.question-grid > [class*="col-span-"] {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
 }
 
 .q-nav-btn {

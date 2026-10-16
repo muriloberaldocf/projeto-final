@@ -44,14 +44,9 @@ if ($userXp < $requiredXp) {
     exit;
 }
 
-// Equipar Avatar (Se for o Hipopótamo Lendário 1500 XP, define também a foto de perfil do mascote!)
-if ($avatarIcon === 'bi-emoji-smile-fill') {
-    $stmtUpdate = $pdo->prepare("UPDATE users SET avatar_icon = ?, avatar = 'assets/img/hipogabarito_logo.png' WHERE id = ?");
-    $stmtUpdate->execute([$avatarIcon, $userId]);
-} else {
-    $stmtUpdate = $pdo->prepare("UPDATE users SET avatar_icon = ? WHERE id = ?");
-    $stmtUpdate->execute([$avatarIcon, $userId]);
-}
+// Equipar Avatar / Título
+$stmtUpdate = $pdo->prepare("UPDATE users SET avatar_icon = ? WHERE id = ?");
+$stmtUpdate->execute([$avatarIcon, $userId]);
 
 echo json_encode([
     'success' => true,

@@ -429,7 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof sounds !== 'undefined') sounds.playClick();
 
         if (theoryScreen) theoryScreen.style.display = 'none';
-        if (theoryHeaderControls) theoryHeaderControls.style.display = 'none';
+        if (theoryHeaderControls) {
+            theoryHeaderControls.style.display = 'none';
+            theoryHeaderControls.style.setProperty('display', 'none', 'important');
+        }
 
         if (quizScreen) quizScreen.style.display = 'flex';
         if (quizHeaderControls) {
@@ -453,7 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (quizFooter) quizFooter.style.display = 'none';
 
         if (theoryScreen) theoryScreen.style.display = 'block';
-        if (theoryHeaderControls) theoryHeaderControls.style.display = 'flex';
+        if (theoryHeaderControls) {
+            theoryHeaderControls.style.display = 'flex';
+            theoryHeaderControls.style.setProperty('display', 'flex', 'important');
+        }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }

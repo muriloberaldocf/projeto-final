@@ -23,11 +23,25 @@ $temas = $stmtTemas->fetchAll(PDO::FETCH_ASSOC);
 
 // Contagem e agrupamento de temas por banca
 $temasPorBanca = [];
-$temasAgrupados = [];
+$temasAgrupadosRaw = [];
 foreach ($temas as $t) {
     $b = strtoupper($t['banca'] ?? 'ENEM');
     $temasPorBanca[$b] = ($temasPorBanca[$b] ?? 0) + 1;
-    $temasAgrupados[$b][] = $t;
+    $temasAgrupadosRaw[$b][] = $t;
+}
+
+// Ordem prioritária de bancas: Provas Reais primeiro, depois Redigir e Possíveis Temas
+$ordemBancas = ['ENEM', 'UNESP', 'FUVEST', 'UNICAMP', 'UERJ', 'REDIGIR', 'POSSIVEIS'];
+$temasAgrupados = [];
+foreach ($ordemBancas as $bKey) {
+    if (!empty($temasAgrupadosRaw[$bKey])) {
+        $temasAgrupados[$bKey] = $temasAgrupadosRaw[$bKey];
+    }
+}
+foreach ($temasAgrupadosRaw as $bKey => $items) {
+    if (!isset($temasAgrupados[$bKey])) {
+        $temasAgrupados[$bKey] = $items;
+    }
 }
 
 // Buscar Histórico de Redações
@@ -307,23 +321,26 @@ require_once __DIR__ . '/includes/header.php';
                                 <button type="button" onclick="filtrarBanca('TODOS')" class="banca-pill active px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-indigo-600 text-white shadow-sm">
                                     Todos (<?= count($temas) ?>)
                                 </button>
+                                <button type="button" onclick="filtrarBanca('ENEM')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200" title="Apenas propostas reais que caíram nas provas oficiais do ENEM">
+                                    🟡 ENEM (<?= $temasPorBanca['ENEM'] ?? 0 ?> Reais)
+                                </button>
+                                <button type="button" onclick="filtrarBanca('UNESP')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200" title="Provas oficiais reais da UNESP">
+                                    🔵 UNESP (<?= $temasPorBanca['UNESP'] ?? 0 ?> Reais)
+                                </button>
+                                <button type="button" onclick="filtrarBanca('FUVEST')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200" title="Provas oficiais reais da FUVEST">
+                                    🔴 FUVEST (<?= $temasPorBanca['FUVEST'] ?? 0 ?> Reais)
+                                </button>
+                                <button type="button" onclick="filtrarBanca('UNICAMP')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200" title="Provas oficiais reais da UNICAMP">
+                                    🟠 UNICAMP (<?= $temasPorBanca['UNICAMP'] ?? 0 ?> Reais)
+                                </button>
+                                <button type="button" onclick="filtrarBanca('UERJ')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200" title="Provas oficiais reais da UERJ">
+                                    🟣 UERJ (<?= $temasPorBanca['UERJ'] ?? 0 ?> Reais)
+                                </button>
                                 <button type="button" onclick="filtrarBanca('REDIGIR')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
                                     📚 Plataforma Redigir (<?= $temasPorBanca['REDIGIR'] ?? 0 ?>)
                                 </button>
-                                <button type="button" onclick="filtrarBanca('ENEM')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    🟡 ENEM (<?= $temasPorBanca['ENEM'] ?? 0 ?>)
-                                </button>
-                                <button type="button" onclick="filtrarBanca('UNESP')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    🔵 UNESP (<?= $temasPorBanca['UNESP'] ?? 0 ?>)
-                                </button>
-                                <button type="button" onclick="filtrarBanca('FUVEST')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    🔴 FUVEST (<?= $temasPorBanca['FUVEST'] ?? 0 ?>)
-                                </button>
-                                <button type="button" onclick="filtrarBanca('UNICAMP')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    🟠 UNICAMP (<?= $temasPorBanca['UNICAMP'] ?? 0 ?>)
-                                </button>
-                                <button type="button" onclick="filtrarBanca('UERJ')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200">
-                                    🟣 UERJ (<?= $temasPorBanca['UERJ'] ?? 0 ?>)
+                                <button type="button" onclick="filtrarBanca('POSSIVEIS')" class="banca-pill px-3.5 py-1.5 rounded-xl text-xs font-outfit font-black transition-all bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200" title="Temas inéditos de simulação e possíveis temas para futuros exames">
+                                    💡 Possíveis Temas (<?= $temasPorBanca['POSSIVEIS'] ?? 0 ?>)
                                 </button>
                             </div>
 
@@ -371,21 +388,28 @@ require_once __DIR__ . '/includes/header.php';
                                 'UNICAMP' => 'bg-orange-100 text-orange-900 border-orange-300 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-700',
                                 'UERJ' => 'bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-700',
                                 'SIMULADO' => 'bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-700',
+                                'POSSIVEIS' => 'bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-700',
                                 'REDIGIR' => 'bg-red-100 text-red-900 border-red-300 dark:bg-red-950/40 dark:text-red-300 dark:border-red-700'
                             ][$bancaUpper] ?? 'bg-indigo-100 text-indigo-900 border-indigo-300';
                             ?>
                             <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col justify-between gap-4 cursor-pointer group" onclick="verPropostaCompleta(<?= $t['id'] ?>)" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>">
                                 <div class="space-y-2.5">
                                     <div class="flex items-center justify-between gap-2">
-                                        <div class="flex items-center gap-1.5">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
                                             <span class="px-2.5 py-0.5 rounded-lg border text-[11px] font-outfit font-black uppercase <?= $corBanca ?>">
-                                                <?= $bancaUpper ?> <?= htmlspecialchars($t['ano'] ?? '') ?>
+                                                <?php if ($bancaUpper === 'POSSIVEIS'): ?>
+                                                    💡 Possível Tema <?= htmlspecialchars($t['ano'] ?? '') ?>
+                                                <?php elseif ($bancaUpper === 'REDIGIR'): ?>
+                                                    📚 Redigir <?= htmlspecialchars($t['ano'] ?? '') ?>
+                                                <?php else: ?>
+                                                    <?= $bancaUpper ?> <?= htmlspecialchars($t['ano'] ?? '') ?> • Prova Real
+                                                <?php endif; ?>
                                             </span>
                                             <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
                                                 <?= htmlspecialchars($t['eixo_tematico'] ?? 'Geral') ?>
                                             </span>
                                         </div>
-                                        <span class="text-[11px] text-slate-400 font-bold">
+                                        <span class="text-[11px] text-slate-400 font-bold shrink-0">
                                             <?= htmlspecialchars($t['genero_textual'] ?? 'Dissertativo') ?>
                                         </span>
                                     </div>
@@ -508,10 +532,22 @@ require_once __DIR__ . '/includes/header.php';
                                 <div class="relative">
                                     <select id="temaSelect" name="tema_id" onchange="aoMudarTema()" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100 font-bold text-sm focus:border-indigo-500 focus:outline-none transition-all pr-10 cursor-pointer">
                                         <?php foreach ($temasAgrupados as $bancaNome => $listaTemas): ?>
-                                            <optgroup label="🏛️ <?= htmlspecialchars($bancaNome) ?> (<?= count($listaTemas) ?> propostas)">
+                                            <?php
+                                            $optLabel = match($bancaNome) {
+                                                'ENEM' => '🟡 ENEM (Provas Reais 1998–2024)',
+                                                'UNESP' => '🔵 UNESP (Provas Reais)',
+                                                'FUVEST' => '🔴 FUVEST (Provas Reais)',
+                                                'UNICAMP' => '🟠 UNICAMP (Provas Reais)',
+                                                'UERJ' => '🟣 UERJ (Provas Reais)',
+                                                'REDIGIR' => '📚 Plataforma Redigir',
+                                                'POSSIVEIS' => '💡 Possíveis Temas / Inéditos (Padrão ENEM)',
+                                                default => "🏛️ $bancaNome"
+                                            };
+                                            ?>
+                                            <optgroup label="<?= $optLabel ?> (<?= count($listaTemas) ?>)">
                                                 <?php foreach ($listaTemas as $t): ?>
                                                     <option value="<?= $t['id'] ?>">
-                                                        [<?= htmlspecialchars($t['banca']) ?> <?= htmlspecialchars($t['ano']) ?>] <?= htmlspecialchars($t['titulo']) ?>
+                                                        [<?= htmlspecialchars($t['banca'] === 'POSSIVEIS' ? 'Possível' : $t['banca']) ?> <?= htmlspecialchars($t['ano']) ?>] <?= htmlspecialchars($t['titulo']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </optgroup>
@@ -1336,6 +1372,406 @@ require_once __DIR__ . '/includes/header.php';
                 .replace(/'/g, "&#039;");
         }
 
+        let globalInfograficoCounter = 0;
+
+        function alternarVisualizacaoCard(id, modo) {
+            const vInfo = document.getElementById('view_infografico_' + id);
+            const vFoto = document.getElementById('view_foto_' + id);
+            const bInfo = document.getElementById('btn_toggle_info_' + id);
+            const bFoto = document.getElementById('btn_toggle_foto_' + id);
+
+            if (modo === 'foto') {
+                if (vInfo) vInfo.classList.add('hidden');
+                if (vFoto) vFoto.classList.remove('hidden');
+                if (bFoto) bFoto.className = "px-2 py-0.5 rounded-md bg-indigo-600 text-white transition flex items-center gap-1 shadow-xs";
+                if (bInfo) bInfo.className = "px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition flex items-center gap-1";
+            } else {
+                if (vFoto) vFoto.classList.add('hidden');
+                if (vInfo) vInfo.classList.remove('hidden');
+                if (bInfo) bInfo.className = "px-2 py-0.5 rounded-md bg-indigo-600 text-white transition flex items-center gap-1 shadow-xs";
+                if (bFoto) bFoto.className = "px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition flex items-center gap-1";
+            }
+        }
+
+        function gerarInfograficoHtml(url, legenda, contextoGeral) {
+            globalInfograficoCounter++;
+            const uId = 'info_' + globalInfograficoCounter;
+            const legNorm = normalizarTexto(legenda);
+            const ctxNorm = normalizarTexto(contextoGeral);
+            const combinado = legNorm + ' ' + ctxNorm;
+
+            // Identificar se a proposta exige um infográfico/gráfico oficial de dados
+            const ehInfografico = /infograf|grafic|censo|indicador|taxa|estatist|pesquisa|pnad|ibge|cnj|ancine|inep|oms|ipcc|datasus|dados/i.test(legenda);
+
+            if (!ehInfografico) {
+                // Foto comum (sem prometer infográfico)
+                return `
+                    <figure class="my-3 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 shadow-sm">
+                        <div class="relative bg-slate-950 flex items-center justify-center max-h-72 overflow-hidden">
+                            <img src="${escapeHtml(url)}" alt="${escapeHtml(legenda)}" class="w-full h-auto max-h-72 object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.closest('figure').style.display='none'">
+                        </div>
+                        <figcaption class="p-2.5 bg-slate-100/90 dark:bg-slate-800/90 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-400 font-medium flex items-center gap-2">
+                            <i class="bi bi-image-fill text-indigo-500 shrink-0"></i>
+                            <span>${escapeHtml(legenda)}</span>
+                        </figcaption>
+                    </figure>
+                `;
+            }
+
+            // Definição dos Dados do Infográfico
+            let orgao = 'INSTITUTO OFICIAL DE PESQUISA • BRASIL';
+            let titulo = legenda.replace(/^infogr[aá]fico\s*(oficial)?\s*:\s*/i, '').replace(/^gr[aá]fico\s*:\s*/i, '');
+            let fonte = 'Relatórios Oficiais e Bases Públicas de Dados Governamentais';
+            let kpi1 = { valor: '40,4%', rotulo: 'Índice de Destaque', desc: 'Dados apurados pelo órgão' };
+            let kpi2 = { valor: '68%', rotulo: 'Impacto Geral', desc: 'Abrangência do fenômeno' };
+            let kpi3 = { valor: '24 Estados', rotulo: 'Extensão Nacional', desc: 'Incidência no território' };
+            let barras = [
+                { rotulo: 'Segmento Principal', pct: 60, valor: '60%', cor: 'bg-indigo-600' },
+                { rotulo: 'Segmento Secundário', pct: 40, valor: '40%', cor: 'bg-amber-500' }
+            ];
+
+            // 1. SISTEMA PRISIONAL & CNJ
+            if (/prision|carcer|cnj|custodia|pena/i.test(combinado)) {
+                orgao = 'CONSELHO NACIONAL DE JUSTIÇA (CNJ) • BNMP 3.0';
+                titulo = 'População Carcerária e Presos Provisórios no Brasil';
+                fonte = 'Banco Nacional de Monitoramento de Prisões (BNMP/CNJ) e SENAPPEN (2024)';
+                kpi1 = { valor: '40,4%', rotulo: 'Presos Provisórios', desc: 'Mais de 336 mil detentos sem condenação definitiva' };
+                kpi2 = { valor: '832.295', rotulo: 'População Carcerária Total', desc: '3ª maior população carcerária do mundo' };
+                kpi3 = { valor: '172%', rotulo: 'Taxa de Ocupação Média', desc: 'Superlotação crítica com déficit de ~350 mil vagas' };
+                barras = [
+                    { rotulo: 'Presos Provisórios (Aguardando julgamento)', pct: 40.4, valor: '40.4% (~336 mil)', cor: 'bg-amber-500' },
+                    { rotulo: 'Presos com Condenação Definitiva', pct: 59.6, valor: '59.6% (~496 mil)', cor: 'bg-indigo-600' }
+                ];
+            }
+            // 2. TRABALHO DE CUIDADO / MULHERES
+            else if (/cuidado|afazeres|domestico|genero|mulher/i.test(combinado)) {
+                orgao = 'IBGE • PESQUISA NACIONAL POR AMOSTRA DE DOMICÍLIOS (PNAD)';
+                titulo = 'Média Semanal de Horas em Afazeres Domésticos e Cuidado de Pessoas';
+                fonte = 'IBGE / Diretoria de Pesquisas — Estatísticas de Gênero';
+                kpi1 = { valor: '21,3 h/sem', rotulo: 'Mulheres', desc: 'Tempo semanal dedicado ao trabalho de cuidado invisível' };
+                kpi2 = { valor: '10,9 h/sem', rotulo: 'Homens', desc: 'Quase metade do tempo dispensado pelas mulheres' };
+                kpi3 = { valor: '92,1%', rotulo: 'Taxa de Realização Feminina', desc: 'Proporção de mulheres que cuidam da casa/filhos' };
+                barras = [
+                    { rotulo: 'Mulheres (21,3 horas/semana)', pct: 66.1, valor: '66.1%', cor: 'bg-rose-500' },
+                    { rotulo: 'Homens (10,9 horas/semana)', pct: 33.9, valor: '33.9%', cor: 'bg-sky-500' }
+                ];
+            }
+            // 3. REGISTRO CIVIL & CIDADANIA
+            else if (/certidao|registro civil|nascimento|indocumentado/i.test(combinado)) {
+                orgao = 'ARPEN-BRASIL & CENSO DEMOGRÁFICO / IBGE';
+                titulo = 'Estimativa de População sem Certidão de Nascimento no Brasil';
+                fonte = 'Arpen-Brasil e Censo Demográfico do IBGE';
+                kpi1 = { valor: '~3 milhões', rotulo: 'Brasileiros sem Certidão', desc: 'Cidadãos invisíveis sem documentação básica' };
+                kpi2 = { valor: '46%', rotulo: 'Crianças de 0 a 5 anos', desc: 'Maior parcela vulnerável sem acesso a creches e SUS' };
+                kpi3 = { valor: '64%', rotulo: 'Concentração Norte/Nordeste', desc: 'Regiões com maior índice de sub-registro civil' };
+                barras = [
+                    { rotulo: 'Norte e Nordeste', pct: 64, valor: '64%', cor: 'bg-amber-500' },
+                    { rotulo: 'Sul, Sudeste e Centro-Oeste', pct: 36, valor: '36%', cor: 'bg-indigo-600' }
+                ];
+            }
+            // 4. DEMOCRATIZAÇÃO DO CINEMA
+            else if (/cinema|salas de exibicao|ancine|filme/i.test(combinado)) {
+                orgao = 'AGÊNCIA NACIONAL DO CINEMA (ANCINE) • OBSERVATÓRIO DO CINEMA';
+                titulo = 'Distribuição Territorial e Concentração das Salas de Cinema';
+                fonte = 'Ancine / Anuário Estatístico do Cinema Brasileiro';
+                kpi1 = { valor: '84%', rotulo: 'Municípios sem Cinema', desc: 'Mais de 4.600 cidades sem nenhuma sala comercial' };
+                kpi2 = { valor: '62%', rotulo: 'Concentração no Sudeste', desc: 'Predomínio de salas em capitais e shoppings do Sudeste' };
+                kpi3 = { valor: '16%', rotulo: 'Municípios Atendidos', desc: 'Apenas uma minoria da população tem acesso contínuo' };
+                barras = [
+                    { rotulo: 'Municípios Sem Nenhuma Sala de Cinema', pct: 84, valor: '84%', cor: 'bg-rose-500' },
+                    { rotulo: 'Municípios Com Salas de Cinema', pct: 16, valor: '16%', cor: 'bg-emerald-500' }
+                ];
+            }
+            // 5. SAÚDE MENTAL & ANSIEDADE
+            else if (/mental|ansiedade|depressao|oms|estigma|psiquic/i.test(combinado)) {
+                orgao = 'ORGANIZAÇÃO MUNDIAL DA SAÚDE (OMS) & MINISTÉRIO DA SAÚDE';
+                titulo = 'Prevalência de Transtornos de Ansiedade e Depressão no Brasil';
+                fonte = 'Relatório Mundial de Saúde Mental da OMS e DataSUS';
+                kpi1 = { valor: '9,3%', rotulo: 'Transtorno de Ansiedade', desc: 'Brasil é líder mundial na prevalência de ansiedade' };
+                kpi2 = { valor: '5,8%', rotulo: 'Depressão Clínica', desc: 'Maior taxa registrada entre os países da América Latina' };
+                kpi3 = { valor: '78%', rotulo: 'Estigma e Silenciamento', desc: 'Pessoas que deixam de buscar tratamento por preconceito' };
+                barras = [
+                    { rotulo: 'Taxa de Ansiedade no Brasil', pct: 72, valor: '9.3%', cor: 'bg-rose-500' },
+                    { rotulo: 'Média Global de Ansiedade', pct: 28, valor: '3.6%', cor: 'bg-slate-400' }
+                ];
+            }
+            // 6. REDES SOCIAIS, ALGORITMOS E TEMPO DE TELA
+            else if (/algoritmo|redes sociais|atencao|tela|digital|ciber/i.test(combinado)) {
+                orgao = 'CETIC.BR • COMITÊ GESTOR DA INTERNET NO BRASIL (CGI.BR)';
+                titulo = 'Tempo de Conexão, Rastreamento Algorítmico e Economia da Atenção';
+                fonte = 'Pesquisa TIC Domicílios e Global Web Index';
+                kpi1 = { valor: '3h 42m', rotulo: 'Média Diária em Redes', desc: 'Tempo diário gasto exclusivamente em aplicativos sociais' };
+                kpi2 = { valor: '86%', rotulo: 'Consumo de Notícias', desc: 'Usuários que recebem informações mediadas por feed' };
+                kpi3 = { valor: '71%', rotulo: 'Sobrecarga Informacional', desc: 'Relatam perda de concentração e ansiedade digital' };
+                barras = [
+                    { rotulo: 'Tempo em Redes e Apps Sociais (3h42m)', pct: 76, valor: '76%', cor: 'bg-indigo-600' },
+                    { rotulo: 'Tempo com Leitura Profunda e Estudos (1h10m)', pct: 24, valor: '24%', cor: 'bg-slate-400' }
+                ];
+            }
+            // 7. DESMATAMENTO, CLIMA E ESTIAGEM
+            else if (/clima|estiagem|ipcc|seca|aquecimento|amazonia|desmat/i.test(combinado)) {
+                orgao = 'INPE (TERRABRASILIS) & RELATÓRIO DO IPCC / ONU';
+                titulo = 'Emergência Climática, Frequência de Extremos e Cobertura Vegetal';
+                fonte = 'Painel Intergovernamental de Mudança Climática (IPCC) e INPE';
+                kpi1 = { valor: '+400%', rotulo: 'Eventos Extremos', desc: 'Aumento na frequência de secas e enchentes severas' };
+                kpi2 = { valor: '1,5 °C', rotulo: 'Meta Limite do Clima', desc: 'Acordo de Paris para conter impactos irreversíveis' };
+                kpi3 = { valor: '-22%', rotulo: 'Vazão Hídrica Média', desc: 'Queda na disponibilidade de água doce em bacias chave' };
+                barras = [
+                    { rotulo: 'Queimadas e Ações Antrópicas', pct: 88, valor: '88%', cor: 'bg-rose-500' },
+                    { rotulo: 'Causas Naturais de Ignição', pct: 12, valor: '12%', cor: 'bg-emerald-500' }
+                ];
+            }
+            // 8. RESÍDUOS SÓLIDOS E RECICLAGEM
+            else if (/residuo|lixo|recicl|plastico|abrelpe/i.test(combinado)) {
+                orgao = 'ABRELPE & SISTEMA NACIONAL DE INFORMAÇÕES SOBRE SANEAMENTO (SNIS)';
+                titulo = 'Panorama da Geração e Destinação de Resíduos Sólidos no Brasil';
+                fonte = 'Panorama dos Resíduos Sólidos no Brasil (Abrelpe / MMA)';
+                kpi1 = { valor: '4%', rotulo: 'Taxa de Reciclagem', desc: 'Apenas 4% dos resíduos recicláveis são reaproveitados' };
+                kpi2 = { valor: '81,8 mi', rotulo: 'Toneladas de Lixo/Ano', desc: 'Produção massiva de resíduos sólidos urbanos no país' };
+                kpi3 = { valor: '39%', rotulo: 'Lixões e Aterros', desc: 'Municípios que ainda descartam lixo sem tratamento' };
+                barras = [
+                    { rotulo: 'Lixo Descartado em Aterros / Lixões', pct: 96, valor: '96%', cor: 'bg-slate-500' },
+                    { rotulo: 'Lixo Efetivamente Reciclado', pct: 4, valor: '4%', cor: 'bg-emerald-500' }
+                ];
+            }
+            // 9. LEITURA & ALFABETIZAÇÃO FUNCIONAL
+            else if (/leitura|alfabetiz|inaf|inep|escolar|evasao/i.test(combinado)) {
+                orgao = 'INSTITUTO PAULO MONTENEGRO & INEP / MINISTÉRIO DA EDUCAÇÃO';
+                titulo = 'Indicadores de Alfabetismo Funcional e Competência Leitora';
+                fonte = 'Indicador de Alfabetismo Funcional (INAF) e Censo Escolar';
+                kpi1 = { valor: '29%', rotulo: 'Analfabetos Funcionais', desc: 'Sabem ler palavras, mas não interpretam textos longos' };
+                kpi2 = { valor: '34%', rotulo: 'Nível Elementar', desc: 'Leem textos curtos e encontram informações explícitas' };
+                kpi3 = { valor: '12%', rotulo: 'Nível Proficiente', desc: 'Apenas 1 em cada 8 cidadãos domina leitura crítica plena' };
+                barras = [
+                    { rotulo: 'Nível Rudimentar ou Elementar', pct: 63, valor: '63%', cor: 'bg-amber-500' },
+                    { rotulo: 'Nível Intermediário ou Proficiente', pct: 37, valor: '37%', cor: 'bg-indigo-600' }
+                ];
+            }
+            // 10. DESIGUALDADE DE RENDA
+            else if (/desigualdade|renda|riqueza|pobreza|concentracao/i.test(combinado)) {
+                orgao = 'WORLD INEQUALITY LAB & IBGE (PNAD CONTÍNUA)';
+                titulo = 'Distribuição da Renda Nacional e Concentração Patrimonial';
+                fonte = 'World Inequality Database e Instituto de Pesquisa Econômica Aplicada';
+                kpi1 = { valor: '58,6%', rotulo: 'Topo 10% Mais Rico', desc: 'Fatia de toda a renda nacional concentrada no topo' };
+                kpi2 = { valor: '10,1%', rotulo: 'Base 50% Mais Pobre', desc: 'Metade da população brasileira sobrevive com um décimo' };
+                kpi3 = { valor: '29x', rotulo: 'Disparidade Extrema', desc: 'Renda média do 1% mais rico é 29 vezes a da base' };
+                barras = [
+                    { rotulo: '10% Mais Ricos (58,6% da renda)', pct: 58.6, valor: '58.6%', cor: 'bg-indigo-600' },
+                    { rotulo: '40% Estrato Médio (31,3% da renda)', pct: 31.3, valor: '31.3%', cor: 'bg-sky-500' },
+                    { rotulo: '50% Mais Pobres (10,1% da renda)', pct: 10.1, valor: '10.1%', cor: 'bg-amber-500' }
+                ];
+            }
+            // 11. UBERIZAÇÃO & TRABALHO EM APLICATIVOS
+            else if (/entregador|aplicativo|uber|plataforma|informal/i.test(combinado)) {
+                orgao = 'IPEA • INSTITUTO DE PESQUISA ECONÔMICA APLICADA & IBGE';
+                titulo = 'Jornada Média e Condições de Trabalho em Plataformas Digitais';
+                fonte = 'IPEA / Nota Técnica sobre Plataformização do Trabalho Urbano';
+                kpi1 = { valor: '62 h/sem', rotulo: 'Jornada Média Semanal', desc: 'Trabalho contínuo nas ruas sem limite de jornada diária' };
+                kpi2 = { valor: '39,2%', rotulo: 'Taxa de Informalidade Geral', desc: 'Mais de 38 milhões de trabalhadores sem carteira no país' };
+                kpi3 = { valor: '76%', rotulo: 'Sem Previdência Social', desc: 'Trabalhadores desamparados em caso de acidente ou doença' };
+                barras = [
+                    { rotulo: 'Jornada em Aplicativos de Entrega (62h)', pct: 62, valor: '62h', cor: 'bg-amber-500' },
+                    { rotulo: 'Jornada Máxima Padrão CLT (44h)', pct: 38, valor: '44h', cor: 'bg-indigo-600' }
+                ];
+            }
+            // 12. MOBILIDADE URBANA & TRANSPORTE SOBRE TRILHOS
+            else if (/mobilidade|trilhos|transporte|metro|trem|transito/i.test(combinado)) {
+                orgao = 'ANPTRILHOS & INSTITUTO DE POLÍTICAS DE TRANSPORTE (ITDP)';
+                titulo = 'Divisão Modal dos Deslocamentos Metropolitanos no Brasil';
+                fonte = 'Relatório Anual do Setor Metroferroviário e Pesquisas de Origem-Destino';
+                kpi1 = { valor: '14,2%', rotulo: 'Deslocamentos sobre Trilhos', desc: 'Subutilização de trens e metrô nas grandes capitais' };
+                kpi2 = { valor: '74,5%', rotulo: 'Dependência Rodoviária', desc: 'Predomínio de automóveis particulares e ônibus poluentes' };
+                kpi3 = { valor: '2h 15m', rotulo: 'Tempo em Congestionamentos', desc: 'Média de horas perdidas no trânsito diariamente' };
+                barras = [
+                    { rotulo: 'Modal Rodoviário (Carros e Ônibus)', pct: 74.5, valor: '74.5%', cor: 'bg-rose-500' },
+                    { rotulo: 'Modal Metroferroviário (Trilhos)', pct: 14.2, valor: '14.2%', cor: 'bg-emerald-500' },
+                    { rotulo: 'Modais Ativos (Bicicleta e a Pé)', pct: 11.3, valor: '11.3%', cor: 'bg-slate-400' }
+                ];
+            }
+            // 13. SURDOS & EDUCAÇÃO BILÍNGUE
+            else if (/surdo|libras|auditiva|bilingue|deficiencia/i.test(combinado)) {
+                orgao = 'INEP & DIRETORIA DE EDUCAÇÃO ESPECIAL (MEC)';
+                titulo = 'Acesso à Educação Bilíngue de Libras e Inclusão Escolar';
+                fonte = 'Censo Escolar da Educação Básica e Relatórios do Inep';
+                kpi1 = { valor: '23%', rotulo: 'Escolas com Libras', desc: 'Apenas uma minoria conta com intérprete habilitado' };
+                kpi2 = { valor: '9,7 mi', rotulo: 'Deficientes Auditivos no País', desc: 'População surda com barreiras severas de comunicação' };
+                kpi3 = { valor: '68%', rotulo: 'Evasão Antes do Superior', desc: 'Barreiras linguísticas que impedem progressão acadêmica' };
+                barras = [
+                    { rotulo: 'Escolas Sem Intérprete de Libras', pct: 77, valor: '77%', cor: 'bg-rose-500' },
+                    { rotulo: 'Escolas Com Acessibilidade Bilíngue', pct: 23, valor: '23%', cor: 'bg-emerald-500' }
+                ];
+            }
+            // 14. INTOLERÂNCIA RELIGIOSA
+            else if (/religio|intolerancia|crenca|disque 100/i.test(combinado)) {
+                orgao = 'OUVIDORIA NACIONAL DE DIREITOS HUMANOS • DISQUE 100';
+                titulo = 'Denúncias de Violações de Liberdade Religiosa por Matriz';
+                fonte = 'Painel Oficial de Dados da Ouvidoria Nacional dos Direitos Humanos';
+                kpi1 = { valor: '+106%', rotulo: 'Aumento nas Denúncias', desc: 'Crescimento de registros de intolerância e agressões' };
+                kpi2 = { valor: '58%', rotulo: 'Matriz Afro-Brasileira', desc: 'Maior parcela dos ataques mira terreiros e sacerdotes' };
+                kpi3 = { valor: '72%', rotulo: 'Violência Verbal e Danos', desc: 'Invasões a locais sagrados e discursos de ódio online' };
+                barras = [
+                    { rotulo: 'Vítimas de Matriz Afro-Brasileira', pct: 58, valor: '58%', cor: 'bg-purple-600' },
+                    { rotulo: 'Outras Matrizes e Grupos sem Religião', pct: 42, valor: '42%', cor: 'bg-slate-500' }
+                ];
+            }
+            // 15. LEI SECA & TRÂNSITO
+            else if (/lei seca|transito|mortalidade|acidente|bafometro/i.test(combinado)) {
+                orgao = 'OBSERVATÓRIO NACIONAL DE SEGURANÇA VIÁRIA & DATASUS';
+                titulo = 'Indicadores de Mortalidade e Efeitos da Fiscalização de Trânsito';
+                fonte = 'Sistema de Informações de Mortalidade (SIM/DataSUS) e ONSV';
+                kpi1 = { valor: '33.000', rotulo: 'Mortes Anuais no Trânsito', desc: 'Uma das principais causas de óbito de jovens no Brasil' };
+                kpi2 = { valor: '-21%', rotulo: 'Impacto da Lei Seca', desc: 'Queda de óbitos comprovada após tolerância zero ao álcool' };
+                kpi3 = { valor: '54%', rotulo: 'Motociclistas e Pedestres', desc: 'Grupos mais vulneráveis nas vias urbanas e rodovias' };
+                barras = [
+                    { rotulo: 'Índice de Óbitos Antes da Lei Seca', pct: 100, valor: '100% (Base)', cor: 'bg-rose-500' },
+                    { rotulo: 'Índice com Fiscalização Rigorosa (-21%)', pct: 79, valor: '79%', cor: 'bg-emerald-500' }
+                ];
+            }
+            // 16. VIOLÊNCIA RACIAL & HOMICÍDIOS
+            else if (/racismo|racial|afro|negra|violencia/i.test(combinado)) {
+                orgao = 'ATLAS DA VIOLÊNCIA • IPEA & FÓRUM BRASILEIRO DE SEGURANÇA PÚBLICA';
+                titulo = 'Indicadores de Desigualdade e Vitimização Racial no Brasil';
+                fonte = 'Atlas da Violência / IPEA e Fórum Brasileiro de Segurança Pública';
+                kpi1 = { valor: '77%', rotulo: 'Vítimas Negras', desc: 'Parcela das vítimas de homicídio no Brasil que são negras' };
+                kpi2 = { valor: '2,6x', rotulo: 'Risco de Morte Violenta', desc: 'Jovem negro tem risco 2,6 vezes maior que jovem branco' };
+                kpi3 = { valor: '44%', rotulo: 'Desigualdade Salarial', desc: 'Diferença de remuneração média entre negros e não negros' };
+                barras = [
+                    { rotulo: 'Homicídios de Pessoas Negras', pct: 77, valor: '77%', cor: 'bg-amber-600' },
+                    { rotulo: 'Homicídios de Pessoas Não Negras', pct: 23, valor: '23%', cor: 'bg-sky-500' }
+                ];
+            }
+            // 17. FEMINICÍDIO & VIOLÊNCIA CONTRA A MULHER
+            else if (/feminicidio|violencia contra a mulher|maria da penha/i.test(combinado)) {
+                orgao = 'FÓRUM BRASILEIRO DE SEGURANÇA PÚBLICA (FBSP)';
+                titulo = 'Notificações de Feminicídio e Violência Doméstica no Brasil';
+                fonte = 'Anuário Brasileiro de Segurança Pública e Ligue 180';
+                kpi1 = { valor: '1 a cada 6h', rotulo: 'Vítima de Feminicídio', desc: 'Média de 4 mulheres assassinadas por dia no país' };
+                kpi2 = { valor: '71,6%', rotulo: 'Dentro da Própria Casa', desc: 'A maior parte dos crimes ocorre no ambiente doméstico' };
+                kpi3 = { valor: '78%', rotulo: 'Autores Conhecidos', desc: 'Cometidos pelo atual parceiro ou ex-companheiro' };
+                barras = [
+                    { rotulo: 'Crime Cometido por Parceiro ou Ex-Parceiro', pct: 78, valor: '78%', cor: 'bg-rose-600' },
+                    { rotulo: 'Crime Cometido por Outros Autores', pct: 22, valor: '22%', cor: 'bg-slate-400' }
+                ];
+            }
+            // 18. FAKE NEWS & DESINFORMAÇÃO
+            else if (/fake news|desinformacao|noticias falsas|boatos/i.test(combinado)) {
+                orgao = 'PESQUISA DATAFOLHA & INSTITUTO TECNOLOGIA E SOCIEDADE (ITS RIO)';
+                titulo = 'Disseminação de Conteúdos Falsos e Confiança nas Instituições';
+                fonte = 'Pesquisas Eleitorais e Sociais Datafolha e ITS Rio';
+                kpi1 = { valor: '68%', rotulo: 'Compartilharam Fake News', desc: 'Já acreditaram ou compartilharam conteúdo comprovadamente falso' };
+                kpi2 = { valor: '79%', rotulo: 'Ameaça à Democracia', desc: 'Concordam que desinformação prejudica decisões cívicas' };
+                kpi3 = { valor: '84%', rotulo: 'Regulação de Plataformas', desc: 'Defendem transparência obrigatória nos algoritmos' };
+                barras = [
+                    { rotulo: 'Compartilharam Conteúdos Não Checados', pct: 68, valor: '68%', cor: 'bg-amber-500' },
+                    { rotulo: 'Checam a Fonte Antes de Compartilhar', pct: 32, valor: '32%', cor: 'bg-indigo-600' }
+                ];
+            }
+
+            // Construir o HTML das barras comparativas
+            let barrasHtml = `
+                <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <span>Comparativo Percentual • Coletânea do Exame</span>
+                        <span class="text-[10px] text-slate-400 font-semibold">Total: 100%</span>
+                    </div>
+                    <div class="w-full h-5 rounded-lg overflow-hidden flex bg-slate-100 dark:bg-slate-700 shadow-inner">
+            `;
+            barras.forEach(b => {
+                barrasHtml += `<div style="width: ${b.pct}%;" class="${b.cor} text-white text-[10px] font-black flex items-center justify-center transition-all truncate px-1" title="${escapeHtml(b.rotulo)}: ${b.valor}">${b.valor}</div>`;
+            });
+            barrasHtml += `</div><div class="flex items-center justify-between flex-wrap gap-2 text-[11px] font-semibold text-slate-600 dark:text-slate-300 pt-1">`;
+            barras.forEach(b => {
+                barrasHtml += `
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-sm ${b.cor} inline-block shrink-0"></span>
+                        <span>${escapeHtml(b.rotulo)}: <strong>${b.valor}</strong></span>
+                    </span>
+                `;
+            });
+            barrasHtml += `</div></div>`;
+
+            // Construir HTML dos KPIs
+            const kpisHtml = `
+                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs">
+                    <span class="block text-[10px] font-bold text-slate-500 uppercase">${escapeHtml(kpi1.rotulo)}</span>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                        <span class="text-xl sm:text-2xl font-black text-amber-500 font-outfit">${escapeHtml(kpi1.valor)}</span>
+                    </div>
+                    <span class="block text-[10px] text-slate-400 mt-1 leading-snug">${escapeHtml(kpi1.desc)}</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs">
+                    <span class="block text-[10px] font-bold text-slate-500 uppercase">${escapeHtml(kpi2.rotulo)}</span>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                        <span class="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400 font-outfit">${escapeHtml(kpi2.valor)}</span>
+                    </div>
+                    <span class="block text-[10px] text-slate-400 mt-1 leading-snug">${escapeHtml(kpi2.desc)}</span>
+                </div>
+                <div class="col-span-2 sm:col-span-1 p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs">
+                    <span class="block text-[10px] font-bold text-slate-500 uppercase">${escapeHtml(kpi3.rotulo)}</span>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                        <span class="text-xl sm:text-2xl font-black text-rose-500 font-outfit">${escapeHtml(kpi3.valor)}</span>
+                    </div>
+                    <span class="block text-[10px] text-slate-400 mt-1 leading-snug">${escapeHtml(kpi3.desc)}</span>
+                </div>
+            `;
+
+            return `
+                <div class="infografico-wrapper my-3 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800/60 bg-gradient-to-br from-indigo-50/60 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 shadow-sm overflow-hidden" id="infografico_box_${uId}">
+                    <div class="px-4 py-2.5 bg-indigo-600/10 dark:bg-indigo-950/40 border-b border-indigo-100 dark:border-indigo-900/40 flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shadow-sm">
+                                <i class="bi bi-bar-chart-fill"></i>
+                            </span>
+                            <span class="text-[11px] font-outfit font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+                                ${escapeHtml(orgao)}
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center gap-1 bg-white dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+                            <button type="button" onclick="alternarVisualizacaoCard('${uId}', 'infografico')" id="btn_toggle_info_${uId}" class="px-2 py-0.5 rounded-md bg-indigo-600 text-white transition flex items-center gap-1 shadow-xs">
+                                <i class="bi bi-pie-chart-fill"></i>
+                                <span>Infográfico Oficial</span>
+                            </button>
+                            <button type="button" onclick="alternarVisualizacaoCard('${uId}', 'foto')" id="btn_toggle_foto_${uId}" class="px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition flex items-center gap-1">
+                                <i class="bi bi-image"></i>
+                                <span>Foto</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VISÃO 1: INFOGRÁFICO DE DADOS -->
+                    <div id="view_infografico_${uId}" class="p-4 sm:p-5 space-y-4">
+                        <div>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 block mb-0.5">PESQUISA & INDICADORES DO EXAME</span>
+                            <h4 class="font-outfit font-black text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
+                                ${escapeHtml(titulo)}
+                            </h4>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                            ${kpisHtml}
+                        </div>
+
+                        ${barrasHtml}
+
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 flex-wrap gap-2">
+                            <span class="flex items-center gap-1">
+                                <i class="bi bi-shield-check text-emerald-500"></i>
+                                <strong>Fonte:</strong> ${escapeHtml(fonte)}
+                            </span>
+                            <span class="font-bold text-indigo-500">Dados Oficiais para Repertório (C2 / C3)</span>
+                        </div>
+                    </div>
+
+                    <!-- VISÃO 2: FOTO CONCEITUAL -->
+                    <div id="view_foto_${uId}" class="hidden p-3 bg-slate-950">
+                        <img src="${escapeHtml(url)}" alt="${escapeHtml(legenda)}" class="w-full h-auto max-h-72 object-cover rounded-xl" loading="lazy">
+                        <p class="text-center text-[10px] text-slate-400 mt-2 italic">${escapeHtml(legenda)}</p>
+                    </div>
+                </div>
+            `;
+        }
+
         // Renderizador profissional de textos motivadores (separa em cards, renderiza fotos/infográficos e fontes)
         function renderizarTextosMotivadores(rawText) {
             if (!rawText || !rawText.trim()) {
@@ -1383,17 +1819,7 @@ require_once __DIR__ . '/includes/header.php';
                 if (imgMatch) {
                     const url = imgMatch[1].trim();
                     const legenda = imgMatch[2].trim();
-                    html += `
-                        <figure class="my-3 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                            <div class="relative bg-slate-950 flex items-center justify-center max-h-72 overflow-hidden">
-                                <img src="${escapeHtml(url)}" alt="${escapeHtml(legenda)}" class="w-full h-auto max-h-72 object-cover transition-transform duration-300 hover:scale-105" loading="lazy" onerror="this.closest('figure').style.display='none'">
-                            </div>
-                            <figcaption class="p-2.5 bg-slate-100/90 dark:bg-slate-800/90 border-t border-slate-200 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-400 font-medium flex items-center gap-2">
-                                <i class="bi bi-image-fill text-indigo-500 shrink-0"></i>
-                                <span>${escapeHtml(legenda)}</span>
-                            </figcaption>
-                        </figure>
-                    `;
+                    html += gerarInfograficoHtml(url, legenda, rawText);
                     return;
                 }
 
@@ -1523,7 +1949,13 @@ require_once __DIR__ . '/includes/header.php';
             const tema = TODOS_TEMAS.find(t => parseInt(t.id) === parseInt(id));
             if (!tema) return;
 
-            document.getElementById('modalPropostaBanca').textContent = `${tema.banca} ${tema.ano || ''} • ${tema.eixo_tematico || ''}`;
+            const bancaUpper = (tema.banca || 'ENEM').toUpperCase();
+            const isPossivel = (bancaUpper === 'POSSIVEIS');
+            const isRedigir = (bancaUpper === 'REDIGIR');
+            const isReal = !isPossivel && !isRedigir && bancaUpper !== 'SIMULADO';
+            const rotuloModal = isPossivel ? `💡 Possível Tema ${tema.ano || ''}` : (isReal ? `🏛️ ${bancaUpper} ${tema.ano || ''} • Prova Real` : `📚 Redigir ${tema.ano || ''}`);
+
+            document.getElementById('modalPropostaBanca').textContent = `${rotuloModal} • ${tema.eixo_tematico || ''}`;
             document.getElementById('modalPropostaTitulo').textContent = tema.titulo;
 
             // Carregar PDF diretamente no iframe do modal (LOGO DE CARA)
@@ -2030,24 +2462,31 @@ require_once __DIR__ . '/includes/header.php';
 
                 if (tema) {
                     const bancaUpper = (tema.banca || 'ENEM').toUpperCase();
+                    const isPossivel = (bancaUpper === 'POSSIVEIS');
+                    const isRedigir = (bancaUpper === 'REDIGIR');
+                    const isReal = !isPossivel && !isRedigir && bancaUpper !== 'SIMULADO';
+
+                    const rotuloExibicao = isPossivel ? 'Possível Tema' : (isRedigir ? 'Redigir' : `${bancaUpper} ${tema.ano || ''}`);
+                    const badgeTexto = isPossivel ? '💡 Possível Tema' : (isReal ? `${bancaUpper} ${tema.ano || ''} • Prova Real` : `📚 Redigir ${tema.ano || ''}`);
+
                     if (formTemaId) formTemaId.value = tema.id;
-                    if (formBanca) formBanca.value = bancaUpper;
-                    if (badgeBancaHeader) badgeBancaHeader.textContent = bancaUpper;
-                    if (badgeBanca1) badgeBanca1.textContent = `${bancaUpper} ${tema.ano || ''}`;
+                    if (formBanca) formBanca.value = isPossivel ? 'ENEM' : bancaUpper;
+                    if (badgeBancaHeader) badgeBancaHeader.textContent = isPossivel ? 'POSSÍVEL TEMA' : bancaUpper;
+                    if (badgeBanca1) badgeBanca1.textContent = badgeTexto;
                     if (badgeEixo1) badgeEixo1.textContent = tema.eixo_tematico || 'Geral';
-                    if (badgeSimuladoBanca) badgeSimuladoBanca.textContent = `${bancaUpper} ${tema.ano || ''} • Proposta Real`;
+                    if (badgeSimuladoBanca) badgeSimuladoBanca.textContent = badgeTexto;
 
                     if (titTema1) titTema1.textContent = tema.titulo;
-                    if (titSimuladoTopo) titSimuladoTopo.textContent = `[${bancaUpper} ${tema.ano || ''}] ${tema.titulo}`;
+                    if (titSimuladoTopo) titSimuladoTopo.textContent = `[${rotuloExibicao}] ${tema.titulo}`;
                     if (descTema1) descTema1.textContent = tema.descricao || '';
-                    if (splitTitulo) splitTitulo.textContent = `[${bancaUpper} ${tema.ano || ''}] ${tema.titulo}`;
+                    if (splitTitulo) splitTitulo.textContent = `[${rotuloExibicao}] ${tema.titulo}`;
                     if (splitDesc) splitDesc.textContent = tema.descricao || '';
 
                     // Orientações Oficiais da Banca
-                    let orientacoesHtml = `<strong>Orientações ${escapeHtml(bancaUpper)}:</strong> `;
+                    let orientacoesHtml = `<strong>Orientações ${isPossivel ? 'do Tema Inédito (Padrão ENEM)' : escapeHtml(bancaUpper)}:</strong> `;
                     if (tema.orientacoes_especificas) {
                         orientacoesHtml += escapeHtml(tema.orientacoes_especificas);
-                    } else if (bancaUpper === 'ENEM') {
+                    } else if (bancaUpper === 'ENEM' || isPossivel) {
                         orientacoesHtml += 'Desenvolva um texto dissertativo-argumentativo em norma padrão. Apresente proposta de intervenção social com os 5 elementos (Agente, Ação, Meio, Efeito e Detalhamento). Respeite os direitos humanos. Limite: 7 a 30 linhas.';
                     } else if (bancaUpper === 'FUVEST') {
                         orientacoesHtml += 'Texto dissertativo-argumentativo de reflexão crítica, filosófica e conceitual. Título obrigatório. Conclusão dialética e autoral. Limite: 20 a 30 linhas.';

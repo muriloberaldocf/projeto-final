@@ -182,10 +182,7 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
 
     <!-- RODAPÉ FIXO DO QUIZ -->
     <footer class="lesson-footer" id="quizFooter" style="display: none;">
-        <div class="lesson-header-inner d-flex justify-content-between align-items-center">
-            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 font-outfit fw-bold" onclick="showTheoryScreen()">
-                <i class="bi bi-journal-text me-1"></i> Voltar à Teoria
-            </button>
+        <div class="lesson-header-inner d-flex justify-content-end align-items-center">
             <button type="button" id="btnCheck" class="btn btn-aprova-primary px-4 py-2.5 fs-6 fw-bold" disabled>
                 Verificar Resposta
             </button>

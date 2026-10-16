@@ -25,6 +25,19 @@ if (!$tema) {
 }
 
 $banca = strtoupper($tema['banca'] ?? 'ENEM');
+$isPossivel = ($banca === 'POSSIVEIS');
+$isReal = !$isPossivel && $banca !== 'REDIGIR' && $banca !== 'SIMULADO';
+
+$bancaExibicao = match($banca) {
+    'POSSIVEIS' => 'SIMULADO / POSSÍVEL TEMA',
+    'REDIGIR' => 'PLATAFORMA REDIGIR',
+    default => $banca
+};
+$subtituloCaderno = $isPossivel
+    ? 'Simulação e Proposta Inédita • Padrão Exame Nacional'
+    : 'Caderno de Prova Oficial • Coletânea de Textos Motivadores';
+$rotuloProva = $isPossivel ? 'PROPOSTA DE REDAÇÃO INÉDITA' : 'PROVA DE REDAÇÃO OFICIAL';
+
 $ano = $tema['ano'] ?? date('Y');
 $titulo = $tema['titulo'] ?? 'Proposta de Redação';
 $slugTitulo = preg_replace('/[^a-zA-Z0-9_\-]+/', '_', $titulo);
@@ -139,6 +152,11 @@ foreach ($linhas as $linha) {
         continue;
     }
 
+    if (preg_match('/\[IMAGEM:\s*([^|]+)\s*\|\s*LEGENDA:\s*([^\]]+)\]/i', $l, $mi)) {
+        $blocoAtual['imagem'] = ['url' => trim($mi[1]), 'legenda' => trim($mi[2])];
+        continue;
+    }
+
     if (preg_match('/\[FONTE:\s*([^\]]+)\]/i', $l, $mf)) {
         $blocoAtual['fonte'] = trim($mf[1]);
         continue;
@@ -146,7 +164,7 @@ foreach ($linhas as $linha) {
 
     $blocoAtual['linhas'][] = $l;
 }
-if (!empty($blocoAtual['linhas'])) {
+if (!empty($blocoAtual['linhas']) || !empty($blocoAtual['imagem'])) {
     $blocosTextos[] = $blocoAtual;
 }
 ?>
@@ -243,7 +261,7 @@ if (!empty($blocoAtual['linhas'])) {
         <div class="flex items-center gap-2 pr-3 border-r border-slate-700">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span class="font-outfit font-black tracking-wider uppercase text-slate-200">
-                <?= htmlspecialchars($banca) ?> <?= htmlspecialchars($ano) ?>
+                <?= htmlspecialchars($bancaExibicao) ?> <?= htmlspecialchars($ano) ?>
             </span>
         </div>
 
@@ -310,13 +328,13 @@ if (!empty($blocoAtual['linhas'])) {
                         </div>
                         <div>
                             <span class="block text-[11px] font-bold tracking-widest uppercase text-slate-800">
-                                MINISTÉRIO DA EDUCAÇÃO • EXAME NACIONAL
+                                <?= $isPossivel ? 'SIMULAÇÃO PEDAGÓGICA • VESTILINGO' : 'MINISTÉRIO DA EDUCAÇÃO • EXAME NACIONAL' ?>
                             </span>
                             <h1 class="text-base font-black tracking-wider uppercase font-outfit m-0 leading-tight">
-                                <?= htmlspecialchars($banca) ?> <?= htmlspecialchars($ano) ?> — PROVA DE REDAÇÃO
+                                <?= htmlspecialchars($bancaExibicao) ?> <?= htmlspecialchars($ano) ?> — <?= $rotuloProva ?>
                             </h1>
                             <span class="block text-[10px] uppercase tracking-wide text-slate-600">
-                                Caderno de Prova Oficial • Coletânea de Textos Motivadores
+                                <?= $subtituloCaderno ?>
                             </span>
                         </div>
                     </div>
@@ -366,6 +384,25 @@ if (!empty($blocoAtual['linhas'])) {
                                 <span class="inline-block px-1.5 py-0.5 bg-black text-white font-black text-[9px] uppercase tracking-wider mb-1.5">
                                     <?= htmlspecialchars($bl['titulo']) ?>
                                 </span>
+
+                                <?php if (!empty($bl['imagem'])): ?>
+                                    <?php
+                                    $legendaImg = $bl['imagem']['legenda'];
+                                    $isInfografico = (bool) preg_match('/infograf|grafic|censo|indicador|taxa|estatist|pesquisa|pnad|ibge|cnj|ancine|inep|oms|ipcc|datasus|dados/i', $legendaImg);
+                                    ?>
+                                    <div class="my-2 p-2 border border-black bg-slate-50 text-[10px] space-y-1 font-sans">
+                                        <div class="flex items-center justify-between border-b border-black pb-0.5">
+                                            <span class="font-black uppercase tracking-wider text-[8.5px] text-slate-800">
+                                                <?= $isInfografico ? '📊 INFOGRÁFICO DE DADOS & PESQUISAS' : '📷 DOCUMENTO VISUAL' ?>
+                                            </span>
+                                            <span class="text-[8px] uppercase font-bold text-slate-500">EXAME OFICIAL</span>
+                                        </div>
+                                        <div class="font-extrabold text-[10px] text-black">
+                                            <?= htmlspecialchars($legendaImg) ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
                                 <div class="space-y-1 text-slate-900 text-justify">
                                     <?php foreach ($bl['linhas'] as $pl): ?>
                                         <p class="m-0 indent-3"><?= htmlspecialchars($pl) ?></p>

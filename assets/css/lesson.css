@@ -53,6 +53,11 @@ body.lesson-page {
     gap: 16px;
 }
 
+#theoryHeaderControls[style*="display: none"],
+#theoryHeaderControls.d-none {
+    display: none !important;
+}
+
 .progress-bar-container {
     flex: 1;
     height: 14px;

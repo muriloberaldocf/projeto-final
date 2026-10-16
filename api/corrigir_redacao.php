@@ -179,6 +179,14 @@ if ($banca === 'UNESP') {
         . "  * C3: Projeto de texto estratégico, consistência argumentativa e autoria;\n"
         . "  * C4: Coesão referencial e sequencial, variedade de conectivos;\n"
         . "  * C5: Proposta de intervenção social detalhada (ou síntese conclusiva coerente com a banca).\n";
+} elseif ($banca === 'POSSIVEIS') {
+    $blocoBanca = "BANCA EXAMINADORA: POSSÍVEL TEMA INÉDITO (PADRÃO MATRIZ ENEM - INEP)\n"
+        . "MATRIZ OFICIAL ENEM (5 COMPETÊNCIAS OFICIAIS DO INEP):\n"
+        . "- C1: Domínio da norma culta da língua escrita formal (desvios gramaticais, pontuação, crase, concordância e regência);\n"
+        . "- C2: Compreensão da proposta temática inédita, aplicação de repertório sociocultural legitimado e tipologia dissertativa;\n"
+        . "- C3: Projeto de texto estratégico, coerência e solidez dos argumentos em defesa do ponto de vista;\n"
+        . "- C4: Coesão inter e intraparágrafos e repertório diversificado de conectivos articuladores;\n"
+        . "- C5: Proposta de intervenção completa com os 5 elementos (Agente, Ação, Meio/Modo, Efeito e Detalhamento).\n";
 } else {
     $blocoBanca = "BANCA EXAMINADORA: ENEM (INEP)\n"
         . "MATRIZ OFICIAL ENEM (5 COMPETÊNCIAS OFICIAIS):\n"

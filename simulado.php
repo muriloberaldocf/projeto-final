@@ -673,7 +673,9 @@ require_once __DIR__ . '/includes/header.php';
                     lastDiff = diff;
                     const info = getDiffBadge(diff);
                     const separator = document.createElement('div');
-                    separator.className = 'col-span-5 flex items-center gap-2 py-1.5 px-0.5';
+                    separator.className = `col-span-full flex items-center gap-2 ${idx > 0 ? 'pt-3 pb-1' : 'pt-1 pb-1'} px-0.5`;
+                    separator.style.gridColumn = '1 / -1';
+                    separator.style.width = '100%';
                     separator.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-extrabold border ${info.color}"><i class="bi ${info.icon}"></i> ${info.label}</span><div class="flex-1 h-px bg-slate-200"></div>`;
                     grid.appendChild(separator);
                 }

@@ -123,7 +123,7 @@ require_once __DIR__ . '/includes/header.php';
             'bi-gem': 'Diamante Medicina',
             'bi-incognito': 'Mestre Misterioso',
             'bi-crown': 'Rei da Aprovação',
-            'bi-emoji-smile-fill': '🦛 Hipopótamo Lendário'
+            'bi-emoji-smile-fill': 'Estudante Lendário'
         };
 
         document.addEventListener('DOMContentLoaded', () => {
