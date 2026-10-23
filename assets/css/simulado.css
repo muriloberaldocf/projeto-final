@@ -288,6 +288,32 @@ h1, h2, h3, h4, h5, h6, .outfit-font {
   position: relative;
 }
 
+/* Feedback Imediato no Modo Treino Livre */
+.simulado-option-card.correct {
+  border-color: #10b981 !important;
+  background-color: #ecfdf5 !important;
+  box-shadow: 0 4px 0 0 #059669 !important;
+}
+.simulado-option-card.correct .simulado-option-badge {
+  background-color: #10b981 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+.simulado-option-card.wrong {
+  border-color: #f43f5e !important;
+  background-color: #fff1f2 !important;
+  box-shadow: 0 4px 0 0 #e11d48 !important;
+}
+.simulado-option-card.wrong .simulado-option-badge {
+  background-color: #f43f5e !important;
+  border-color: #e11d48 !important;
+  color: #ffffff !important;
+}
+.simulado-option-card.disabled-option {
+  cursor: default !important;
+  pointer-events: none !important;
+}
+
 .simulado-option-card:hover,
 .option-card:hover {
   border-color: #a78bfa;

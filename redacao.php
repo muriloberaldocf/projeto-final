@@ -63,18 +63,19 @@ require_once __DIR__ . '/includes/header.php';
     <style>
         /* Folha Pautada Oficial e Gutter de Linhas (Letrus Style) */
         .folha-pautada-box {
-            border-radius: 18px;
-            border: 2px solid #cbd5e1;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
             background: #ffffff;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
             transition: all 0.2s ease;
+            position: relative;
         }
         .folha-pautada-box:focus-within {
             border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.08);
         }
         .redacao-gutter {
-            width: 44px;
+            width: 46px;
             background: #f8fafc;
             border-right: 2px solid #e2e8f0;
             padding: 16px 0;
@@ -100,10 +101,13 @@ require_once __DIR__ . '/includes/header.php';
         }
         .redacao-folha-sync {
             background-color: #ffffff;
-            background-image: repeating-linear-gradient(white, white 31px, #e2e8f0 31px, #e2e8f0 32px);
+            /* Folha oficial pautada com guia sutil de margem vermelha à esquerda */
+            background-image: 
+                repeating-linear-gradient(to bottom, transparent, transparent 31px, #e2e8f0 31px, #e2e8f0 32px),
+                linear-gradient(to right, transparent 20px, rgba(239, 68, 68, 0.22) 20px, rgba(239, 68, 68, 0.22) 22px, transparent 22px);
             line-height: 32px;
-            padding: 16px 20px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 16px 20px 16px 36px;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             font-size: 15px;
             color: #1e293b;
             border: none;
@@ -111,10 +115,12 @@ require_once __DIR__ . '/includes/header.php';
             resize: none;
             min-height: 992px; /* 30 linhas * 32px + 32px padding */
             overflow-y: auto;
+            letter-spacing: 0.01em;
         }
         html.dark .folha-pautada-box {
             border-color: #334155;
             background: #18202e;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
         }
         html.dark .redacao-gutter {
             background: #0f172a;
@@ -127,7 +133,9 @@ require_once __DIR__ . '/includes/header.php';
         }
         html.dark .redacao-folha-sync {
             background-color: #18202e !important;
-            background-image: repeating-linear-gradient(#18202e, #18202e 31px, #273449 31px, #273449 32px) !important;
+            background-image: 
+                repeating-linear-gradient(to bottom, transparent, transparent 31px, #273449 31px, #273449 32px),
+                linear-gradient(to right, transparent 20px, rgba(244, 63, 94, 0.25) 20px, rgba(244, 63, 94, 0.25) 22px, transparent 22px) !important;
             color: #f8fafc !important;
         }
 
@@ -183,6 +191,29 @@ require_once __DIR__ . '/includes/header.php';
             background-color: rgba(236, 72, 153, 0.4) !important;
             color: #fbcfe8 !important;
             border-bottom-color: #f472b6;
+        }
+
+        /* Cursores Realistas de Marca-Texto para os Textos Motivadores */
+        .cursor-grifo-amarelo, .cursor-grifo-amarelo *:not(button):not(a):not(.fonte-nao-grifavel):not(.letrus-mark) {
+            cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cG9seWdvbiBwb2ludHM9IjEsNCA0LDEgMTEsOCA2LDEwIiBmaWxsPSIjZmFjYzE1IiBzdHJva2U9IiMwZjE3MmEiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBvbHlnb24gcG9pbnRzPSI2LDEwIDExLDggMTQsMTIgOCwxNCIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuMiIvPjxwb2x5Z29uIHBvaW50cz0iOCwxNCAxNCwxMiAyNSwyMyAxOSwyNyIgZmlsbD0iI2ZlZjA4YSIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMjEiIHkyPSIyNSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIwLjgiLz48cG9seWdvbiBwb2ludHM9IjE5LDI3IDI1LDIzIDI4LDI2IDIyLDMwIiBmaWxsPSIjMGYxNzJhIi8+PC9zdmc=") 2 2, text !important;
+        }
+        .cursor-grifo-verde, .cursor-grifo-verde *:not(button):not(a):not(.fonte-nao-grifavel):not(.letrus-mark) {
+            cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cG9seWdvbiBwb2ludHM9IjEsNCA0LDEgMTEsOCA2LDEwIiBmaWxsPSIjMjJjNTVlIiBzdHJva2U9IiMwZjE3MmEiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBvbHlnb24gcG9pbnRzPSI2LDEwIDExLDggMTQsMTIgOCwxNCIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuMiIvPjxwb2x5Z29uIHBvaW50cz0iOCwxNCAxNCwxMiAyNSwyMyAxOSwyNyIgZmlsbD0iI2JiZjdkMCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMjEiIHkyPSIyNSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIwLjgiLz48cG9seWdvbiBwb2ludHM9IjE5LDI3IDI1LDIzIDI4LDI2IDIyLDMwIiBmaWxsPSIjMGYxNzJhIi8+PC9zdmc=") 2 2, text !important;
+        }
+        .cursor-grifo-azul, .cursor-grifo-azul *:not(button):not(a):not(.fonte-nao-grifavel):not(.letrus-mark) {
+            cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cG9seWdvbiBwb2ludHM9IjEsNCA0LDEgMTEsOCA2LDEwIiBmaWxsPSIjMGVhNWU5IiBzdHJva2U9IiMwZjE3MmEiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBvbHlnb24gcG9pbnRzPSI2LDEwIDExLDggMTQsMTIgOCwxNCIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuMiIvPjxwb2x5Z29uIHBvaW50cz0iOCwxNCAxNCwxMiAyNSwyMyAxOSwyNyIgZmlsbD0iI2JhZTZmZCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMjEiIHkyPSIyNSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIwLjgiLz48cG9seWdvbiBwb2ludHM9IjE5LDI3IDI1LDIzIDI4LDI2IDIyLDMwIiBmaWxsPSIjMGYxNzJhIi8+PC9zdmc=") 2 2, text !important;
+        }
+        .cursor-grifo-rosa, .cursor-grifo-rosa *:not(button):not(a):not(.fonte-nao-grifavel):not(.letrus-mark) {
+            cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cG9seWdvbiBwb2ludHM9IjEsNCA0LDEgMTEsOCA2LDEwIiBmaWxsPSIjZWM0ODk5IiBzdHJva2U9IiMwZjE3MmEiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBvbHlnb24gcG9pbnRzPSI2LDEwIDExLDggMTQsMTIgOCwxNCIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuMiIvPjxwb2x5Z29uIHBvaW50cz0iOCwxNCAxNCwxMiAyNSwyMyAxOSwyNyIgZmlsbD0iI2ZiY2ZlOCIgc3Ryb2tlPSIjMGYxNzJhIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMjEiIHkyPSIyNSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIwLjgiLz48cG9seWdvbiBwb2ludHM9IjE5LDI3IDI1LDIzIDI4LDI2IDIyLDMwIiBmaWxsPSIjMGYxNzJhIi8+PC9zdmc=") 2 2, text !important;
+        }
+
+        /* Proteção Absoluta para Fontes e Créditos: NUNCA GRIFÁVEIS */
+        .fonte-nao-grifavel, .fonte-nao-grifavel * {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            cursor: not-allowed !important;
         }
 
         /* Dropzone para Envio de Foto/PDF */
@@ -392,7 +423,7 @@ require_once __DIR__ . '/includes/header.php';
                                 'REDIGIR' => 'bg-red-100 text-red-900 border-red-300 dark:bg-red-950/40 dark:text-red-300 dark:border-red-700'
                             ][$bancaUpper] ?? 'bg-indigo-100 text-indigo-900 border-indigo-300';
                             ?>
-                            <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col justify-between gap-4 cursor-pointer group" onclick="verPropostaCompleta(<?= $t['id'] ?>)" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>">
+                            <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col justify-between gap-4 cursor-pointer group" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>">
                                 <div class="space-y-2.5">
                                     <div class="flex items-center justify-between gap-2">
                                         <div class="flex items-center gap-1.5 flex-wrap">
@@ -402,7 +433,15 @@ require_once __DIR__ . '/includes/header.php';
                                                 <?php elseif ($bancaUpper === 'REDIGIR'): ?>
                                                     📚 Redigir <?= htmlspecialchars($t['ano'] ?? '') ?>
                                                 <?php else: ?>
-                                                    <?= $bancaUpper ?> <?= htmlspecialchars($t['ano'] ?? '') ?> • Prova Real
+                                                    <?php 
+                                                    $origemUpper = strtoupper($t['origem'] ?? '');
+                                                    if (strpos($origemUpper, 'PPL') !== false): ?>
+                                                        🔒 <?= $bancaUpper ?> <?= htmlspecialchars($t['ano'] ?? '') ?> • PPL / Reaplicação
+                                                    <?php elseif (strpos($origemUpper, '2ª') !== false || strpos($origemUpper, '2A') !== false): ?>
+                                                        📝 <?= $bancaUpper ?> <?= htmlspecialchars($t['ano'] ?? '') ?> • 2ª Aplicação
+                                                    <?php else: ?>
+                                                        🏛️ <?= $bancaUpper ?> <?= htmlspecialchars($t['ano'] ?? '') ?> • Regular (1ª)
+                                                    <?php endif; ?>
                                                 <?php endif; ?>
                                             </span>
                                             <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
@@ -429,14 +468,14 @@ require_once __DIR__ . '/includes/header.php';
                                             <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i>
                                             <span class="hidden sm:inline">PDF</span>
                                         </a>
-                                        <button type="button" onclick="iniciarLeituraComTema(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs transition-all flex items-center gap-1.5" title="Abrir textos motivadores em tela cheia com marca-texto">
+                                        <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs transition-all flex items-center gap-1.5" title="Ver coletânea de textos motivadores">
                                             <i class="bi bi-book-half"></i>
-                                            <span>Ler Textos</span>
+                                            <span>Textos</span>
                                         </button>
                                     </div>
 
                                     <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-sm transition-all flex items-center gap-1.5">
-                                        <span>Escrever</span>
+                                        <span>Iniciar Redação</span>
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                 </div>
@@ -452,269 +491,186 @@ require_once __DIR__ . '/includes/header.php';
                     <input type="hidden" name="csrf_token" id="letrusCsrfToken" value="<?= htmlspecialchars(getCsrfToken()) ?>">
                     <input type="hidden" id="inputBancaAtiva" name="banca" value="ENEM">
 
-                    <!-- BARRA SUPERIOR DE SIMULADO OFICIAL (ENEM / LETRUS VESTIBULARES) -->
-                    <div id="barraSimuladoOficial" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-4 sm:p-5 border-2 border-indigo-500/40 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-all">
-                        <div class="absolute -right-8 -top-8 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-                        <!-- LADO ESQUERDO: AÇÃO DE VOLTAR + EMBLEMA DE SIMULADO + TÍTULO DA PROPOSTA -->
-                        <div class="flex items-center gap-3.5 min-w-0">
-                            <button type="button" onclick="sairDoModoSimulado()" class="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/15 text-white font-outfit font-black text-xs sm:text-sm transition-all flex items-center gap-2 shrink-0 shadow-sm" title="Voltar ao catálogo de propostas e restaurar menu lateral">
-                                <i class="bi bi-arrow-left text-base"></i>
-                                <span>Voltar aos Temas</span>
-                            </button>
-
-                            <div class="h-8 w-px bg-white/15 hidden sm:block shrink-0"></div>
-
-                            <div class="min-w-0">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 shadow-sm">
-                                        <i class="bi bi-file-earmark-lock2-fill"></i> Modo Simulado Oficial
-                                    </span>
-                                    <span id="badgeSimuladoBanca" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
-                                        ENEM • Proposta Real
-                                    </span>
-                                    <span class="text-[11px] text-slate-400 hidden xl:inline">
-                                        • Workspace 50/50
-                                    </span>
-                                </div>
-                                <h2 id="tituloSimuladoTopo" class="font-outfit font-black text-sm sm:text-base text-white truncate max-w-sm sm:max-w-md md:max-w-xl lg:max-w-2xl mt-1" title="Título da Proposta">
-                                    Carregando proposta...
-                                </h2>
-                            </div>
-                        </div>
-
-                        <!-- LADO DIREITO: CONTROLES DE EXAME, STATUS RASCUNHO, TIMER E BOTÃO DE ENTREGA -->
-                        <div class="flex flex-wrap items-center gap-2.5 shrink-0 justify-between lg:justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-white/10">
-                            <!-- STATUS RASCUNHO NA NUVEM -->
-                            <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-slate-300">
-                                <i class="bi bi-cloud-check-fill text-emerald-400 text-sm"></i>
-                                <span id="txtSimuladoDraft" class="font-medium text-[11px]">Rascunho salvo</span>
-                            </div>
-
-                            <!-- CRONÔMETRO DE PROVA -->
-                            <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/15 shadow-sm">
-                                <div class="text-right">
-                                    <span class="block text-[8px] uppercase tracking-wider font-extrabold text-slate-400 leading-none mb-0.5">Tempo</span>
-                                    <span id="displayTimerSimulado" class="font-outfit font-black text-sm sm:text-base text-amber-300 leading-none">00:00:00</span>
-                                </div>
-                                <button type="button" onclick="toggleTimer()" class="w-7 h-7 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white flex items-center justify-center transition shadow-sm" title="Iniciar/Pausar Cronômetro">
-                                    <i class="bi bi-play-fill text-base" id="iconTimerSimulado"></i>
+                    <!-- BARRA PRINCIPAL DO WORKSPACE (LIMPA, ELEGANTE E INTEGRADA) -->
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm space-y-4">
+                        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
+                            <!-- LADO ESQUERDO: VOLTAR AOS TEMAS + SELETOR DE PROPOSTA -->
+                            <div class="flex items-center gap-3 flex-1 min-w-0">
+                                <button type="button" onclick="sairDoModoSimulado()" class="px-3.5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs transition flex items-center gap-1.5 shrink-0 border border-slate-200 dark:border-slate-600 shadow-xs" title="Voltar ao catálogo de propostas">
+                                    <i class="bi bi-arrow-left text-sm"></i>
+                                    <span class="hidden sm:inline">Temas</span>
                                 </button>
-                            </div>
 
-                            <!-- BOTÃO MODO ZEN / FOCO -->
-                            <button type="button" onclick="toggleModoFocoTotal()" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-slate-300 hover:text-white font-outfit font-bold text-xs transition flex items-center gap-1.5" title="Alternar Modo Foco Zen">
-                                <i class="bi bi-arrows-fullscreen text-amber-300"></i>
-                                <span class="hidden md:inline">Zen</span>
-                            </button>
-
-                            <!-- BOTÃO DIRETO: ENTREGAR REDAÇÃO -->
-                            <button type="button" onclick="dispararEnvioRedacao()" class="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 active:scale-95 text-white font-outfit font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
-                                <span>Entregar</span>
-                                <i class="bi bi-send-fill text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- TOPO DA BANCADA: SELETOR DE PROPOSTA + CONTROLES + STEPPER LETRUS -->
-                    <div class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm space-y-4">
-                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                            <!-- SELETOR DE PROPOSTA -->
-                            <div class="flex-1 w-full">
-                                <div class="flex items-center justify-between gap-2 mb-1.5">
-                                    <label class="block font-outfit font-extrabold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                        Proposta / Tema Selecionado
-                                    </label>
-                                    <span id="badgeBancaHeader" class="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
-                                        ENEM
-                                    </span>
-                                </div>
-                                <div class="relative">
-                                    <select id="temaSelect" name="tema_id" onchange="aoMudarTema()" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100 font-bold text-sm focus:border-indigo-500 focus:outline-none transition-all pr-10 cursor-pointer">
-                                        <?php foreach ($temasAgrupados as $bancaNome => $listaTemas): ?>
-                                            <?php
-                                            $optLabel = match($bancaNome) {
-                                                'ENEM' => '🟡 ENEM (Provas Reais 1998–2024)',
-                                                'UNESP' => '🔵 UNESP (Provas Reais)',
-                                                'FUVEST' => '🔴 FUVEST (Provas Reais)',
-                                                'UNICAMP' => '🟠 UNICAMP (Provas Reais)',
-                                                'UERJ' => '🟣 UERJ (Provas Reais)',
-                                                'REDIGIR' => '📚 Plataforma Redigir',
-                                                'POSSIVEIS' => '💡 Possíveis Temas / Inéditos (Padrão ENEM)',
-                                                default => "🏛️ $bancaNome"
-                                            };
-                                            ?>
-                                            <optgroup label="<?= $optLabel ?> (<?= count($listaTemas) ?>)">
-                                                <?php foreach ($listaTemas as $t): ?>
-                                                    <option value="<?= $t['id'] ?>">
-                                                        [<?= htmlspecialchars($t['banca'] === 'POSSIVEIS' ? 'Possível' : $t['banca']) ?> <?= htmlspecialchars($t['ano']) ?>] <?= htmlspecialchars($t['titulo']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </optgroup>
-                                        <?php endforeach; ?>
-                                        <option value="custom">✍️ Digitar Outro Tema Personalizado...</option>
-                                    </select>
-                                    <i class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
-                                </div>
-
-                                <div id="divTemaCustom" class="mt-3 hidden">
-                                    <input type="text" id="temaCustom" name="tema_custom" placeholder="Digite o título ou pergunta do tema personalizado..." class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-indigo-400 rounded-2xl px-4 py-3 text-slate-900 dark:text-slate-100 font-medium text-sm focus:outline-none">
-                                </div>
-                            </div>
-
-                            <!-- CONTROLES SUPERIORES: CRONÔMETRO + MODO FOCO TOTAL ZEN -->
-                            <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-700">
-                                <!-- CRONÔMETRO DE PROVA -->
-                                <div class="bg-slate-50 dark:bg-slate-900 p-2.5 sm:p-3 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center gap-2.5 shadow-sm">
-                                    <div class="text-right">
-                                        <span class="block text-[9px] sm:text-[10px] font-black uppercase text-slate-400">Tempo de Prova</span>
-                                        <span id="displayTimer" class="font-outfit font-black text-base sm:text-xl text-indigo-600 dark:text-indigo-400">00:00:00</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2 mb-1">
+                                        <span class="text-[10px] font-outfit font-black uppercase tracking-wider text-slate-400">
+                                            Proposta / Tema Ativo
+                                        </span>
+                                        <span id="badgeBancaHeader" class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                            ENEM
+                                        </span>
                                     </div>
-                                    <button type="button" id="btnTimerToggle" onclick="toggleTimer()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition-all shadow-sm" title="Iniciar/Pausar Cronômetro">
-                                        <i class="bi bi-play-fill text-xl" id="iconTimer"></i>
+                                    <div class="relative">
+                                        <select id="temaSelect" name="tema_id" onchange="aoMudarTema()" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-slate-900 dark:text-slate-100 font-bold text-xs sm:text-sm focus:border-indigo-500 focus:outline-none transition-all pr-8 cursor-pointer truncate">
+                                            <?php foreach ($temasAgrupados as $bancaNome => $listaTemas): ?>
+                                                <?php
+                                                $optLabel = match($bancaNome) {
+                                                    'ENEM' => '🟡 ENEM (Provas Reais 1998–2024)',
+                                                    'UNESP' => '🔵 UNESP (Provas Reais)',
+                                                    'FUVEST' => '🔴 FUVEST (Provas Reais)',
+                                                    'UNICAMP' => '🟠 UNICAMP (Provas Reais)',
+                                                    'UERJ' => '🟣 UERJ (Provas Reais)',
+                                                    'REDIGIR' => '📚 Plataforma Redigir',
+                                                    'POSSIVEIS' => '💡 Possíveis Temas / Inéditos (Padrão ENEM)',
+                                                    default => "🏛️ $bancaNome"
+                                                };
+                                                ?>
+                                                <optgroup label="<?= $optLabel ?> (<?= count($listaTemas) ?>)">
+                                                    <?php foreach ($listaTemas as $t): ?>
+                                                        <option value="<?= $t['id'] ?>">
+                                                            [<?= htmlspecialchars($t['origem'] ?: ($t['banca'] . ' ' . $t['ano'])) ?>] <?= htmlspecialchars($t['titulo']) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </optgroup>
+                                            <?php endforeach; ?>
+                                            <option value="custom">✍️ Digitar Outro Tema Personalizado...</option>
+                                        </select>
+                                        <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                                    </div>
+
+                                    <div id="divTemaCustom" class="mt-2 hidden">
+                                        <input type="text" id="temaCustom" name="tema_custom" placeholder="Digite o título ou pergunta do tema personalizado..." class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-indigo-400 rounded-xl px-3 py-1.5 text-slate-900 dark:text-slate-100 font-medium text-xs focus:outline-none">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- LADO DIREITO: CRONÔMETRO + MODO FOCO + ENTREGAR -->
+                            <div class="flex items-center gap-2 sm:gap-2.5 shrink-0 justify-end">
+                                <!-- CRONÔMETRO DE PROVA -->
+                                <div class="bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2 shadow-xs">
+                                    <div class="text-right">
+                                        <span class="block text-[8px] font-black uppercase text-slate-400 leading-none mb-0.5">Tempo</span>
+                                        <span id="displayTimer" class="font-outfit font-black text-sm text-indigo-600 dark:text-indigo-400 leading-none">00:00:00</span>
+                                    </div>
+                                    <button type="button" id="btnTimerToggle" onclick="toggleTimer()" class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition shadow-xs" title="Iniciar/Pausar Cronômetro">
+                                        <i class="bi bi-play-fill text-sm" id="iconTimer"></i>
                                     </button>
                                 </div>
 
-                                <!-- BOTÃO MODO FOCO TOTAL / TELA CHEIA -->
-                                <button type="button" onclick="toggleModoFocoTotal()" id="btnModoFoco" class="px-3.5 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-outfit font-extrabold text-xs transition-all flex items-center gap-2 shadow-sm" title="Alternar Modo Foco sem distrações">
-                                    <i class="bi bi-arrows-fullscreen text-indigo-600 dark:text-indigo-400" id="iconModoFoco"></i>
-                                    <span id="txtModoFoco" class="hidden sm:inline">Modo Foco</span>
+                                <!-- MODO FOCO -->
+                                <button type="button" onclick="toggleModoFocoTotal()" id="btnModoFoco" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-400 bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs transition flex items-center gap-1.5 shadow-xs" title="Modo Foco sem distrações">
+                                    <i class="bi bi-arrows-fullscreen text-indigo-500" id="iconModoFoco"></i>
+                                    <span id="txtModoFoco" class="hidden md:inline">Foco</span>
+                                </button>
+
+                                <!-- BOTÃO ENTREGAR REDAÇÃO -->
+                                <button type="button" onclick="dispararEnvioRedacao()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-outfit font-black text-xs sm:text-sm shadow-sm transition-all flex items-center gap-1.5">
+                                    <span>Entregar</span>
+                                    <i class="bi bi-send-fill text-xs"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- NAVEGAÇÃO ENTRE ETAPAS (FLUXO LETRUS) -->
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/70">
-                            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
-                                <button type="button" id="btnStepLeitura" onclick="irParaEtapa('leitura')" class="flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-outfit font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm">
-                                    <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black">1</span>
-                                    <span>1. Leitura & Grifos</span>
+                        <!-- LINHA INFERIOR: NAVEGAÇÃO ENTRE ETAPAS (STEPPER LETRUS) + STATUS -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-700/60">
+                            <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
+                                <button type="button" id="btnStepLeitura" onclick="irParaEtapa('leitura')" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-outfit font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm">
+                                    <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[9px] font-black">1</span>
+                                    <span>1. Textos Motivadores</span>
                                 </button>
-                                <button type="button" id="btnStepEscrita" onclick="irParaEtapa('escrita')" class="flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-outfit font-extrabold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
-                                    <span class="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-[10px] font-black">2</span>
-                                    <span>2. Redação (Split-Screen)</span>
+                                <button type="button" id="btnStepEscrita" onclick="irParaEtapa('escrita')" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-outfit font-extrabold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+                                    <span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-[9px] font-black">2</span>
+                                    <span>2. Folha de Redação</span>
                                 </button>
                             </div>
 
                             <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end">
-                                <span id="badgeGrifosGeral" class="px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 font-outfit font-bold text-xs flex items-center gap-1.5">
+                                <span id="badgeGrifosGeral" class="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 font-outfit font-bold text-xs flex items-center gap-1.5">
                                     <i class="bi bi-highlighter text-amber-500"></i>
                                     <span id="txtCountGrifosGeral">0 trechos destacados</span>
                                 </span>
-                                <span id="badgeDraftGeral" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 text-xs font-medium flex items-center gap-1.5">
+                                <span id="badgeDraftGeral" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-500 text-xs font-medium flex items-center gap-1.5">
                                     <i class="bi bi-cloud-check-fill text-indigo-500"></i>
                                     <span id="txtDraftStatus">Rascunho salvo</span>
                                 </span>
                             </div>
                         </div>
+
+                        <!-- Elementos de compatibilidade invisíveis para JS legado -->
+                        <div class="hidden">
+                            <span id="tituloSimuladoTopo"></span>
+                            <span id="badgeSimuladoBanca"></span>
+                            <span id="txtSimuladoDraft"></span>
+                            <span id="displayTimerSimulado"></span>
+                            <span id="iconTimerSimulado"></span>
+                        </div>
                     </div>
 
                     <!-- ========================================================================= -->
-                    <!-- ETAPA 1: LEITURA ATENTA E GRIFO DOS TEXTOS MOTIVADORES (FLUXO LETRUS)     -->
+                    <!-- ETAPA 1: TELA EXCLUSIVA COM OS TEXTOS MOTIVADORES E AVANÇO                -->
                     <!-- ========================================================================= -->
-                    <div id="etapaLeitura" class="space-y-6">
-                        <!-- BANNER DO TEMA & ORIENTAÇÕES OFICIAIS -->
-                        <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-lg border border-indigo-800/40 space-y-4">
-                            <div class="flex flex-wrap items-center justify-between gap-3">
-                                <div class="flex items-center gap-2">
-                                    <span class="px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-400 text-slate-950 shadow-sm" id="badgeEtapa1Banca">
+                    <div id="etapaLeitura" class="space-y-4">
+                        <!-- BARRA SUPERIOR LIMPA: TÍTULO DA PROPOSTA + PALETA MARCA-TEXTO + BOTÃO AVANÇAR -->
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" id="badgeEtapa1Banca">
                                         ENEM
                                     </span>
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-indigo-200 border border-white/10" id="badgeEtapa1Eixo">
+                                    <span class="text-xs text-slate-400 font-bold" id="badgeEtapa1Eixo">
                                         Geral
                                     </span>
-                                </div>
-                                <div class="flex items-center gap-2.5">
-                                    <span class="text-xs font-bold text-slate-300 hidden sm:flex items-center gap-1.5">
-                                        <i class="bi bi-eye-fill text-amber-300"></i>
-                                        <span>Etapa 1: Leitura & Grifos</span>
-                                    </span>
-                                    <button type="button" onclick="irParaEtapa('escrita')" class="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-outfit font-black text-xs shadow-md transition-all flex items-center gap-1.5">
-                                        <span>Escrever Redação</span>
-                                        <i class="bi bi-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h2 id="tituloTemaEtapa1" class="font-outfit font-black text-xl sm:text-2xl text-white leading-snug">
-                                    Carregando tema...
-                                </h2>
-                                <p id="descTemaEtapa1" class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-                                </p>
-                            </div>
-
-                            <div id="boxOrientacoesEtapa1" class="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-indigo-100 leading-relaxed">
-                            </div>
-                        </div>
-
-                        <!-- BARRA DE FERRAMENTAS DO MARCADOR DE TEXTO (LETRUS HIGHLIGHTER) -->
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl border-2 border-indigo-200 dark:border-indigo-900/60 p-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sticky top-16 z-30 backdrop-blur-md bg-white/95 dark:bg-slate-800/95">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="text-xs font-outfit font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 me-1">
-                                    <i class="bi bi-pen-fill text-indigo-600 dark:text-indigo-400"></i>
-                                    <span>Marca-Texto:</span>
-                                </span>
-
-                                <!-- BOTÕES DE CORES -->
-                                <button type="button" onclick="setCorGrifoAtiva('amarelo')" id="btnCorAmarelo" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-yellow-100 text-yellow-900 border-2 border-yellow-400 shadow-sm" title="Amarelo: Ideias Centrais e Teses">
-                                    <span class="w-3.5 h-3.5 rounded-full bg-yellow-400"></span>
-                                    <span>Teses</span>
-                                </button>
-                                <button type="button" onclick="setCorGrifoAtiva('verde')" id="btnCorVerde" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-2 border-transparent hover:border-emerald-300" title="Verde: Argumentos e Repertórios">
-                                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-400"></span>
-                                    <span>Argumentos</span>
-                                </button>
-                                <button type="button" onclick="setCorGrifoAtiva('azul')" id="btnCorAzul" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-2 border-transparent hover:border-sky-300" title="Azul: Dados Estatísticos e Fatos">
-                                    <span class="w-3.5 h-3.5 rounded-full bg-sky-400"></span>
-                                    <span>Dados</span>
-                                </button>
-                                <button type="button" onclick="setCorGrifoAtiva('rosa')" id="btnCorRosa" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-2 border-transparent hover:border-pink-300" title="Rosa: Problemas e Consequências">
-                                    <span class="w-3.5 h-3.5 rounded-full bg-pink-400"></span>
-                                    <span>Problemas</span>
-                                </button>
-
-                                <button type="button" onclick="limparTodosGrifos()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1" title="Limpar todos os grifos deste tema">
-                                    <i class="bi bi-trash3 text-rose-500"></i>
-                                    <span class="hidden sm:inline">Limpar</span>
-                                </button>
-                            </div>
-
-                            <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
-                                <!-- Alternador: Texto vs PDF -->
-                                <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <button type="button" id="btnModoTextoEtapa1" onclick="setModoVisualizacaoEtapa1('texto')" class="px-3 py-1 rounded-lg text-xs font-outfit font-black transition bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm flex items-center gap-1">
-                                        <i class="bi bi-fonts"></i>
-                                        <span>Texto com Grifos</span>
-                                    </button>
-                                    <button type="button" id="btnModoPdfEtapa1" onclick="setModoVisualizacaoEtapa1('pdf')" class="px-3 py-1 rounded-lg text-xs font-outfit font-bold transition text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-300 flex items-center gap-1">
-                                        <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i>
-                                        <span>PDF Original</span>
-                                    </button>
-                                </div>
-
-                                <button type="button" onclick="irParaEtapa('escrita')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-md transition-all flex items-center gap-2">
-                                    <span>Escrever</span>
-                                    <i class="bi bi-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- CONTAINER DOS TEXTOS MOTIVADORES: ETAPA 1 -->
-                        <div class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm space-y-6">
-                            <!-- VISUALIZAÇÃO EM TEXTO TRANSCRITO COM MARCA-TEXTO -->
-                            <div id="viewTextoEtapa1" class="space-y-4">
-                                <div class="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-900/60 text-xs text-indigo-900 dark:text-indigo-200 flex items-center justify-between gap-3">
-                                    <span class="flex items-center gap-2">
-                                        <i class="bi bi-cursor-text text-indigo-600 dark:text-indigo-400 text-sm"></i>
-                                        <span><strong>Dica Letrus:</strong> Selecione qualquer palavra ou frase com o cursor para grifar. Use cores para categorizar ideias, teses e dados!</span>
-                                    </span>
-                                    <span id="badgeContadorGrifosEtapa1" class="px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white font-black text-[11px] shrink-0">
+                                    <span id="badgeContadorGrifosEtapa1" class="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-[10px] font-bold text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                                         0 grifos
                                     </span>
                                 </div>
+                                <h2 id="tituloTemaEtapa1" class="font-outfit font-black text-base sm:text-lg text-slate-900 dark:text-white truncate" title="Tema">
+                                    Carregando tema...
+                                </h2>
+                                <p id="descTemaEtapa1" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 hidden"></p>
+                                <div id="boxOrientacoesEtapa1" class="hidden"></div>
+                            </div>
 
-                                <!-- TEXTOS RENDERIZADOS -->
+                            <div class="flex items-center gap-2 sm:gap-3 flex-wrap shrink-0">
+                                <!-- Paleta de Marca-Texto Interativa -->
+                                <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span class="text-[11px] font-outfit font-bold text-slate-400 hidden sm:inline-flex items-center gap-1 me-1">
+                                        <i class="bi bi-pen-fill text-indigo-500"></i> Marca-texto:
+                                    </span>
+                                    <button type="button" data-cor="amarelo" onclick="setCorGrifoAtiva('amarelo')" class="btn-paleta-cor w-5 h-5 rounded-full bg-yellow-400 hover:scale-110 active:scale-95 transition shadow-sm border border-yellow-500/40 flex items-center justify-center" title="Marca-texto Amarelo"></button>
+                                    <button type="button" data-cor="verde" onclick="setCorGrifoAtiva('verde')" class="btn-paleta-cor w-5 h-5 rounded-full bg-emerald-400 hover:scale-110 active:scale-95 transition shadow-sm border border-emerald-500/40 flex items-center justify-center" title="Marca-texto Verde"></button>
+                                    <button type="button" data-cor="azul" onclick="setCorGrifoAtiva('azul')" class="btn-paleta-cor w-5 h-5 rounded-full bg-sky-400 hover:scale-110 active:scale-95 transition shadow-sm border border-sky-500/40 flex items-center justify-center" title="Marca-texto Azul"></button>
+                                    <button type="button" data-cor="rosa" onclick="setCorGrifoAtiva('rosa')" class="btn-paleta-cor w-5 h-5 rounded-full bg-pink-400 hover:scale-110 active:scale-95 transition shadow-sm border border-pink-500/40 flex items-center justify-center" title="Marca-texto Rosa"></button>
+                                    <span class="w-[1px] h-3.5 bg-slate-300 dark:bg-slate-700 mx-0.5"></span>
+                                    <button type="button" onclick="limparTodosGrifos()" class="text-slate-400 hover:text-rose-500 text-xs transition p-0.5" title="Limpar todos os grifos deste tema">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Alternador: Texto vs PDF -->
+                                <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <button type="button" id="btnModoTextoEtapa1" onclick="setModoVisualizacaoEtapa1('texto')" class="px-2.5 py-1 rounded-lg text-xs font-outfit font-black transition bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm flex items-center gap-1">
+                                        <i class="bi bi-fonts"></i>
+                                        <span>Texto</span>
+                                    </button>
+                                    <button type="button" id="btnModoPdfEtapa1" onclick="setModoVisualizacaoEtapa1('pdf')" class="px-2.5 py-1 rounded-lg text-xs font-outfit font-bold transition text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-300 flex items-center gap-1">
+                                        <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i>
+                                        <span>PDF</span>
+                                    </button>
+                                </div>
+
+                                <!-- Botão de Avanço -->
+                                <button type="button" onclick="irParaEtapa('escrita')" class="px-4 sm:px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-outfit font-black text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2">
+                                    <span>Avançar para a Redação</span>
+                                    <i class="bi bi-arrow-right font-black"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- CONTAINER DOS TEXTOS MOTIVADORES -->
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm space-y-6">
+                            <!-- VISUALIZAÇÃO EM TEXTO TRANSCRITO -->
+                            <div id="viewTextoEtapa1" class="space-y-4">
                                 <div id="letrusTextosEtapa1" class="textos-motivadores-render space-y-4 leading-relaxed text-slate-800 dark:text-slate-200 select-text">
                                     <!-- Conteúdo injetado via JS -->
                                 </div>
@@ -726,23 +682,11 @@ require_once __DIR__ . '/includes/header.php';
                             </div>
                         </div>
 
-                        <!-- CALL TO ACTION NO RODAPÉ DA ETAPA 1 -->
-                        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 border-2 border-indigo-500/30">
-                            <div class="space-y-1 text-center sm:text-left">
-                                <span class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center justify-center sm:justify-start gap-1.5">
-                                    <i class="bi bi-check2-circle"></i> Leitura concluída?
-                                </span>
-                                <h3 class="font-outfit font-black text-xl text-white">
-                                    Pronto para começar a produção do seu texto?
-                                </h3>
-                                <p class="text-xs text-slate-300 max-w-xl mb-0">
-                                    Na próxima etapa, os textos motivadores ficarão <strong>ao lado da folha oficial de redação</strong> com todos os seus grifos salvos!
-                                </p>
-                            </div>
-
-                            <button type="button" onclick="irParaEtapa('escrita')" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-outfit font-black text-sm sm:text-base shadow-[0_5px_0_0_#3730a3] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 shrink-0">
+                        <!-- BOTÃO DE AVANÇAR PARA A REDAÇÃO NO FINAL DOS TEXTOS -->
+                        <div class="flex items-center justify-center pt-2 pb-6">
+                            <button type="button" onclick="irParaEtapa('escrita')" class="w-full sm:w-auto px-10 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-outfit font-black text-base shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2.5">
                                 <span>Avançar para a Redação</span>
-                                <i class="bi bi-pencil-square text-lg"></i>
+                                <i class="bi bi-arrow-right text-xl"></i>
                             </button>
                         </div>
                     </div>
@@ -751,31 +695,21 @@ require_once __DIR__ . '/includes/header.php';
                     <!-- ETAPA 2: BANCADA DE PRODUÇÃO TEXTUAL COM SPLIT-SCREEN (LETRUS WORKSPACE) -->
                     <!-- ========================================================================= -->
                     <div id="etapaEscrita" class="hidden space-y-6">
-                        <!-- BARRA DE CONTROLE DE VISUALIZAÇÃO / MINIMIZAR -->
+                        <!-- BARRA DE CONTROLE: SETINHA DE ALTERNÂNCIA E AÇÕES -->
                         <div class="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-3.5 sm:p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="irParaEtapa('leitura')" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs transition flex items-center gap-1.5" title="Voltar à tela de leitura completa">
-                                    <i class="bi bi-arrow-left"></i>
-                                    <span>Rever Textos (Tela Cheia)</span>
+                                <!-- SETINHA COMPACTA PARA EXIBIR / OCULTAR TEXTOS LADO A LADO (SEM TELA CHEIA) -->
+                                <button type="button" id="btnToggleSideTextos" onclick="toggleTextosAoLado()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-600 transition-all" title="Ocultar ou exibir textos ao lado da folha">
+                                    <i class="bi bi-chevron-left text-sm" id="iconSideTextos"></i>
+                                    <span id="txtSideTextos">Ocultar Textos</span>
                                 </button>
 
-                                <span class="hidden md:inline text-xs text-slate-400 font-bold">|</span>
+                                <span class="text-xs text-slate-300 dark:text-slate-600">|</span>
 
-                                <!-- CONTROLES DE MINIMIZAR / SPLIT -->
-                                <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
-                                    <button type="button" id="btnViewSplit" onclick="setVisualizacaoBancada('split')" title="Visualização Dividida: Textos de um lado e Folha do outro" class="px-3 py-1.5 rounded-lg text-xs font-outfit font-black transition bg-indigo-600 text-white shadow-sm flex items-center gap-1.5">
-                                        <i class="bi bi-layout-split"></i>
-                                        <span class="hidden sm:inline">Dividido (50/50)</span>
-                                    </button>
-                                    <button type="button" id="btnViewRedacaoOnly" onclick="setVisualizacaoBancada('redacao-only')" title="Minimizar Textos: Folha em Tela Cheia" class="px-3 py-1.5 rounded-lg text-xs font-outfit font-bold transition text-slate-600 dark:text-slate-300 hover:text-indigo-600 flex items-center gap-1.5">
-                                        <i class="bi bi-layout-sidebar-reverse"></i>
-                                        <span class="hidden sm:inline">Minimizar Textos</span>
-                                    </button>
-                                    <button type="button" id="btnViewTextosOnly" onclick="setVisualizacaoBancada('textos-only')" title="Minimizar Redação: Foco nos Textos" class="px-3 py-1.5 rounded-lg text-xs font-outfit font-bold transition text-slate-600 dark:text-slate-300 hover:text-indigo-600 flex items-center gap-1.5">
-                                        <i class="bi bi-layout-sidebar"></i>
-                                        <span class="hidden sm:inline">Foco nos Textos</span>
-                                    </button>
-                                </div>
+                                <button type="button" onclick="irParaEtapa('leitura')" class="px-3 py-1.5 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 font-outfit font-semibold text-xs transition flex items-center gap-1.5" title="Voltar à tela de leitura dos textos">
+                                    <i class="bi bi-journal-text"></i>
+                                    <span class="hidden sm:inline">Tela de Leitura</span>
+                                </button>
                             </div>
 
                             <div class="flex items-center gap-2">
@@ -783,26 +717,18 @@ require_once __DIR__ . '/includes/header.php';
                                     <i class="bi bi-arrow-counterclockwise"></i>
                                     <span class="hidden sm:inline">Limpar Folha</span>
                                 </button>
-                                <button type="button" onclick="salvarRascunhoManual()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-outfit font-bold transition flex items-center gap-1.5 shadow-sm" title="Salvar Rascunho">
+                                <button type="button" onclick="salvarRascunhoManual()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-outfit font-bold transition flex items-center gap-1.5 shadow-sm" title="Salvar Rascunho">
                                     <i class="bi bi-save-fill text-indigo-500"></i>
                                     <span>Salvar</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- FAIXA DE AVISO QUANDO OS TEXTOS MOTIVADORES ESTIVEREM MINIMIZADOS -->
-                        <div id="bannerTextosMinimizados" class="hidden">
-                            <button type="button" onclick="setVisualizacaoBancada('split')" class="w-full py-3 px-5 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 border-2 border-dashed border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-outfit font-black text-xs sm:text-sm flex items-center justify-between transition-all shadow-sm">
-                                <span class="flex items-center gap-2">
-                                    <i class="bi bi-book-half text-base"></i>
-                                    <span>Os textos motivadores estão minimizados. Clique para restaurar a visualização lado a lado.</span>
-                                </span>
-                                <span class="px-3 py-1 rounded-xl bg-indigo-600 text-white font-bold text-xs flex items-center gap-1 shadow-sm">
-                                    <span>Restaurar Textos</span>
-                                    <i class="bi bi-arrow-right"></i>
-                                </span>
-                            </button>
-                        </div>
+                        <!-- BOTÃO FLUTUANTE DISCRETO (SETINHA) QUANDO TEXTOS ESTIVEREM OCULTOS -->
+                        <button type="button" id="btnFloatingTextos" onclick="setVisualizacaoBancada('split')" class="hidden fixed left-4 top-1/2 -translate-y-1/2 z-30 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-outfit font-black text-xs group" title="Ver textos motivadores ao lado">
+                            <i class="bi bi-chevron-right text-base group-hover:translate-x-0.5 transition-transform"></i>
+                            <span>Textos Motivadores</span>
+                        </button>
 
                         <!-- GRID PRINCIPAL SPLIT-SCREEN (TEXTOS DE UM LADO E REDAÇÃO DO OUTRO) -->
                         <div id="gridSplitBancada" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -831,10 +757,14 @@ require_once __DIR__ . '/includes/header.php';
                                         <div class="flex items-center gap-1.5 shrink-0">
                                             <!-- Mini-paleta de marca-texto -->
                                             <div class="flex items-center gap-1 p-1 bg-white dark:bg-slate-800 rounded-xl border border-indigo-100 dark:border-indigo-900 shadow-sm me-1">
-                                                <button type="button" onclick="setCorGrifoAtiva('amarelo')" class="w-5 h-5 rounded-full bg-yellow-400 hover:scale-110 transition shadow-sm" title="Grifo Amarelo"></button>
-                                                <button type="button" onclick="setCorGrifoAtiva('verde')" class="w-5 h-5 rounded-full bg-emerald-400 hover:scale-110 transition shadow-sm" title="Grifo Verde"></button>
-                                                <button type="button" onclick="setCorGrifoAtiva('azul')" class="w-5 h-5 rounded-full bg-sky-400 hover:scale-110 transition shadow-sm" title="Grifo Azul"></button>
-                                                <button type="button" onclick="setCorGrifoAtiva('rosa')" class="w-5 h-5 rounded-full bg-pink-400 hover:scale-110 transition shadow-sm" title="Grifo Rosa"></button>
+                                                <button type="button" data-cor="amarelo" onclick="setCorGrifoAtiva('amarelo')" class="btn-paleta-cor w-5 h-5 rounded-full bg-yellow-400 hover:scale-110 active:scale-95 transition shadow-sm border border-yellow-500/40 flex items-center justify-center" title="Marca-texto Amarelo"></button>
+                                                <button type="button" data-cor="verde" onclick="setCorGrifoAtiva('verde')" class="btn-paleta-cor w-5 h-5 rounded-full bg-emerald-400 hover:scale-110 active:scale-95 transition shadow-sm border border-emerald-500/40 flex items-center justify-center" title="Marca-texto Verde"></button>
+                                                <button type="button" data-cor="azul" onclick="setCorGrifoAtiva('azul')" class="btn-paleta-cor w-5 h-5 rounded-full bg-sky-400 hover:scale-110 active:scale-95 transition shadow-sm border border-sky-500/40 flex items-center justify-center" title="Marca-texto Azul"></button>
+                                                <button type="button" data-cor="rosa" onclick="setCorGrifoAtiva('rosa')" class="btn-paleta-cor w-5 h-5 rounded-full bg-pink-400 hover:scale-110 active:scale-95 transition shadow-sm border border-pink-500/40 flex items-center justify-center" title="Marca-texto Rosa"></button>
+                                                <span class="w-[1px] h-3.5 bg-slate-200 dark:bg-slate-700 mx-0.5"></span>
+                                                <button type="button" onclick="limparTodosGrifos()" class="text-slate-400 hover:text-rose-500 text-[11px] transition px-0.5" title="Limpar todos os grifos">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
                                             </div>
 
                                             <!-- Alternar Texto vs PDF no split -->
@@ -847,9 +777,10 @@ require_once __DIR__ . '/includes/header.php';
                                                 </button>
                                             </div>
 
-                                            <!-- Botão Minimizar Textos -->
-                                            <button type="button" onclick="setVisualizacaoBancada('redacao-only')" class="p-1.5 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 transition" title="Minimizar Textos (Foco Total na Redação)">
-                                                <i class="bi bi-chevron-left text-base"></i>
+                                            <!-- Botão Ocultar Textos com setinha -->
+                                            <button type="button" onclick="setVisualizacaoBancada('redacao-only')" class="px-2.5 py-1 rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-white dark:hover:bg-slate-800 text-xs font-bold transition flex items-center gap-1 border border-indigo-100 dark:border-indigo-900" title="Ocultar Textos (focar na folha de redação)">
+                                                <i class="bi bi-chevron-left text-sm"></i>
+                                                <span class="hidden sm:inline">Ocultar</span>
                                             </button>
                                         </div>
                                     </div>
@@ -883,17 +814,22 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="hidden" id="formInputTemaId" name="tema_id" value="">
                                     <input type="hidden" id="formInputTemaCustom" name="tema_custom" value="">
 
+                                    <!-- ATALHO DE SETINHA NO TOPO DA FOLHA QUANDO TEXTOS ESTIVEREM OCULTOS -->
+                                    <div id="barraAtalhoTextos" class="hidden flex items-center justify-between pb-3 mb-2 border-b border-slate-100 dark:border-slate-700/60">
+                                        <button type="button" onclick="setVisualizacaoBancada('split')" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs border border-indigo-200 dark:border-slate-600 shadow-sm transition-all" title="Ver textos motivadores lado a lado">
+                                            <i class="bi bi-chevron-right text-sm"></i>
+                                            <span>Ver Textos Motivadores (ao lado)</span>
+                                        </button>
+                                    </div>
+
                                     <!-- TÍTULO DA REDAÇÃO (CAMPO PROPRIO) -->
                                     <div>
                                         <div class="flex items-center justify-between mb-1">
                                             <label class="block font-outfit font-extrabold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                                Título da Redação:
+                                                Título da Redação <span class="font-normal lowercase text-slate-400" id="rotuloTituloBanca">(opcional)</span>
                                             </label>
-                                            <span class="text-[11px] text-slate-400 font-bold" id="rotuloTituloBanca">
-                                                * Opcional no ENEM • Avaliado na FUVEST/UNESP
-                                            </span>
                                         </div>
-                                        <input type="text" id="tituloRedacao" name="titulo_redacao" oninput="agendarAutoSave()" placeholder="Digite aqui o título expressivo da sua redação..." class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
+                                        <input type="text" id="tituloRedacao" name="titulo_redacao" oninput="agendarAutoSave()" placeholder="Digite o título da sua redação..." class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
                                     </div>
 
                                     <!-- MODO DE ENVIO: DIGITAR FOLHA vs FOTO/PDF -->
@@ -912,9 +848,9 @@ require_once __DIR__ . '/includes/header.php';
                                     </div>
                                     <input type="hidden" id="tipoEnvioInput" name="tipo_envio" value="texto">
 
-                                    <!-- ÁREA 1: FOLHA PAUTADA COM LINHAS NUMERADAS (1 A 30 ESTILO LETRUS) -->
+                                    <!-- ÁREA 1: FOLHA PAUTADA COM LINHAS NUMERADAS (1 A 30) -->
                                     <div id="containerTexto" class="space-y-3">
-                                        <!-- RÉGUA DE CONTADORES E FEEDBACK PEDAGÓGICO -->
+                                        <!-- RÉGUA DE CONTADORES LIMPA -->
                                         <div class="flex flex-wrap items-center justify-between text-xs font-bold gap-2">
                                             <div class="flex items-center gap-2">
                                                 <span id="badgeLinhas" class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-mono font-black transition-all">
@@ -928,12 +864,10 @@ require_once __DIR__ . '/includes/header.php';
                                                 </span>
                                             </div>
 
-                                            <span id="badgeStatusPedagogico" class="text-[11px] text-slate-400 font-semibold">
-                                                Mínimo 7 e máximo 30 linhas
-                                            </span>
+                                            <span id="badgeAlertaLinhas" class="hidden text-xs font-bold text-rose-500"></span>
                                         </div>
 
-                                        <!-- FOLHA OFICIAL COM GUTTER DE NÚMEROS -->
+                                        <!-- FOLHA OFICIAL COM GUTTER DE NÚMEROS E MARGEM -->
                                         <div class="folha-pautada-box flex overflow-hidden relative">
                                             <!-- COLUNA DE LINHAS 1 A 30 -->
                                             <div id="gutterLinhas" class="redacao-gutter select-none shrink-0" aria-hidden="true">
@@ -942,13 +876,8 @@ require_once __DIR__ . '/includes/header.php';
                                                 <?php endfor; ?>
                                             </div>
 
-                                            <!-- TEXTAREA DA REDAÇÃO -->
-                                            <textarea id="textoRedacao" name="texto_redacao" rows="30" oninput="atualizarContadoresRedacao(); agendarAutoSave(); sincronizarLinhaAtiva();" onkeyup="sincronizarLinhaAtiva();" onclick="sincronizarLinhaAtiva();" placeholder="Comece aqui a sua introdução com a tese central...&#10;&#10;Em seguida, estruture o desenvolvimento com argumentos consistentes e repertório legítimo...&#10;&#10;Finalize com uma conclusão articulada (proposta de intervenção completa no ENEM ou reflexão crítica na UNESP/FUVEST)." class="redacao-folha-sync w-full"></textarea>
-                                        </div>
-
-                                        <div class="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
-                                            <span>* As linhas sincronizam automaticamente com a extensão oficial da prova.</span>
-                                            <span id="badgeAlertaLinhas" class="hidden font-bold text-rose-500"></span>
+                                            <!-- TEXTAREA DA REDAÇÃO LIMPA -->
+                                            <textarea id="textoRedacao" name="texto_redacao" rows="30" oninput="atualizarContadoresRedacao(); agendarAutoSave(); sincronizarLinhaAtiva();" onkeyup="sincronizarLinhaAtiva();" onclick="sincronizarLinhaAtiva();" placeholder="Comece a escrever sua redação aqui..." class="redacao-folha-sync w-full"></textarea>
                                         </div>
                                     </div>
 
@@ -989,24 +918,6 @@ require_once __DIR__ . '/includes/header.php';
 
                         </div>
                     </div>
-                </div>
-
-                <!-- MINI-TOOLBAR FLUTUANTE DE GRIFO (AO SELECIONAR TEXTO NO CONTAINER) -->
-                <div id="floatingHighlightToolbar" class="fixed z-50 hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-indigo-200 dark:border-indigo-900 p-2 flex items-center gap-2 transform -translate-x-1/2 -translate-y-full transition-all duration-150 pointer-events-auto">
-                    <span class="text-[10px] font-outfit font-black uppercase text-slate-400 px-1">Grifar:</span>
-                    <button type="button" onclick="aplicarGrifoFlutuante('amarelo')" class="w-7 h-7 rounded-full bg-yellow-300 hover:scale-110 active:scale-95 transition-transform border-2 border-yellow-400 shadow-sm flex items-center justify-center text-xs" title="Amarelo: Ideia Central / Tese">
-                    </button>
-                    <button type="button" onclick="aplicarGrifoFlutuante('verde')" class="w-7 h-7 rounded-full bg-emerald-300 hover:scale-110 active:scale-95 transition-transform border-2 border-emerald-400 shadow-sm flex items-center justify-center text-xs" title="Verde: Argumento / Repertório">
-                    </button>
-                    <button type="button" onclick="aplicarGrifoFlutuante('azul')" class="w-7 h-7 rounded-full bg-sky-300 hover:scale-110 active:scale-95 transition-transform border-2 border-sky-400 shadow-sm flex items-center justify-center text-xs" title="Azul: Dados / Estatísticas">
-                    </button>
-                    <button type="button" onclick="aplicarGrifoFlutuante('rosa')" class="w-7 h-7 rounded-full bg-pink-300 hover:scale-110 active:scale-95 transition-transform border-2 border-pink-400 shadow-sm flex items-center justify-center text-xs" title="Rosa: Problema / Causa">
-                    </button>
-                    <span class="w-[1px] h-5 bg-slate-200 dark:bg-slate-700 mx-0.5"></span>
-                    <button type="button" onclick="removerGrifoFlutuante()" class="px-2 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1" title="Remover Grifo da seleção">
-                        <i class="bi bi-eraser-fill text-rose-500"></i>
-                        <span class="text-[10px]">Apagar</span>
-                    </button>
                 </div>
 
                 <!-- ========================================================================= -->
@@ -1187,9 +1098,9 @@ require_once __DIR__ . '/includes/header.php';
                     <a id="btnModalNovaAba" href="#" target="_blank" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs transition flex items-center justify-center" title="Abrir em Nova Aba">
                         <i class="bi bi-box-arrow-up-right"></i>
                     </a>
-                    <button type="button" id="btnModalPraticar" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 transform active:scale-95" title="Minimizar leitura e começar a escrever na folha">
+                    <button type="button" id="btnModalPraticar" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 transform active:scale-95" title="Ver textos motivadores e iniciar redação">
                         <i class="bi bi-pencil-square"></i>
-                        <span>Minimizar e Escrever ✍️</span>
+                        <span>Iniciar Redação</span>
                     </button>
                 </div>
             </div>
@@ -1307,8 +1218,28 @@ require_once __DIR__ . '/includes/header.php';
             }
         }
 
-        // Função de Saída rápida do Simulado de volta ao Banco de Temas
-        function sairDoModoSimulado() {
+        // Função de Saída rápida do Simulado de volta ao Banco de Temas com confirmação se houver prova em andamento
+        async function sairDoModoSimulado() {
+            if (isRedacaoAtiva && timerSeconds > 10) {
+                const result = await Swal.fire({
+                    title: 'Sair da Redação?',
+                    text: 'O seu tempo de produção está correndo. Deseja pausar o cronômetro e voltar ao catálogo de temas?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, sair e pausar',
+                    cancelButtonText: 'Continuar escrevendo',
+                    confirmButtonColor: '#4f46e5',
+                    cancelButtonColor: '#64748b',
+                    reverseButtons: true
+                });
+                if (!result.isConfirmed) {
+                    return;
+                }
+            }
+            if (typeof pausarCronometro === 'function') {
+                pausarCronometro();
+            }
+            isRedacaoAtiva = false;
             switchPortalTab('banco');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1348,6 +1279,10 @@ require_once __DIR__ . '/includes/header.php';
                     irParaEtapa('escrita');
                 }
             } else {
+                if (typeof pausarCronometro === 'function') {
+                    pausarCronometro();
+                }
+                isRedacaoAtiva = false;
                 aplicarModoSimulado(false);
             }
 
@@ -1754,7 +1689,7 @@ require_once __DIR__ . '/includes/header.php';
 
                         ${barrasHtml}
 
-                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 flex-wrap gap-2">
+                        <div class="fonte-nao-grifavel pt-2 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 flex-wrap gap-2 select-none">
                             <span class="flex items-center gap-1">
                                 <i class="bi bi-shield-check text-emerald-500"></i>
                                 <strong>Fonte:</strong> ${escapeHtml(fonte)}
@@ -1764,9 +1699,9 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <!-- VISÃO 2: FOTO CONCEITUAL -->
-                    <div id="view_foto_${uId}" class="hidden p-3 bg-slate-950">
+                    <div id="view_foto_${uId}" class="hidden p-3 bg-slate-100 dark:bg-slate-900 rounded-b-xl border-t border-slate-200 dark:border-slate-700">
                         <img src="${escapeHtml(url)}" alt="${escapeHtml(legenda)}" class="w-full h-auto max-h-72 object-cover rounded-xl" loading="lazy">
-                        <p class="text-center text-[10px] text-slate-400 mt-2 italic">${escapeHtml(legenda)}</p>
+                        <p class="fonte-nao-grifavel text-center text-[10px] text-slate-500 dark:text-slate-400 mt-2 italic select-none">${escapeHtml(legenda)}</p>
                     </div>
                 </div>
             `;
@@ -1794,7 +1729,7 @@ require_once __DIR__ . '/includes/header.php';
                     dentroDeTextoCard = true;
                     html += `
                         <div class="rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm space-y-3 transition-all">
-                            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-700/60">
+                            <div class="fonte-nao-grifavel flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-700/60 select-none">
                                 <span class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-outfit font-black text-[11px] uppercase tracking-wide shadow-sm flex items-center gap-1.5">
                                     <i class="bi bi-file-earmark-text-fill"></i>
                                     ${escapeHtml(l)}
@@ -1828,9 +1763,21 @@ require_once __DIR__ . '/includes/header.php';
                 if (fonteMatch) {
                     const fonte = fonteMatch[1].trim();
                     html += `
-                        <div class="mt-2.5 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-bold italic">
+                        <div class="fonte-nao-grifavel mt-2.5 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-bold italic select-none">
                             <i class="bi bi-quote text-indigo-500 text-sm shrink-0"></i>
-                            <span>${escapeHtml(fonte)}</span>
+                            <span>Fonte: ${escapeHtml(fonte)}</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 3.1 Fonte Genérica / Citação de origem bibliográfica
+                const genericFonteMatch = l.match(/^(\(?Fonte:?|\(?Disponível em:?|\(?Acesso em:?|\(?Adaptado de:?)\s*(.+)$/i);
+                if (genericFonteMatch) {
+                    html += `
+                        <div class="fonte-nao-grifavel mt-2.5 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-bold italic select-none">
+                            <i class="bi bi-quote text-indigo-500 text-sm shrink-0"></i>
+                            <span>${escapeHtml(l)}</span>
                         </div>
                     `;
                     return;
@@ -2015,8 +1962,105 @@ require_once __DIR__ . '/includes/header.php';
         let autoSaveTimer = null;
         let timerSeconds = 0;
         let timerInterval = null;
+        let isRedacaoAtiva = false;
+        let focusWarningActive = false;
 
-        // Iniciar Escrita com Proposta selecionada (Workspace Split-Screen Letrus)
+        // Controle do Cronômetro Oficial de Produção
+        function iniciarCronometro() {
+            isRedacaoAtiva = true;
+            const icon = document.getElementById('iconTimer');
+            const iconSimulado = document.getElementById('iconTimerSimulado');
+            if (icon) icon.className = 'bi bi-pause-fill text-sm';
+            if (iconSimulado) iconSimulado.className = 'bi bi-pause-fill text-base';
+
+            if (timerInterval) return;
+
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
+                const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
+                const s = String(timerSeconds % 60).padStart(2, '0');
+                const timeStr = `${h}:${m}:${s}`;
+                const el = document.getElementById('displayTimer');
+                const elSimulado = document.getElementById('displayTimerSimulado');
+                if (el) el.textContent = timeStr;
+                if (elSimulado) elSimulado.textContent = timeStr;
+            }, 1000);
+        }
+
+        function pausarCronometro() {
+            isRedacaoAtiva = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            const icon = document.getElementById('iconTimer');
+            const iconSimulado = document.getElementById('iconTimerSimulado');
+            if (icon) icon.className = 'bi bi-play-fill text-sm';
+            if (iconSimulado) iconSimulado.className = 'bi bi-play-fill text-base';
+        }
+
+        function toggleTimer() {
+            if (timerInterval) {
+                pausarCronometro();
+            } else {
+                iniciarCronometro();
+            }
+        }
+
+        // ============================================================
+        // SISTEMA DE FOCO TOTAL & ANTI-DISTRAÇÃO ("MANTENHA O FOCO!!!")
+        // ============================================================
+        function handleFocusLostRedacao() {
+            if (!isRedacaoAtiva || focusWarningActive) return;
+            // Se houver modal do SweetAlert aberto (ex: envio, confirmação) ou modal de chave API
+            if (typeof Swal !== 'undefined' && Swal.isVisible && Swal.isVisible()) return;
+            const modalApiKey = document.getElementById('modalApiKey');
+            if (modalApiKey && !modalApiKey.classList.contains('hidden')) return;
+
+            focusWarningActive = true;
+
+            Swal.fire({
+                title: '⚠️ Mantenha o foco!!!',
+                text: 'Você saiu da tela da redação! Para garantir uma preparação autêntica para o vestibular, mantenha sua atenção total na prova.',
+                icon: 'warning',
+                confirmButtonText: 'Voltar à Redação',
+                confirmButtonColor: '#4f46e5',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then(() => {
+                focusWarningActive = false;
+            });
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isRedacaoAtiva) {
+                handleFocusLostRedacao();
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            if (isRedacaoAtiva) {
+                // Pequeno debounce para evitar falso positivo com modais internos ou input file
+                setTimeout(() => {
+                    const fileInput = document.getElementById('arquivoInput');
+                    if (fileInput && document.activeElement === fileInput) return;
+                    if (isRedacaoAtiva && !document.hasFocus() && (typeof Swal === 'undefined' || !Swal.isVisible || !Swal.isVisible())) {
+                        handleFocusLostRedacao();
+                    }
+                }, 200);
+            }
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (isRedacaoAtiva && timerSeconds > 10) {
+                e.preventDefault();
+                e.returnValue = 'A sua redação está em andamento. O tempo continua correndo e seu texto está salvo.';
+                return e.returnValue;
+            }
+        });
+
+        // Iniciar Escrita com Proposta selecionada (Abre sempre na tela de leitura com textos primeiro)
         function iniciarEscritaComTema(id) {
             fecharModalProposta();
             const select = document.getElementById('temaSelect');
@@ -2026,8 +2070,27 @@ require_once __DIR__ . '/includes/header.php';
             aoMudarTema();
             switchPortalTab('escrever');
 
-            // Abrir direto na bancada de redação com o split-screen oficial ativo!
-            irParaEtapa('escrita');
+            // Sempre abre primeiro na tela de textos motivadores com o botão para avançar!
+            irParaEtapa('leitura');
+
+            // Iniciar o cronômetro imediatamente e marcar a redação como ativa
+            iniciarCronometro();
+
+            // Alerta Toast estilo simulado oficial
+            if (typeof Swal !== 'undefined') {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3500,
+                    timerProgressBar: true
+                });
+                Toast.fire({
+                    icon: 'info',
+                    title: '⏱️ Redação Iniciada!',
+                    text: 'O cronômetro começou a contar. Mantenha o foco e boa prova!'
+                });
+            }
 
             window.scrollTo({ top: 0, behavior: 'instant' });
             setTimeout(() => {
@@ -2038,22 +2101,7 @@ require_once __DIR__ . '/includes/header.php';
 
         // Iniciar com Leitura em Tela Cheia & Grifos (Etapa 1)
         function iniciarLeituraComTema(id) {
-            fecharModalProposta();
-            const select = document.getElementById('temaSelect');
-            if (id && select) {
-                select.value = id;
-            }
-            aoMudarTema();
-            switchPortalTab('escrever');
-
-            // Abrir na etapa de leitura completa e grifos
-            irParaEtapa('leitura');
-
-            window.scrollTo({ top: 0, behavior: 'instant' });
-            setTimeout(() => {
-                const topo = document.getElementById('tabContentEscrever');
-                if (topo) topo.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 60);
+            iniciarEscritaComTema(id);
         }
 
         // Navegação entre Etapa 1 (Leitura) e Etapa 2 (Split-Screen)
@@ -2081,6 +2129,11 @@ require_once __DIR__ . '/includes/header.php';
                 salvarGrifosTema();
                 sincronizarTextosEntreContainers();
 
+                // Garantir que o cronômetro esteja rodando na etapa de escrita
+                if (!timerInterval) {
+                    iniciarCronometro();
+                }
+
                 if (etapaLeitura) etapaLeitura.classList.add('hidden');
                 if (etapaEscrita) etapaEscrita.classList.remove('hidden');
                 if (btnStepEscrita) btnStepEscrita.className = btnAtivo;
@@ -2098,37 +2151,47 @@ require_once __DIR__ . '/includes/header.php';
             }
         }
 
-        // Alternância de Visualização da Bancada Split (Dividido, Minimizar Textos, Minimizar Redação)
+        // Alternância de Visualização da Bancada Split (Dividido, Minimizar Textos)
         function setVisualizacaoBancada(modo) {
             modoVisualizacaoBancada = modo;
             const colTextos = document.getElementById('colunaTextos');
             const colRedacao = document.getElementById('colunaRedacao');
-            const bannerMinimizado = document.getElementById('bannerTextosMinimizados');
-            const btnSplit = document.getElementById('btnViewSplit');
-            const btnRedacao = document.getElementById('btnViewRedacaoOnly');
-            const btnTextos = document.getElementById('btnViewTextosOnly');
-
-            const classAtivo = "px-3 py-1.5 rounded-lg text-xs font-outfit font-black transition bg-indigo-600 text-white shadow-sm flex items-center gap-1.5";
-            const classInativo = "px-3 py-1.5 rounded-lg text-xs font-outfit font-bold transition text-slate-600 dark:text-slate-300 hover:text-indigo-600 flex items-center gap-1.5";
-
-            if (btnSplit) btnSplit.className = (modo === 'split') ? classAtivo : classInativo;
-            if (btnRedacao) btnRedacao.className = (modo === 'redacao-only') ? classAtivo : classInativo;
-            if (btnTextos) btnTextos.className = (modo === 'textos-only') ? classAtivo : classInativo;
+            const btnToggleSide = document.getElementById('btnToggleSideTextos');
+            const iconSide = document.getElementById('iconSideTextos');
+            const txtSide = document.getElementById('txtSideTextos');
+            const btnFloating = document.getElementById('btnFloatingTextos');
+            const barraAtalho = document.getElementById('barraAtalhoTextos');
 
             if (modo === 'split') {
                 if (colTextos) colTextos.className = "coluna-split lg:col-span-6 xl:col-span-6 space-y-4 transition-all block";
                 if (colRedacao) colRedacao.className = "coluna-split lg:col-span-6 xl:col-span-6 space-y-4 transition-all block";
-                if (bannerMinimizado) bannerMinimizado.classList.add('hidden');
+                if (btnFloating) btnFloating.classList.add('hidden');
+                if (barraAtalho) barraAtalho.classList.add('hidden');
+                if (btnToggleSide) {
+                    if (iconSide) iconSide.className = 'bi bi-chevron-left text-sm';
+                    if (txtSide) txtSide.textContent = 'Ocultar Textos';
+                    btnToggleSide.className = "px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-600 transition-all";
+                }
             } else if (modo === 'redacao-only') {
-                // Textos minimizados: Folha de Redação ganha 100% da tela!
+                // Textos ocultos: Folha de Redação ganha 100% da tela!
                 if (colTextos) colTextos.className = "coluna-split hidden";
                 if (colRedacao) colRedacao.className = "coluna-split lg:col-span-12 xl:col-span-12 space-y-4 transition-all block";
-                if (bannerMinimizado) bannerMinimizado.classList.remove('hidden');
-            } else if (modo === 'textos-only') {
-                // Redação minimizada: Textos ganham 100% da tela!
-                if (colTextos) colTextos.className = "coluna-split lg:col-span-12 xl:col-span-12 space-y-4 transition-all block";
-                if (colRedacao) colRedacao.className = "coluna-split hidden";
-                if (bannerMinimizado) bannerMinimizado.classList.add('hidden');
+                if (btnFloating) btnFloating.classList.remove('hidden');
+                if (barraAtalho) barraAtalho.classList.remove('hidden');
+                if (btnToggleSide) {
+                    if (iconSide) iconSide.className = 'bi bi-chevron-right text-sm';
+                    if (txtSide) txtSide.textContent = 'Ver Textos Motivadores';
+                    btnToggleSide.className = "px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs flex items-center gap-2 border border-indigo-200 dark:border-slate-600 shadow-sm transition-all";
+                }
+            }
+        }
+
+        // Alternador rápido da setinha
+        function toggleTextosAoLado() {
+            if (modoVisualizacaoBancada === 'split') {
+                setVisualizacaoBancada('redacao-only');
+            } else {
+                setVisualizacaoBancada('split');
             }
         }
 
@@ -2153,38 +2216,37 @@ require_once __DIR__ . '/includes/header.php';
         }
 
         // =========================================================================
-        // MARCADOR DE TEXTO INTELIGENTE (LETRUS HIGHLIGHTER)
+        // MARCADOR DE TEXTO AUTOMÁTICO (LETRUS STYLE COM CURSOR REALISTA)
         // =========================================================================
         function setCorGrifoAtiva(cor) {
+            if (!cor) cor = 'amarelo';
             corGrifoAtiva = cor;
-            const cores = ['amarelo', 'verde', 'azul', 'rosa'];
-            cores.forEach(c => {
-                const btn = document.getElementById('btnCor' + c.charAt(0).toUpperCase() + c.slice(1));
-                if (btn) {
-                    if (c === cor) {
-                        btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm border-2 ${
-                            c === 'amarelo' ? 'bg-yellow-100 text-yellow-900 border-yellow-400' :
-                            c === 'verde' ? 'bg-emerald-100 text-emerald-900 border-emerald-400' :
-                            c === 'azul' ? 'bg-sky-100 text-sky-900 border-sky-400' :
-                            'bg-pink-100 text-pink-900 border-pink-400'
-                        }`;
-                    } else {
-                        btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-2 border-transparent';
-                    }
+            try {
+                localStorage.setItem('letrus_cor_grifo_ativa', cor);
+            } catch(e) {}
+
+            // 1. Atualizar classe de cursor nos containers de textos motivadores
+            const c1 = document.getElementById('letrusTextosEtapa1');
+            const c2 = document.getElementById('letrusTextosSplit');
+            const classesCursor = ['cursor-grifo-amarelo', 'cursor-grifo-verde', 'cursor-grifo-azul', 'cursor-grifo-rosa'];
+            [c1, c2].forEach(el => {
+                if (el) {
+                    classesCursor.forEach(cls => el.classList.remove(cls));
+                    el.classList.add(`cursor-grifo-${cor}`);
                 }
             });
-        }
 
-        function aplicarGrifoFlutuante(cor) {
-            aplicarGrifoNaSelecao(cor || corGrifoAtiva);
-            const tb = document.getElementById('floatingHighlightToolbar');
-            if (tb) tb.classList.add('hidden');
-        }
-
-        function removerGrifoFlutuante() {
-            removerGrifoDaSelecao();
-            const tb = document.getElementById('floatingHighlightToolbar');
-            if (tb) tb.classList.add('hidden');
+            // 2. Atualizar estado visual de TODOS os botões da paleta (.btn-paleta-cor)
+            document.querySelectorAll('.btn-paleta-cor').forEach(btn => {
+                const btnCor = btn.dataset.cor;
+                if (btnCor === cor) {
+                    btn.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-600', 'dark:ring-offset-slate-900', 'scale-110');
+                    btn.innerHTML = '<i class="bi bi-check text-[11px] text-slate-950 font-black"></i>';
+                } else {
+                    btn.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-600', 'dark:ring-offset-slate-900', 'scale-110');
+                    btn.innerHTML = '';
+                }
+            });
         }
 
         function aplicarGrifoNaSelecao(cor) {
@@ -2201,11 +2263,33 @@ require_once __DIR__ . '/includes/header.php';
             if (!inEtapa1 && !inSplit) return;
 
             const selectedText = range.toString().trim();
-            if (selectedText.length === 0) return;
+            if (selectedText.length < 2) return;
 
+            // Bloqueio Absoluto: Proibido grifar fontes ou créditos!
+            const common = range.commonAncestorContainer;
+            const start = range.startContainer;
+            const end = range.endContainer;
+            const elCommon = (common.nodeType === 1) ? common : common.parentElement;
+            const elStart = (start.nodeType === 1) ? start : start.parentElement;
+            const elEnd = (end.nodeType === 1) ? end : end.parentElement;
+
+            if (elCommon?.closest('.fonte-nao-grifavel') || elStart?.closest('.fonte-nao-grifavel') || elEnd?.closest('.fonte-nao-grifavel')) {
+                sel.removeAllRanges();
+                return;
+            }
+
+            try {
+                const clone = range.cloneContents();
+                if (clone.querySelector && clone.querySelector('.fonte-nao-grifavel')) {
+                    sel.removeAllRanges();
+                    return;
+                }
+            } catch(e) {}
+
+            const corFinal = cor || corGrifoAtiva || 'amarelo';
             const mark = document.createElement('mark');
-            mark.className = `letrus-mark mark-${cor}`;
-            mark.dataset.cor = cor;
+            mark.className = `letrus-mark mark-${corFinal}`;
+            mark.dataset.cor = corFinal;
             mark.title = 'Clique para remover ou trocar a cor deste grifo';
             mark.onclick = function(ev) {
                 ev.stopPropagation();
@@ -2215,9 +2299,13 @@ require_once __DIR__ . '/includes/header.php';
             try {
                 range.surroundContents(mark);
             } catch (err) {
-                const frag = range.extractContents();
-                mark.appendChild(frag);
-                range.insertNode(mark);
+                try {
+                    const frag = range.extractContents();
+                    mark.appendChild(frag);
+                    range.insertNode(mark);
+                } catch(e2) {
+                    console.warn('Erro ao inserir grifo:', e2);
+                }
             }
 
             sel.removeAllRanges();
@@ -2231,7 +2319,7 @@ require_once __DIR__ . '/includes/header.php';
 
             const range = sel.getRangeAt(0);
             const container = range.commonAncestorContainer;
-            const markEl = container.nodeType === 1 ? container.closest('.letrus-mark') : container.parentElement.closest('.letrus-mark');
+            const markEl = container.nodeType === 1 ? container.closest('.letrus-mark') : container.parentElement?.closest('.letrus-mark');
 
             if (markEl) {
                 desembrulharMark(markEl);
@@ -2306,6 +2394,7 @@ require_once __DIR__ . '/includes/header.php';
                     const c2 = document.getElementById('letrusTextosSplit');
                     if (c1) c1.innerHTML = freshHtml;
                     if (c2) c2.innerHTML = freshHtml;
+                    setCorGrifoAtiva(corGrifoAtiva);
                     atualizarContadorGrifos();
                 }
             });
@@ -2351,8 +2440,6 @@ require_once __DIR__ . '/includes/header.php';
         }
 
         function atualizarContadorGrifos() {
-            const count = document.querySelectorAll('#etapaLeitura .letrus-mark, #etapaEscrita .letrus-mark').length;
-            // Para não duplicar caso ambos estejam no DOM, pegamos do container principal ativo:
             const containerAtivo = (etapaAtual === 'leitura') ? document.getElementById('letrusTextosEtapa1') : document.getElementById('letrusTextosSplit');
             const total = containerAtivo ? containerAtivo.querySelectorAll('.letrus-mark').length : 0;
 
@@ -2366,16 +2453,21 @@ require_once __DIR__ . '/includes/header.php';
             if (splitMini) splitMini.textContent = `${total} grifo${total === 1 ? '' : 's'} ativo${total === 1 ? '' : 's'}`;
         }
 
-        // Posicionamento inteligente da Toolbar Flutuante ao selecionar texto
-        function monitorarSelecaoTexto(e) {
-            const tb = document.getElementById('floatingHighlightToolbar');
-            if (!tb) return;
+        // Grifo Automático ao Selecionar Texto (Mouseup / Touchend)
+        let isInteragindoComMark = false;
 
-            const sel = window.getSelection();
-            if (!sel || sel.isCollapsed || sel.toString().trim().length < 2) {
-                tb.classList.add('hidden');
+        document.addEventListener('mousedown', (e) => {
+            isInteragindoComMark = !!e.target.closest('.letrus-mark');
+        });
+
+        function monitorarSelecaoAutomatica(e) {
+            if (isInteragindoComMark) {
+                isInteragindoComMark = false;
                 return;
             }
+
+            const sel = window.getSelection();
+            if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
 
             const range = sel.getRangeAt(0);
             const c1 = document.getElementById('letrusTextosEtapa1');
@@ -2384,27 +2476,39 @@ require_once __DIR__ . '/includes/header.php';
             const inC1 = c1 && c1.contains(range.commonAncestorContainer);
             const inC2 = c2 && c2.contains(range.commonAncestorContainer);
 
-            if (!inC1 && !inC2) {
-                tb.classList.add('hidden');
+            // Só atua se a seleção ocorreu dentro de um dos containers de textos motivadores
+            if (!inC1 && !inC2) return;
+
+            const selectedText = sel.toString().trim();
+            if (selectedText.length < 2) return;
+
+            // Bloquear se tocar ou estiver dentro de fonte!
+            const common = range.commonAncestorContainer;
+            const start = range.startContainer;
+            const end = range.endContainer;
+            const elCommon = (common.nodeType === 1) ? common : common.parentElement;
+            const elStart = (start.nodeType === 1) ? start : start.parentElement;
+            const elEnd = (end.nodeType === 1) ? end : end.parentElement;
+
+            if (elCommon?.closest('.fonte-nao-grifavel') || elStart?.closest('.fonte-nao-grifavel') || elEnd?.closest('.fonte-nao-grifavel')) {
+                sel.removeAllRanges();
                 return;
             }
 
-            const rect = range.getBoundingClientRect();
-            if (rect.width > 0) {
-                tb.style.left = `${window.scrollX + rect.left + rect.width / 2}px`;
-                tb.style.top = `${window.scrollY + rect.top - 12}px`;
-                tb.classList.remove('hidden');
-            }
+            try {
+                const clone = range.cloneContents();
+                if (clone.querySelector && clone.querySelector('.fonte-nao-grifavel')) {
+                    sel.removeAllRanges();
+                    return;
+                }
+            } catch(err) {}
+
+            // Aplica o grifo automaticamente sem precisar clicar em nenhum botão extra!
+            aplicarGrifoNaSelecao(corGrifoAtiva || 'amarelo');
         }
 
-        document.addEventListener('mouseup', monitorarSelecaoTexto);
-        document.addEventListener('touchend', monitorarSelecaoTexto);
-        document.addEventListener('mousedown', (e) => {
-            const tb = document.getElementById('floatingHighlightToolbar');
-            if (tb && !tb.contains(e.target)) {
-                setTimeout(() => tb.classList.add('hidden'), 150);
-            }
-        });
+        document.addEventListener('mouseup', monitorarSelecaoAutomatica);
+        document.addEventListener('touchend', monitorarSelecaoAutomatica);
 
         // =========================================================================
         // CARREGAMENTO DO TEMA & SINCRONIZAÇÃO GERAL
@@ -2466,8 +2570,18 @@ require_once __DIR__ . '/includes/header.php';
                     const isRedigir = (bancaUpper === 'REDIGIR');
                     const isReal = !isPossivel && !isRedigir && bancaUpper !== 'SIMULADO';
 
-                    const rotuloExibicao = isPossivel ? 'Possível Tema' : (isRedigir ? 'Redigir' : `${bancaUpper} ${tema.ano || ''}`);
-                    const badgeTexto = isPossivel ? '💡 Possível Tema' : (isReal ? `${bancaUpper} ${tema.ano || ''} • Prova Real` : `📚 Redigir ${tema.ano || ''}`);
+                    const origemUpper = (tema.origem || '').toUpperCase();
+                    let tagAplicacao = 'Prova Real';
+                    if (origemUpper.includes('PPL')) {
+                        tagAplicacao = 'PPL / Reaplicação';
+                    } else if (origemUpper.includes('2ª') || origemUpper.includes('2A')) {
+                        tagAplicacao = '2ª Aplicação';
+                    } else if (origemUpper.includes('REGULAR')) {
+                        tagAplicacao = 'Regular (1ª)';
+                    }
+
+                    const rotuloExibicao = isPossivel ? 'Possível Tema' : (isRedigir ? 'Redigir' : `${bancaUpper} ${tema.ano || ''} (${tagAplicacao})`);
+                    const badgeTexto = isPossivel ? '💡 Possível Tema' : (isReal ? `${bancaUpper} ${tema.ano || ''} • ${tagAplicacao}` : `📚 Redigir ${tema.ano || ''}`);
 
                     if (formTemaId) formTemaId.value = tema.id;
                     if (formBanca) formBanca.value = isPossivel ? 'ENEM' : bancaUpper;
@@ -2502,14 +2616,14 @@ require_once __DIR__ . '/includes/header.php';
                     // Rótulo dinâmico do campo de título
                     if (rotuloTituloBanca) {
                         if (bancaUpper === 'FUVEST') {
-                            rotuloTituloBanca.textContent = '🚨 OBRIGATÓRIO na FUVEST (Avaliado em C5)';
-                            rotuloTituloBanca.className = 'text-[11px] text-amber-500 font-black';
+                            rotuloTituloBanca.textContent = '(obrigatório na FUVEST)';
+                            rotuloTituloBanca.className = 'font-bold text-amber-500 lowercase';
                         } else if (bancaUpper === 'UNESP') {
-                            rotuloTituloBanca.textContent = '⭐ RECOMENDADO na UNESP (Valoriza seu projeto de texto)';
-                            rotuloTituloBanca.className = 'text-[11px] text-indigo-500 font-bold';
+                            rotuloTituloBanca.textContent = '(recomendado na UNESP)';
+                            rotuloTituloBanca.className = 'font-bold text-indigo-500 lowercase';
                         } else {
-                            rotuloTituloBanca.textContent = '* Opcional no ENEM • Avaliado na FUVEST/UNESP';
-                            rotuloTituloBanca.className = 'text-[11px] text-slate-400 font-bold';
+                            rotuloTituloBanca.textContent = '(opcional)';
+                            rotuloTituloBanca.className = 'font-normal text-slate-400 lowercase';
                         }
                     }
 
@@ -2538,6 +2652,7 @@ require_once __DIR__ . '/includes/header.php';
 
                     atualizarContadorGrifos();
                     carregarRascunho(tema.id);
+                    setCorGrifoAtiva(corGrifoAtiva || 'amarelo');
                 }
             }
         }
@@ -2610,7 +2725,6 @@ require_once __DIR__ . '/includes/header.php';
             const badgePalavras = document.getElementById('badgePalavras');
             const badgeParagrafos = document.getElementById('badgeParagrafos');
             const alerta = document.getElementById('badgeAlertaLinhas');
-            const statusPedagogico = document.getElementById('badgeStatusPedagogico');
 
             const linhasQuebra = txt.split('\n');
             let totalLinhas = 0;
@@ -2623,37 +2737,27 @@ require_once __DIR__ . '/includes/header.php';
             const paragrafos = txt.trim() === '' ? 0 : txt.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
 
             if (badgeLinhas) badgeLinhas.textContent = `${totalLinhas} / 30 linhas`;
-            if (badgePalavras) badgePalavras.textContent = `${palavras} palavras`;
+            if (badgePalavras) badgePalavras.textContent = `${palavras} palavra${palavras === 1 ? '' : 's'}`;
             if (badgeParagrafos) badgeParagrafos.textContent = `${paragrafos} parágrafo${paragrafos === 1 ? '' : 's'}`;
 
             if (totalLinhas > 30) {
                 if (alerta) {
-                    alerta.textContent = '🚨 Excedeu o limite oficial de 30 linhas! O que passar não é corrigido.';
+                    alerta.textContent = '🚨 Excedeu o limite de 30 linhas';
                     alerta.classList.remove('hidden');
                 }
-                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-mono font-black';
-                if (statusPedagogico) statusPedagogico.textContent = '❌ Limite de 30 linhas ultrapassado';
+                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-mono font-black border border-rose-300 dark:border-rose-800';
             } else if (totalLinhas > 0 && totalLinhas < 7) {
                 if (alerta) {
-                    alerta.textContent = '⚠️ Menos de 7 linhas é desclassificada com nota zero!';
+                    alerta.textContent = '⚠️ Mínimo de 7 linhas';
                     alerta.classList.remove('hidden');
                 }
-                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-mono font-black';
-                if (statusPedagogico) statusPedagogico.textContent = '⚠️ Mínimo de 7 linhas obrigatório';
+                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-mono font-black border border-amber-300 dark:border-amber-800';
             } else if (totalLinhas >= 7) {
                 if (alerta) alerta.classList.add('hidden');
-                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono font-black';
-                if (statusPedagogico) {
-                    if (paragrafos === 4) {
-                        statusPedagogico.textContent = '🎯 Estrutura clássica de 4 parágrafos (Intro, D1, D2, Conclusão)';
-                    } else {
-                        statusPedagogico.textContent = '✅ Extensão oficial válida para avaliação';
-                    }
-                }
+                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-mono font-black border border-emerald-300 dark:border-emerald-800';
             } else {
                 if (alerta) alerta.classList.add('hidden');
-                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-mono font-black';
-                if (statusPedagogico) statusPedagogico.textContent = 'Mínimo 7 e máximo 30 linhas';
+                if (badgeLinhas) badgeLinhas.className = 'px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-mono font-black border border-slate-200 dark:border-slate-600';
             }
         }
 
@@ -2832,31 +2936,6 @@ require_once __DIR__ . '/includes/header.php';
             }
         }
 
-        function toggleTimer() {
-            const icon = document.getElementById('iconTimer');
-            const iconSimulado = document.getElementById('iconTimerSimulado');
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                if (icon) icon.className = 'bi bi-play-fill text-xl';
-                if (iconSimulado) iconSimulado.className = 'bi bi-play-fill text-base';
-            } else {
-                if (icon) icon.className = 'bi bi-pause-fill text-xl';
-                if (iconSimulado) iconSimulado.className = 'bi bi-pause-fill text-base';
-                timerInterval = setInterval(() => {
-                    timerSeconds++;
-                    const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
-                    const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
-                    const s = String(timerSeconds % 60).padStart(2, '0');
-                    const timeStr = `${h}:${m}:${s}`;
-                    const el = document.getElementById('displayTimer');
-                    const elSimulado = document.getElementById('displayTimerSimulado');
-                    if (el) el.textContent = timeStr;
-                    if (elSimulado) elSimulado.textContent = timeStr;
-                }, 1000);
-            }
-        }
-
         // =========================================================================
         // ENVIO DO FORMULÁRIO COM IA (GEMINI)
         // =========================================================================
@@ -2899,6 +2978,10 @@ require_once __DIR__ . '/includes/header.php';
                     return;
                 }
             }
+
+            // Desativar alerta anti-distração e pausar cronômetro durante a avaliação
+            isRedacaoAtiva = false;
+            pausarCronometro();
 
             // Atrelar valores do tema
             formData.set('tema_id', document.getElementById('temaSelect')?.value || '');
@@ -3051,6 +3134,11 @@ require_once __DIR__ . '/includes/header.php';
             } else {
                 aoMudarTema();
             }
+            try {
+                const savedCor = localStorage.getItem('letrus_cor_grifo_ativa');
+                if (savedCor) corGrifoAtiva = savedCor;
+            } catch(e) {}
+            setCorGrifoAtiva(corGrifoAtiva || 'amarelo');
             atualizarContadoresRedacao();
             aplicarFiltrosTemas();
         });

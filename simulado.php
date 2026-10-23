@@ -80,6 +80,63 @@ require_once __DIR__ . '/includes/header.php';
                             </div>
                         </div>
 
+                        <!-- Painel de Filtros Avançados do ENEM (Edição por Ano e Área do Conhecimento) -->
+                        <div id="panelEnemFiltros" class="bg-indigo-50/70 dark:bg-indigo-950/30 p-5 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+                                        <i class="bi bi-sliders"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-outfit font-black text-xs sm:text-sm text-indigo-950 dark:text-indigo-200 mb-0">Edição Histórica & Área do Conhecimento</h3>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-0">Banco oficial integrado com +3.500 questões reais do ENEM (2009 a 2023).</p>
+                                    </div>
+                                </div>
+                                <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700 shadow-xs">
+                                    <i class="bi bi-patch-check-fill text-indigo-500"></i> Oficial INEP
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                        <i class="bi bi-calendar3 text-indigo-600"></i> Edição / Ano do ENEM:
+                                    </label>
+                                    <select id="selectEnemYear" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
+                                        <option value="0">Qualquer Ano (Mix Aleatório das Provas)</option>
+                                        <option value="2023">ENEM 2023 Oficial</option>
+                                        <option value="2022">ENEM 2022 Oficial</option>
+                                        <option value="2021">ENEM 2021 Oficial</option>
+                                        <option value="2020">ENEM 2020 Oficial</option>
+                                        <option value="2019">ENEM 2019 Oficial</option>
+                                        <option value="2018">ENEM 2018 Oficial</option>
+                                        <option value="2017">ENEM 2017 Oficial</option>
+                                        <option value="2016">ENEM 2016 Oficial</option>
+                                        <option value="2015">ENEM 2015 Oficial</option>
+                                        <option value="2014">ENEM 2014 Oficial</option>
+                                        <option value="2013">ENEM 2013 Oficial</option>
+                                        <option value="2012">ENEM 2012 Oficial</option>
+                                        <option value="2011">ENEM 2011 Oficial</option>
+                                        <option value="2010">ENEM 2010 Oficial</option>
+                                        <option value="2009">ENEM 2009 Oficial</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                        <i class="bi bi-bookmark-check text-indigo-600"></i> Área do Conhecimento:
+                                    </label>
+                                    <select id="selectEnemSubject" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
+                                        <option value="0">Todas as Áreas (Simulado Geral Completo)</option>
+                                        <option value="5">Linguagens, Códigos e suas Tecnologias</option>
+                                        <option value="6">Ciências Humanas e suas Tecnologias</option>
+                                        <option value="4">Ciências da Natureza e suas Tecnologias</option>
+                                        <option value="1">Matemática e suas Tecnologias</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Quantidade e Tempo (3 minutos por questão) -->
                         <div>
                             <div class="flex items-center justify-between mb-4">
@@ -107,6 +164,37 @@ require_once __DIR__ . '/includes/header.php';
                                     <span class="block text-sm font-extrabold">90 Questões</span>
                                     <span class="text-[11px] opacity-80">4h 30min (Oficial)</span>
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- 3. Escolha do Modo de Resolução (Inspirado no questoesConcursos) -->
+                        <div>
+                            <h2 class="text-lg font-extrabold font-outfit mb-3 text-slate-800 flex items-center gap-2">
+                                <i class="bi bi-3-circle-fill text-indigo-600"></i> Modo de Resolução
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <div id="cardModeTimed" class="mode-card selected cursor-pointer p-4 rounded-2xl border-2 border-indigo-600 bg-indigo-50/50 hover:border-indigo-600 transition-all" onclick="selectPracticeMode('timed', this)">
+                                    <div class="flex items-center gap-3 mb-1.5">
+                                        <div class="mode-icon w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+                                            <i class="bi bi-stopwatch"></i>
+                                        </div>
+                                        <h3 class="font-outfit font-extrabold text-sm text-slate-900 mb-0">Simulado Cronometrado Oficial</h3>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mb-0">Sob pressão de tempo. O gabarito e relatório são entregues após submeter toda a prova.</p>
+                                </div>
+
+                                <div id="cardModePractice" class="mode-card cursor-pointer p-4 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 transition-all" onclick="selectPracticeMode('practice', this)">
+                                    <div class="flex items-center gap-3 mb-1.5">
+                                        <div class="mode-icon w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-bold shadow-xs">
+                                            <i class="bi bi-patch-check-fill text-emerald-600"></i>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="font-outfit font-extrabold text-sm text-slate-900 mb-0">Treino Livre (Feedback Imediato)</h3>
+                                            <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-emerald-100 text-emerald-700">NOVO</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mb-0">Sem cronômetro regressivo. Responda questão por questão com gabarito imediato e resolução comentada!</p>
+                                </div>
                             </div>
                         </div>
 
@@ -281,6 +369,11 @@ require_once __DIR__ . '/includes/header.php';
                             <div id="qOptions" class="space-y-3.5 flex flex-col">
                                 <!-- Populated by JS -->
                             </div>
+
+                            <!-- Painel de Feedback Imediato no Treino Livre -->
+                            <div id="feedbackContainer" class="hidden mt-4 space-y-3">
+                                <!-- Preenchido dinamicamente no Treino Livre -->
+                            </div>
                         </div>
                     </div>
 
@@ -402,18 +495,44 @@ require_once __DIR__ . '/includes/header.php';
         let selectedExam = 'enem';
         let selectedCount = 30;
         let selectedTimeMinutes = 90; // Média de 3 min por questão: 30 * 3 = 90 min
+        let selectedExecutionMode = 'timed'; // 'timed' (cronometrado) ou 'practice' (treino livre feedback imediato)
         
         let questionsData = [];
         let userAnswers = {};
+        let practiceFeedback = {}; // { [qId]: { chosen: 'a', is_correct: true/false, correct_option: 'b', explanation: '...' } }
         let currentQuestionIndex = 0;
         
         let timerInterval = null;
         let secondsRemaining = 0;
         let totalSeconds = 0;
+        let elapsedSeconds = 0;
         let examEndTimeStamp = null;
 
         let isExamActive = false;
         let focusWarningActive = false;
+
+        // ============================================================
+        // SELEÇÃO DO MODO DE RESOLUÇÃO (CRONOMETRADO VS TREINO LIVRE)
+        // ============================================================
+        function selectPracticeMode(mode, el) {
+            selectedExecutionMode = mode;
+            document.querySelectorAll('.mode-card').forEach(c => {
+                c.classList.remove('selected', 'border-indigo-600', 'bg-indigo-50/50');
+                c.classList.add('border-slate-200');
+                const icon = c.querySelector('.mode-icon');
+                if (icon) {
+                    icon.classList.remove('bg-indigo-600', 'text-white');
+                    icon.classList.add('bg-slate-100', 'text-slate-700');
+                }
+            });
+            el.classList.add('selected', 'border-indigo-600', 'bg-indigo-50/50');
+            el.classList.remove('border-slate-200');
+            const activeIcon = el.querySelector('.mode-icon');
+            if (activeIcon) {
+                activeIcon.classList.add('bg-indigo-600', 'text-white');
+                activeIcon.classList.remove('bg-slate-100', 'text-slate-700');
+            }
+        }
 
         // ============================================================
         // PERSISTÊNCIA TOTAL (SALVAR, RECUPERAR E LIMPAR ESTADO)
@@ -426,10 +545,13 @@ require_once __DIR__ . '/includes/header.php';
                 selectedExam: selectedExam,
                 selectedCount: selectedCount,
                 selectedTimeMinutes: selectedTimeMinutes,
+                selectedExecutionMode: selectedExecutionMode,
                 questionsData: questionsData,
                 userAnswers: userAnswers,
+                practiceFeedback: practiceFeedback,
                 currentQuestionIndex: currentQuestionIndex,
                 totalSeconds: totalSeconds,
+                elapsedSeconds: elapsedSeconds,
                 examEndTimeStamp: examEndTimeStamp,
                 isExamActive: true,
                 savedAt: Date.now()
@@ -456,34 +578,45 @@ require_once __DIR__ . '/includes/header.php';
                 if (!raw) return;
 
                 const state = JSON.parse(raw);
-                if (!state || !state.questionsData || state.questionsData.length === 0 || !state.examEndTimeStamp) {
+                if (!state || !state.questionsData || state.questionsData.length === 0) {
                     clearSimuladoState();
                     return;
                 }
 
-                // Calcular tempo restante com base no timestamp absoluto de término
-                const remaining = Math.floor((state.examEndTimeStamp - Date.now()) / 1000);
-                if (remaining <= 0) {
-                    clearSimuladoState();
-                    Swal.fire({
-                        title: 'Tempo Expirado',
-                        text: 'O tempo do simulado anterior expirou enquanto você esteve fora da página.',
-                        icon: 'info',
-                        confirmButtonColor: '#4f46e5'
-                    });
-                    return;
+                selectedExecutionMode = state.selectedExecutionMode || 'timed';
+
+                // Se for modo cronometrado, verificar expiração
+                if (selectedExecutionMode === 'timed') {
+                    if (!state.examEndTimeStamp) {
+                        clearSimuladoState();
+                        return;
+                    }
+                    const remaining = Math.floor((state.examEndTimeStamp - Date.now()) / 1000);
+                    if (remaining <= 0) {
+                        clearSimuladoState();
+                        Swal.fire({
+                            title: 'Tempo Expirado',
+                            text: 'O tempo do simulado anterior expirou enquanto você esteve fora da página.',
+                            icon: 'info',
+                            confirmButtonColor: '#4f46e5'
+                        });
+                        return;
+                    }
+                    secondsRemaining = remaining;
+                } else {
+                    elapsedSeconds = state.elapsedSeconds || 0;
                 }
 
                 // Restaurar todas as variáveis
                 questionsData = state.questionsData;
                 userAnswers = state.userAnswers || {};
+                practiceFeedback = state.practiceFeedback || {};
                 currentQuestionIndex = state.currentQuestionIndex || 0;
                 selectedExam = state.selectedExam || 'enem';
                 selectedCount = state.selectedCount || 30;
                 selectedTimeMinutes = state.selectedTimeMinutes || 90;
                 totalSeconds = state.totalSeconds || (selectedTimeMinutes * 60);
                 examEndTimeStamp = state.examEndTimeStamp;
-                secondsRemaining = remaining;
                 isExamActive = true;
 
                 // Ajustar UI para modo foco
@@ -511,6 +644,18 @@ require_once __DIR__ . '/includes/header.php';
                     position: 'top-end',
                     showConfirmButton: false,
                     timer: 4000,
+                    timerProgressBar: true
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: selectedExecutionMode === 'practice' ? 'Treino Livre Restaurado!' : 'Simulado Restaurado!',
+                    text: 'Seu progresso e respostas foram mantidos com segurança.'
+                });
+            } catch (err) {
+                console.error('Erro ao restaurar simulado salvo:', err);
+                clearSimuladoState();
+            }
+        }
                     timerProgressBar: true
                 });
                 Toast.fire({
@@ -545,6 +690,15 @@ require_once __DIR__ . '/includes/header.php';
                 activeIcon.classList.add('bg-indigo-600', 'text-white');
                 activeIcon.classList.remove('bg-slate-100', 'text-slate-700');
             }
+
+            const panelFiltros = document.getElementById('panelEnemFiltros');
+            if (panelFiltros) {
+                if (type === 'enem') {
+                    panelFiltros.classList.remove('hidden');
+                } else {
+                    panelFiltros.classList.add('hidden');
+                }
+            }
         }
 
         function selectQuestionCount(count, timeMins, el) {
@@ -561,19 +715,36 @@ require_once __DIR__ . '/includes/header.php';
         function startSimulado() {
             Swal.fire({
                 title: 'Carregando Simulado...',
-                text: 'Buscando questões do banco de dados',
+                text: 'Buscando questões do banco de dados oficial',
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
             });
 
-            fetch(`api/simulado.php?exam=${selectedExam}&count=${selectedCount}`)
+            let yearParam = '';
+            let subjectParam = '';
+            if (selectedExam === 'enem') {
+                const y = document.getElementById('selectEnemYear')?.value || '0';
+                const s = document.getElementById('selectEnemSubject')?.value || '0';
+                if (y !== '0') yearParam = `&year=${encodeURIComponent(y)}`;
+                if (s !== '0') subjectParam = `&subject_id=${encodeURIComponent(s)}`;
+            }
+
+            fetch(`api/simulado.php?exam=${selectedExam}&count=${selectedCount}${yearParam}${subjectParam}`)
                 .then(res => res.json())
                 .then(data => {
                     Swal.close();
                     if (data.status === 'success' && data.questions.length > 0) {
                         questionsData = data.questions;
                         userAnswers = {};
+                        practiceFeedback = {};
                         currentQuestionIndex = 0;
+                        elapsedSeconds = 0;
+
+                        // Se for treino livre, atualizar o texto do botão de entrega
+                        const btnFinish = document.querySelector('#screenExam button[onclick*="finishSimulado"]');
+                        if (btnFinish) {
+                            btnFinish.textContent = selectedExecutionMode === 'practice' ? 'Concluir Treino' : 'Entregar Prova';
+                        }
 
                         // 1. Ocultar Sidebar e Header Superior para Foco Total
                         const sidebar = document.getElementById('mainSidebar');
@@ -616,38 +787,53 @@ require_once __DIR__ . '/includes/header.php';
         }
 
         function startTimer() {
-            updateTimerDisplay();
             if (timerInterval) clearInterval(timerInterval);
 
-            timerInterval = setInterval(() => {
-                if (examEndTimeStamp) {
-                    secondsRemaining = Math.max(0, Math.floor((examEndTimeStamp - Date.now()) / 1000));
-                } else {
-                    secondsRemaining--;
-                }
+            if (selectedExecutionMode === 'practice') {
                 updateTimerDisplay();
+                timerInterval = setInterval(() => {
+                    elapsedSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            } else {
+                updateTimerDisplay();
+                timerInterval = setInterval(() => {
+                    if (examEndTimeStamp) {
+                        secondsRemaining = Math.max(0, Math.floor((examEndTimeStamp - Date.now()) / 1000));
+                    } else {
+                        secondsRemaining--;
+                    }
+                    updateTimerDisplay();
 
-                if (secondsRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    isExamActive = false;
-                    clearSimuladoState();
-                    Swal.fire('Tempo Esgotado!', 'O tempo do simulado acabou. Suas respostas serão enviadas agora.', 'info').then(() => {
-                        submitSimuladoData(true);
-                    });
-                }
-            }, 1000);
+                    if (secondsRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        isExamActive = false;
+                        clearSimuladoState();
+                        Swal.fire('Tempo Esgotado!', 'O tempo do simulado acabou. Suas respostas serão enviadas agora.', 'info').then(() => {
+                            submitSimuladoData(true);
+                        });
+                    }
+                }, 1000);
+            }
         }
 
         function updateTimerDisplay() {
-            const hours = Math.floor(secondsRemaining / 3600);
-            const mins = Math.floor((secondsRemaining % 3600) / 60);
-            const secs = secondsRemaining % 60;
-            if (hours > 0) {
-                document.getElementById('timeRemaining').textContent = 
-                    `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            const timeEl = document.getElementById('timeRemaining');
+            if (!timeEl) return;
+
+            if (selectedExecutionMode === 'practice') {
+                const mins = Math.floor(elapsedSeconds / 60);
+                const secs = elapsedSeconds % 60;
+                timeEl.textContent = `Treino: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             } else {
-                document.getElementById('timeRemaining').textContent = 
-                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                const hours = Math.floor(secondsRemaining / 3600);
+                const mins = Math.floor((secondsRemaining % 3600) / 60);
+                const secs = secondsRemaining % 60;
+                if (hours > 0) {
+                    timeEl.textContent = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                } else {
+                    timeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
             }
         }
 
@@ -693,12 +879,23 @@ require_once __DIR__ . '/includes/header.php';
         function updateQuestionGridState() {
             const answeredCount = Object.keys(userAnswers).length;
             const badge = document.getElementById('answeredCounterBadge');
-            if (badge) {
-                badge.textContent = `${answeredCount}/${questionsData.length} respondidas`;
-                if (answeredCount === questionsData.length && questionsData.length > 0) {
+
+            if (selectedExecutionMode === 'practice') {
+                const totalFb = Object.keys(practiceFeedback).length;
+                const totalCorrect = Object.values(practiceFeedback).filter(f => f.is_correct).length;
+                const pct = totalFb > 0 ? Math.round((totalCorrect / totalFb) * 100) : 0;
+                if (badge) {
+                    badge.textContent = `Acertos: ${totalCorrect}/${totalFb} (${pct}%)`;
                     badge.className = 'text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200';
-                } else {
-                    badge.className = 'text-[11px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-lg border border-indigo-200';
+                }
+            } else {
+                if (badge) {
+                    badge.textContent = `${answeredCount}/${questionsData.length} respondidas`;
+                    if (answeredCount === questionsData.length && questionsData.length > 0) {
+                        badge.className = 'text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200';
+                    } else {
+                        badge.className = 'text-[11px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-lg border border-indigo-200';
+                    }
                 }
             }
 
@@ -706,8 +903,16 @@ require_once __DIR__ . '/includes/header.php';
                 const btn = document.getElementById(`qGridBtn_${idx}`);
                 if (!btn) return;
 
-                btn.classList.remove('bg-indigo-600', 'text-white', 'bg-indigo-100', 'text-indigo-800', 'border-indigo-400');
-                if (idx === currentQuestionIndex) {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'bg-indigo-100', 'text-indigo-800', 'border-indigo-400', 'bg-emerald-500', 'border-emerald-600', 'bg-rose-500', 'border-rose-600', 'ring-2', 'ring-indigo-600');
+                
+                if (selectedExecutionMode === 'practice' && practiceFeedback[q.id]) {
+                    const isCorr = practiceFeedback[q.id].is_correct;
+                    if (idx === currentQuestionIndex) {
+                        btn.classList.add(isCorr ? 'bg-emerald-600' : 'bg-rose-600', 'text-white', 'ring-2', 'ring-indigo-600');
+                    } else {
+                        btn.classList.add(isCorr ? 'bg-emerald-500' : 'bg-rose-500', 'text-white', isCorr ? 'border-emerald-600' : 'border-rose-600');
+                    }
+                } else if (idx === currentQuestionIndex) {
                     btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
                 } else if (userAnswers[q.id]) {
                     btn.classList.add('bg-indigo-100', 'text-indigo-800', 'border-indigo-400');
@@ -735,18 +940,41 @@ require_once __DIR__ . '/includes/header.php';
                 diffBadgeEl.innerHTML = `<i class="bi ${diffInfo.icon}"></i> ${diffInfo.label}`;
             }
 
-            let cleanText = (q.question_text || '')
-                .replace(/!\[.*?\]\(.*?\)/gi, '')
-                .replace(/\[(.*?)\]\((?:https?:\/\/.*?)\)/gi, '$1')
-                .replace(/https?:\/\/[^\s\)\"]+/gi, '')
-                .replace(/www\.[^\s\)\"]+/gi, '')
-                .replace(/(?:Disponível em|Acesso em)[\:\.\,\s]*/gi, '')
-                .replace(/\n{3,}/g, '\n\n')
-                .trim();
+            // Extrair e renderizar imagens e textos oficiais da questão
+            let rawText = q.question_text || '';
+            const imgRegex = /!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/gi;
+            let images = [];
+            let textWithoutImages = rawText.replace(imgRegex, (match, alt, url) => {
+                if (!url.includes('broken-image.svg')) {
+                    images.push({ alt: alt || 'Figura da questão', url: url });
+                }
+                return '';
+            });
+
+            textWithoutImages = textWithoutImages.replace(/\n{3,}/g, '\n\n').trim();
 
             const qTextEl = document.getElementById('qText');
-            qTextEl.textContent = cleanText;
-            qTextEl.style.whiteSpace = 'pre-line';
+            qTextEl.innerHTML = '';
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'whitespace-pre-line text-slate-800 dark:text-slate-100 font-medium text-base sm:text-lg leading-relaxed';
+            textDiv.textContent = textWithoutImages;
+            qTextEl.appendChild(textDiv);
+
+            if (images.length > 0) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'my-4 space-y-3';
+                images.forEach(img => {
+                    const imgBox = document.createElement('div');
+                    imgBox.className = 'text-center p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs max-w-xl mx-auto';
+                    imgBox.innerHTML = `
+                        <img src="${img.url}" alt="${img.alt}" class="max-h-80 sm:max-h-96 mx-auto rounded-xl object-contain" loading="lazy" onerror="this.parentElement.style.display='none'">
+                        ${img.alt && img.alt !== 'Figura da questão' ? `<span class="block text-[11px] text-slate-400 mt-1 font-mono">${img.alt}</span>` : ''}
+                    `;
+                    imgContainer.appendChild(imgBox);
+                });
+                qTextEl.appendChild(imgContainer);
+            }
 
             const optionsContainer = document.getElementById('qOptions');
             optionsContainer.innerHTML = '';
@@ -759,36 +987,127 @@ require_once __DIR__ . '/includes/header.php';
                 { key: 'e', text: q.option_e }
             ];
 
+            const fb = practiceFeedback[q.id];
+
             options.forEach(opt => {
                 if (!opt.text) return;
                 const isSelected = userAnswers[q.id] === opt.key;
                 
                 const optDiv = document.createElement('div');
-                optDiv.className = `simulado-option-card ${isSelected ? 'selected' : ''}`;
+                let extraClass = '';
+                if (selectedExecutionMode === 'practice' && fb) {
+                    extraClass = 'disabled-option ';
+                    if (opt.key === fb.correct_option) {
+                        extraClass += 'correct';
+                    } else if (opt.key === fb.chosen && !fb.is_correct) {
+                        extraClass += 'wrong';
+                    }
+                } else if (isSelected) {
+                    extraClass = 'selected';
+                }
+
+                optDiv.className = `simulado-option-card ${extraClass}`;
                 optDiv.onclick = () => selectOption(q.id, opt.key);
+
+                let optContent = opt.text;
+                let optImgHtml = '';
+                const altImgMatch = optContent.match(/!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/i);
+                if (altImgMatch) {
+                    optContent = optContent.replace(/!\[.*?\]\(.*?\)/gi, '').trim();
+                    optImgHtml = `<div class="mt-2"><img src="${altImgMatch[2]}" alt="${altImgMatch[1]}" class="max-h-24 rounded border border-slate-200 bg-white p-1" loading="lazy"></div>`;
+                }
+
+                let iconHtml = `<i class="bi ${isSelected ? 'bi-record-circle-fill text-indigo-600' : 'bi-circle text-slate-300'} text-base"></i>`;
+                if (selectedExecutionMode === 'practice' && fb) {
+                    if (opt.key === fb.correct_option) {
+                        iconHtml = `<i class="bi bi-check-circle-fill text-emerald-600 text-lg"></i>`;
+                    } else if (opt.key === fb.chosen && !fb.is_correct) {
+                        iconHtml = `<i class="bi bi-x-circle-fill text-rose-600 text-lg"></i>`;
+                    } else {
+                        iconHtml = `<i class="bi bi-circle text-slate-200 text-base"></i>`;
+                    }
+                }
 
                 optDiv.innerHTML = `
                     <div class="simulado-option-badge">
                         ${opt.key.toUpperCase()}
                     </div>
-                    <div class="simulado-option-text">${opt.text}</div>
+                    <div class="simulado-option-text flex-1">
+                        <div>${optContent || ''}</div>
+                        ${optImgHtml}
+                    </div>
                     <div class="simulado-option-indicator">
-                        <i class="bi ${isSelected ? 'bi-record-circle-fill text-indigo-600' : 'bi-circle text-slate-300'} text-base"></i>
+                        ${iconHtml}
                     </div>
                 `;
                 optionsContainer.appendChild(optDiv);
             });
 
+            // Feedback Banner no Treino Livre
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            if (feedbackContainer) {
+                if (selectedExecutionMode === 'practice' && fb) {
+                    feedbackContainer.classList.remove('hidden');
+                    feedbackContainer.innerHTML = `
+                        <div class="p-4 rounded-2xl border-2 ${fb.is_correct ? 'border-emerald-300 bg-emerald-50 text-emerald-950' : 'border-rose-300 bg-rose-50 text-rose-950'} space-y-2.5 shadow-xs">
+                            <div class="flex items-center gap-2.5 font-outfit font-black text-sm">
+                                <i class="bi ${fb.is_correct ? 'bi-check-circle-fill text-emerald-600 text-xl' : 'bi-x-circle-fill text-rose-600 text-xl'}"></i>
+                                <span>${fb.is_correct ? 'Gabarito Correto! Você acertou esta questão.' : `Resposta Incorreta. O gabarito oficial é a Letra ${fb.correct_option.toUpperCase()}.`}</span>
+                            </div>
+                            ${fb.explanation ? `
+                            <div class="pt-2.5 border-t border-slate-200/80 text-xs text-slate-700 leading-relaxed">
+                                <span class="font-outfit font-black text-slate-900 flex items-center gap-1.5 mb-1 text-[11px] uppercase tracking-wide">
+                                    <i class="bi bi-lightbulb-fill text-amber-500"></i> Resolução Comentada:
+                                </span>
+                                <div class="whitespace-pre-line font-medium">${escapeHtml(fb.explanation)}</div>
+                            </div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    feedbackContainer.classList.add('hidden');
+                    feedbackContainer.innerHTML = '';
+                }
+            }
+
             document.getElementById('btnPrev').disabled = index === 0;
-            document.getElementById('btnNext').textContent = index === questionsData.length - 1 ? 'Concluir Prova' : 'Próxima >';
+            document.getElementById('btnNext').textContent = index === questionsData.length - 1 ? (selectedExecutionMode === 'practice' ? 'Concluir Treino' : 'Concluir Prova') : 'Próxima >';
             
             updateQuestionGridState();
         }
 
-        function selectOption(qId, optionKey) {
-            userAnswers[qId] = optionKey;
-            saveSimuladoState();
-            renderQuestion(currentQuestionIndex);
+        async function selectOption(qId, optionKey) {
+            if (selectedExecutionMode === 'practice') {
+                if (practiceFeedback[qId]) return; // Já respondida no Treino Livre
+
+                try {
+                    const res = await fetch('api/save_answer.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question_id: qId, chosen_option: optionKey })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        practiceFeedback[qId] = {
+                            chosen: optionKey,
+                            is_correct: data.is_correct,
+                            correct_option: data.correct_option,
+                            explanation: data.explanation_text
+                        };
+                        userAnswers[qId] = optionKey;
+                        saveSimuladoState();
+                        renderQuestion(currentQuestionIndex);
+                        updateQuestionGridState();
+                    } else {
+                        Swal.fire('Aviso', data.message || 'Erro ao registrar resposta.', 'warning');
+                    }
+                } catch (e) {
+                    console.error('Erro na resposta imediata:', e);
+                }
+            } else {
+                userAnswers[qId] = optionKey;
+                saveSimuladoState();
+                renderQuestion(currentQuestionIndex);
+            }
         }
 
         function prevQuestion() {

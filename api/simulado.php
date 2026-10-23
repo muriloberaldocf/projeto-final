@@ -216,10 +216,17 @@ try {
         LEFT JOIN subjects s ON u.subject_id = s.id
     ";
 
-    // Construir filtro de banca
+    // Construir filtro de banca, ano e disciplina
+    $year = (int)($_GET['year'] ?? $_POST['year'] ?? 0);
+    $subjectId = (int)($_GET['subject_id'] ?? $_POST['subject_id'] ?? 0);
+
     $examFilter = "";
     if ($exam === 'enem') {
-        $examFilter = " AND q.exam_source LIKE '%ENEM%'";
+        if ($year >= 2009 && $year <= 2024) {
+            $examFilter = " AND q.exam_source LIKE 'ENEM " . $year . "%'";
+        } else {
+            $examFilter = " AND q.exam_source LIKE '%ENEM%'";
+        }
     } elseif ($exam === 'fuvest') {
         $examFilter = " AND (q.exam_source LIKE '%FUVEST%' OR q.exam_source LIKE '%USP%')";
     } elseif ($exam === 'unicamp') {
@@ -228,6 +235,10 @@ try {
         $examFilter = " AND q.exam_source LIKE '%UNESP%'";
     }
     // misto = sem filtro de banca
+
+    if ($subjectId > 0) {
+        $examFilter .= " AND s.id = " . $subjectId;
+    }
 
     // Buscar cada nível separadamente
     $selectedQuestions = [];

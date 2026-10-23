@@ -105,6 +105,7 @@ Inspirado no modelo de engajamento do Duolingo e no rigor avaliativo do ENEM/INE
 | Código | Nome da Regra | Especificação Técnica e Condições de Disparo | Tratamento de Violação / Exceção |
 | :--- | :--- | :--- | :--- |
 | **RN-28** | **Estrutura Obrigatória de Questões de Vestibular** | Toda questão cadastrada no banco de dados deve conter obrigatoriamente:<br>• Enunciado contextualizado não vazio;<br>• Exatamente 5 alternativas de resposta (`option_a`, `option_b`, `option_c`, `option_d`, `option_e`);<br>• Gabarito oficial restrito a uma letra minúscula (`'a'`, `'b'`, `'c'`, `'d'`, `'e'`);<br>• Explicação comentada passo a passo (`explanation_text`);<br>• Classificação de dificuldade (`fácil`, `médio`, `difícil`);<br>• Fonte da banca e ano (`exam_source`). | A falta de qualquer uma das 5 opções ou gabarito inválido inviabiliza o cadastro no banco. |
+| **RN-29** | **Cálculo de Raio-X & Diagnóstico Pedagógico** | O sistema consolida as respostas de `user_answers`, `simulados`, `redacoes` e `user_daily_activity` para calcular dinamicamente:<br>• Taxa de acerto por matéria (Radar com 6 disciplinas);<br>• Curva de dificuldade (Fácil, Médio, Difícil);<br>• Média histórica das competências da redação (C1 a C5 na escala 0–200);<br>• Diagnóstico automático de rendimento e recomendação imediata da disciplina/competência com menor índice de acerto. | Consultas sem dados históricos retornam estado neutro sem gerar exceções no front-end. |
 
 ---
 
@@ -124,6 +125,7 @@ Inspirado no modelo de engajamento do Duolingo e no rigor avaliativo do ENEM/INE
 | **RF-10** | Loja & Perfil (`profile.php`) | Gerenciamento de foto de perfil, seleção de avatares desbloqueáveis por XP e seleção de molduras com animações CSS/glow. | **MÉDIA** |
 | **RF-11** | Ranking & Amigos (`leaderboard.php`) | Tabela de classificação ordenada por XP com busca de colegas, envio de solicitações de amizade e pódio arcade. | **MÉDIA** |
 | **RF-12** | Guia de Cursos (`course_guide.php`) | Pesquisa integrada de cursos superiores com filtros de intenção (Notas de corte SISU/ENEM, Existência do curso e Grade Curricular). | **MÉDIA** |
+| **RF-13** | Raio-X & Métricas (`metricas.php`) | Painel de analytics do vestibulando com gráficos Chart.js (Radar por Matéria, Curva de Dificuldade, Competências C1-C5 e Consistência de XP em 14 dias), filtros temporais e diagnóstico inteligente. | **ALTA** |
 
 ---
 

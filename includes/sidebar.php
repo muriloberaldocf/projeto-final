@@ -77,14 +77,41 @@ $userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
                 <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isRedacao ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-purple-100 text-purple-700' ?>">IA</span>
             </a>
 
-            <!-- 5. GUIA DE CURSOS & NOTAS -->
-            <?php $isCourseGuide = ($currentPage === 'course_guide.php'); ?>
-            <a href="course_guide.php" title="Guia de Cursos & Notas" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isCourseGuide ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <i class="bi bi-mortarboard-fill text-lg shrink-0 <?= $isCourseGuide ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
-                <span class="sidebar-text truncate">Guia de Cursos & Notas</span>
+            <!-- 5. PROVAS & GABARITOS OFICIAIS (NOVO) -->
+            <?php $isProvas = ($currentPage === 'provas_oficiais.php'); ?>
+            <a href="provas_oficiais.php" title="Provas Anteriores & Gabaritos (USP, UNICAMP, UNESP, ENEM)" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isProvas ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="flex items-center gap-3 truncate">
+                    <i class="bi bi-file-earmark-pdf-fill text-lg shrink-0 <?= $isProvas ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
+                    <span class="sidebar-text truncate">Provas & Gabaritos</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isProvas ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-rose-100 text-rose-700' ?>">PDFs</span>
             </a>
 
-            <!-- 6. MEU PERFIL -->
+            <!-- 6. GUIA DE CONCORRÊNCIA & ACERTOS -->
+            <?php $isGuia = ($currentPage === 'guia_concorrencia.php' || $currentPage === 'calculadora_enem.php'); ?>
+            <a href="guia_concorrencia.php" title="Guia de Concorrência & Faixa de Acertos ENEM" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isGuia ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="flex items-center gap-3 truncate">
+                    <i class="bi bi-speedometer2 text-lg shrink-0 <?= $isGuia ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
+                    <span class="sidebar-text truncate">Guia de Concorrência</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isGuia ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-indigo-100 text-indigo-700' ?>">ACERTOS</span>
+            </a>
+
+            <!-- 7. GUIA DE CURSOS & SISU -->
+            <?php $isCourseGuide = ($currentPage === 'course_guide.php'); ?>
+            <a href="course_guide.php" title="Catálogo de Cursos & Notas de Corte do SiSU" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isCourseGuide ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <i class="bi bi-mortarboard-fill text-lg shrink-0 <?= $isCourseGuide ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
+                <span class="sidebar-text truncate">Cursos & Notas SiSU</span>
+            </a>
+
+            <!-- 7. RAIO-X & MÉTRICAS (NOVO) -->
+            <?php $isMetricas = ($currentPage === 'metricas.php'); ?>
+            <a href="metricas.php" title="Raio-X & Métricas de Desempenho" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isMetricas ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <i class="bi bi-graph-up-arrow text-lg shrink-0 <?= $isMetricas ? 'text-amber-300' : 'text-emerald-600' ?>"></i>
+                <span class="sidebar-text truncate">Raio-X & Métricas</span>
+            </a>
+
+            <!-- 8. MEU PERFIL -->
             <?php $isProfile = ($currentPage === 'profile.php'); ?>
             <a href="profile.php" title="Meu Perfil" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isProfile ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
                 <svg class="w-5 h-5 shrink-0 <?= $isProfile ? 'text-amber-300' : 'text-indigo-600' ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">

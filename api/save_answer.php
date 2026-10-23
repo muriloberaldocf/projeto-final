@@ -26,16 +26,18 @@ if (!$questionId || !in_array($chosenOption, ['a', 'b', 'c', 'd', 'e'])) {
 }
 
 // O servidor busca a resposta oficial no banco — nunca confia no cliente
-$stmtQ = $pdo->prepare("SELECT correct_option FROM questions WHERE id = ?");
+$stmtQ = $pdo->prepare("SELECT correct_option, explanation_text FROM questions WHERE id = ?");
 $stmtQ->execute([$questionId]);
-$correctOption = $stmtQ->fetchColumn();
+$qRow = $stmtQ->fetch();
 
-if (!$correctOption) {
+if (!$qRow) {
     echo json_encode(['success' => false, 'message' => 'Questão não encontrada no banco.']);
     exit;
 }
 
-$isCorrect = (strtolower(trim($correctOption)) === $chosenOption) ? 1 : 0;
+$correctOption = strtolower(trim($qRow['correct_option']));
+$explanationText = trim($qRow['explanation_text'] ?? '');
+$isCorrect = ($correctOption === $chosenOption) ? 1 : 0;
 
 $stmt = $pdo->prepare("INSERT INTO user_answers (user_id, question_id, chosen_option, is_correct, answered_at) VALUES (?, ?, ?, ?, NOW())");
 $stmt->execute([$userId, $questionId, $chosenOption, $isCorrect]);
@@ -43,5 +45,6 @@ $stmt->execute([$userId, $questionId, $chosenOption, $isCorrect]);
 echo json_encode([
     'success' => true,
     'is_correct' => (bool)$isCorrect,
-    'correct_option' => strtolower(trim($correctOption))
+    'correct_option' => $correctOption,
+    'explanation_text' => $explanationText
 ]);
