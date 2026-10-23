@@ -447,7 +447,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2">
                         <div class="sm:col-span-6 relative">
                             <i class="bi bi-search absolute left-3.5 top-3 text-slate-400"></i>
-                            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Buscar por ano, fase ou caderno (Ex: 2024, 1ª fase, Caderno V...)" class="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-indigo-600 text-xs font-bold text-slate-800 focus:outline-none">
+                            <input type="text" id="searchInput" autocomplete="off" oninput="applyFilters()" placeholder="Buscar por ano, fase ou caderno (Ex: 2024, 1ª fase, Caderno V...)" class="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-indigo-600 text-xs font-bold text-slate-800 focus:outline-none">
                         </div>
 
                         <div class="sm:col-span-3">

@@ -401,8 +401,10 @@ require_once __DIR__ . '/includes/header.php';
 
                             <!-- BUSCADOR EM TEMPO REAL -->
                             <div class="relative flex-1 w-full">
-                                <input type="text" id="inputBuscaTema" onkeyup="aplicarFiltrosTemas()" placeholder="Buscar por tema, filósofo (Bauman, Foucault...), palavra-chave ou ano..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs font-medium text-slate-900 dark:text-white focus:outline-none pr-8">
-                                <i class="bi bi-search absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="inputBuscaTema" autocomplete="off" onkeyup="aplicarFiltrosTemas()" onkeydown="if(event.key==='Enter'){event.preventDefault(); abrirPrimeiroTemaFiltrado();}" placeholder="Buscar por tema, filósofo (Bauman, Foucault...), palavra-chave ou ano..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs font-medium text-slate-900 dark:text-white focus:outline-none pr-8">
+                                <button type="button" onclick="limparBuscaTema()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs transition" title="Limpar busca">
+                                    <i class="bi bi-search" id="iconBuscaStatus"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -423,7 +425,7 @@ require_once __DIR__ . '/includes/header.php';
                                 'REDIGIR' => 'bg-red-100 text-red-900 border-red-300 dark:bg-red-950/40 dark:text-red-300 dark:border-red-700'
                             ][$bancaUpper] ?? 'bg-indigo-100 text-indigo-900 border-indigo-300';
                             ?>
-                            <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col justify-between gap-4 cursor-pointer group" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>">
+                            <div class="tema-card bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col justify-between gap-4 cursor-pointer group" onclick="iniciarEscritaComTema(<?= $t['id'] ?>, 'escrita')" data-id="<?= $t['id'] ?>" data-banca="<?= $bancaUpper ?>" data-titulo="<?= htmlspecialchars($t['titulo']) ?>" data-eixo="<?= htmlspecialchars($t['eixo_tematico'] ?? '') ?>" title="Clique para abrir e começar a escrever esta redação">
                                 <div class="space-y-2.5">
                                     <div class="flex items-center justify-between gap-2">
                                         <div class="flex items-center gap-1.5 flex-wrap">
@@ -468,13 +470,13 @@ require_once __DIR__ . '/includes/header.php';
                                             <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i>
                                             <span class="hidden sm:inline">PDF</span>
                                         </a>
-                                        <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs transition-all flex items-center gap-1.5" title="Ver coletânea de textos motivadores">
+                                        <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>, 'leitura')" class="px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs transition-all flex items-center gap-1.5" title="Ver coletânea em tela de leitura">
                                             <i class="bi bi-book-half"></i>
                                             <span>Textos</span>
                                         </button>
                                     </div>
 
-                                    <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>)" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-sm transition-all flex items-center gap-1.5">
+                                    <button type="button" onclick="iniciarEscritaComTema(<?= $t['id'] ?>, 'escrita')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-black text-xs shadow-sm transition-all flex items-center gap-1.5" title="Abrir folha oficial e começar a redação">
                                         <span>Iniciar Redação</span>
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
@@ -503,15 +505,17 @@ require_once __DIR__ . '/includes/header.php';
 
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between gap-2 mb-1">
-                                        <span class="text-[10px] font-outfit font-black uppercase tracking-wider text-slate-400">
-                                            Proposta / Tema Ativo
-                                        </span>
-                                        <span id="badgeBancaHeader" class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                                            ENEM
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-[10px] font-outfit font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                                                <i class="bi bi-pencil-fill"></i> Tema Selecionado para Produção
+                                            </span>
+                                            <span id="badgeBancaHeader" class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                                ENEM
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="relative">
-                                        <select id="temaSelect" name="tema_id" onchange="aoMudarTema()" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-slate-900 dark:text-slate-100 font-bold text-xs sm:text-sm focus:border-indigo-500 focus:outline-none transition-all pr-8 cursor-pointer truncate">
+                                        <select id="temaSelect" name="tema_id" onchange="aoMudarTema()" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-indigo-300 dark:border-indigo-700 rounded-xl px-3.5 py-2 text-slate-900 dark:text-slate-100 font-bold text-xs sm:text-sm focus:border-indigo-500 focus:outline-none transition-all pr-8 cursor-pointer truncate shadow-xs" title="Tema ativo para escrita (clique se desejar alternar)">
                                             <?php foreach ($temasAgrupados as $bancaNome => $listaTemas): ?>
                                                 <?php
                                                 $optLabel = match($bancaNome) {
@@ -576,7 +580,7 @@ require_once __DIR__ . '/includes/header.php';
                             <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
                                 <button type="button" id="btnStepLeitura" onclick="irParaEtapa('leitura')" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-outfit font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm">
                                     <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[9px] font-black">1</span>
-                                    <span>1. Textos Motivadores</span>
+                                    <span>1. Proposta & Textos</span>
                                 </button>
                                 <button type="button" id="btnStepEscrita" onclick="irParaEtapa('escrita')" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-outfit font-extrabold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
                                     <span class="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-[9px] font-black">2</span>
@@ -695,20 +699,13 @@ require_once __DIR__ . '/includes/header.php';
                     <!-- ETAPA 2: BANCADA DE PRODUÇÃO TEXTUAL COM SPLIT-SCREEN (LETRUS WORKSPACE) -->
                     <!-- ========================================================================= -->
                     <div id="etapaEscrita" class="hidden space-y-6">
-                        <!-- BARRA DE CONTROLE: SETINHA DE ALTERNÂNCIA E AÇÕES -->
+                        <!-- BARRA DE CONTROLE DA BANCADA: AÇÕES E LAYOUT -->
                         <div class="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-3.5 sm:p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
-                                <!-- SETINHA COMPACTA PARA EXIBIR / OCULTAR TEXTOS LADO A LADO (SEM TELA CHEIA) -->
-                                <button type="button" id="btnToggleSideTextos" onclick="toggleTextosAoLado()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-600 transition-all" title="Ocultar ou exibir textos ao lado da folha">
-                                    <i class="bi bi-chevron-left text-sm" id="iconSideTextos"></i>
-                                    <span id="txtSideTextos">Ocultar Textos</span>
-                                </button>
-
-                                <span class="text-xs text-slate-300 dark:text-slate-600">|</span>
-
-                                <button type="button" onclick="irParaEtapa('leitura')" class="px-3 py-1.5 rounded-xl text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 font-outfit font-semibold text-xs transition flex items-center gap-1.5" title="Voltar à tela de leitura dos textos">
-                                    <i class="bi bi-journal-text"></i>
-                                    <span class="hidden sm:inline">Tela de Leitura</span>
+                                <!-- BOTÃO ÚNICO DE ALTERNÂNCIA DE LARGURA (EXPANDIR FOLHA / DIVIDIR TELA) -->
+                                <button type="button" id="btnToggleSideTextos" onclick="toggleTextosAoLado()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-600 transition-all" title="Alternar entre tela dividida e folha inteira">
+                                    <i class="bi bi-arrows-angle-expand text-xs" id="iconSideTextos"></i>
+                                    <span id="txtSideTextos">Expandir Folha</span>
                                 </button>
                             </div>
 
@@ -723,12 +720,6 @@ require_once __DIR__ . '/includes/header.php';
                                 </button>
                             </div>
                         </div>
-
-                        <!-- BOTÃO FLUTUANTE DISCRETO (SETINHA) QUANDO TEXTOS ESTIVEREM OCULTOS -->
-                        <button type="button" id="btnFloatingTextos" onclick="setVisualizacaoBancada('split')" class="hidden fixed left-4 top-1/2 -translate-y-1/2 z-30 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-200 dark:border-indigo-800 shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 font-outfit font-black text-xs group" title="Ver textos motivadores ao lado">
-                            <i class="bi bi-chevron-right text-base group-hover:translate-x-0.5 transition-transform"></i>
-                            <span>Textos Motivadores</span>
-                        </button>
 
                         <!-- GRID PRINCIPAL SPLIT-SCREEN (TEXTOS DE UM LADO E REDAÇÃO DO OUTRO) -->
                         <div id="gridSplitBancada" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -814,13 +805,6 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="hidden" id="formInputTemaId" name="tema_id" value="">
                                     <input type="hidden" id="formInputTemaCustom" name="tema_custom" value="">
 
-                                    <!-- ATALHO DE SETINHA NO TOPO DA FOLHA QUANDO TEXTOS ESTIVEREM OCULTOS -->
-                                    <div id="barraAtalhoTextos" class="hidden flex items-center justify-between pb-3 mb-2 border-b border-slate-100 dark:border-slate-700/60">
-                                        <button type="button" onclick="setVisualizacaoBancada('split')" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs border border-indigo-200 dark:border-slate-600 shadow-sm transition-all" title="Ver textos motivadores lado a lado">
-                                            <i class="bi bi-chevron-right text-sm"></i>
-                                            <span>Ver Textos Motivadores (ao lado)</span>
-                                        </button>
-                                    </div>
 
                                     <!-- TÍTULO DA REDAÇÃO (CAMPO PROPRIO) -->
                                     <div>
@@ -1024,7 +1008,7 @@ require_once __DIR__ . '/includes/header.php';
                                 }
                                 $bancaTag = strtoupper($red['banca'] ?? 'ENEM');
                                 ?>
-                                <div class="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div class="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-indigo-400 dark:hover:border-indigo-500 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer group" onclick="window.location.href='redacao_resultado.php?id=<?= $red['id'] ?>'" title="Clique para abrir e ver o relatório detalhado desta redação">
                                     <div class="space-y-1 min-w-0 flex-1">
                                         <div class="flex items-center gap-2">
                                             <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-100 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200 uppercase">
@@ -1042,7 +1026,7 @@ require_once __DIR__ . '/includes/header.php';
                                                 </span>
                                             <?php endif; ?>
                                         </div>
-                                        <h4 class="font-outfit font-extrabold text-base text-slate-900 dark:text-white truncate">
+                                        <h4 class="font-outfit font-extrabold text-base text-slate-900 dark:text-white truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                             <?= htmlspecialchars($red['titulo']) ?>
                                         </h4>
                                         <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
@@ -1054,7 +1038,7 @@ require_once __DIR__ . '/includes/header.php';
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
+                                    <div class="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-between sm:justify-end" onclick="event.stopPropagation()">
                                         <div class="text-right">
                                             <div class="px-3.5 py-1.5 rounded-xl border text-sm font-outfit font-black <?= $badgeCor ?>">
                                                 <?= $tagIcon ?> <?= $nota ?> <span class="text-[11px] font-bold opacity-75">/ 1000</span>
@@ -1839,6 +1823,39 @@ require_once __DIR__ . '/includes/header.php';
             if (countEl) {
                 countEl.textContent = visiveis;
             }
+
+            const iconBusca = document.getElementById('iconBuscaStatus');
+            if (iconBusca) {
+                if (termoNorm) {
+                    iconBusca.className = 'bi bi-x-circle-fill text-slate-400 hover:text-rose-500';
+                } else {
+                    iconBusca.className = 'bi bi-search text-slate-400';
+                }
+            }
+        }
+
+        // Abre o primeiro tema visível nos filtros (útil para teclar ENTER no buscador)
+        function abrirPrimeiroTemaFiltrado() {
+            const cards = document.querySelectorAll('.tema-card');
+            for (let c of cards) {
+                if (c.style.display !== 'none' && !c.classList.contains('hidden')) {
+                    const id = c.getAttribute('data-id');
+                    if (id) {
+                        iniciarEscritaComTema(id, 'escrita');
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Limpa o buscador em 1 clique
+        function limparBuscaTema() {
+            const input = document.getElementById('inputBuscaTema');
+            if (input) {
+                input.value = '';
+                aplicarFiltrosTemas();
+                input.focus();
+            }
         }
 
         // Alternar gaveta inline da coletânea diretamente no card (NADA SOME DA TELA!)
@@ -2060,8 +2077,8 @@ require_once __DIR__ . '/includes/header.php';
             }
         });
 
-        // Iniciar Escrita com Proposta selecionada (Abre sempre na tela de leitura com textos primeiro)
-        function iniciarEscritaComTema(id) {
+        // Iniciar Escrita com Proposta selecionada (Abre DIRETO a folha oficial de redação pronta para escrever)
+        function iniciarEscritaComTema(id, etapaInicial = 'escrita') {
             fecharModalProposta();
             const select = document.getElementById('temaSelect');
             if (id && select) {
@@ -2070,8 +2087,8 @@ require_once __DIR__ . '/includes/header.php';
             aoMudarTema();
             switchPortalTab('escrever');
 
-            // Sempre abre primeiro na tela de textos motivadores com o botão para avançar!
-            irParaEtapa('leitura');
+            // Abrir diretamente a etapa de escrita por padrão (folha pautada, linhas 1-30 e split-screen com os textos)
+            irParaEtapa(etapaInicial);
 
             // Iniciar o cronômetro imediatamente e marcar a redação como ativa
             iniciarCronometro();
@@ -2082,26 +2099,33 @@ require_once __DIR__ . '/includes/header.php';
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false,
-                    timer: 3500,
+                    timer: 3000,
                     timerProgressBar: true
                 });
                 Toast.fire({
                     icon: 'info',
-                    title: '⏱️ Redação Iniciada!',
-                    text: 'O cronômetro começou a contar. Mantenha o foco e boa prova!'
+                    title: '⏱️ Redação Pronta para Escrita!',
+                    text: 'O cronômetro oficial está ativo. Mantenha o foco e boa prova!'
                 });
             }
 
             window.scrollTo({ top: 0, behavior: 'instant' });
             setTimeout(() => {
-                const topo = document.getElementById('tabContentEscrever');
-                if (topo) topo.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 60);
+                if (etapaInicial === 'escrita') {
+                    const etapaEscritaEl = document.getElementById('etapaEscrita');
+                    if (etapaEscritaEl) etapaEscritaEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const folha = document.getElementById('textoRedacao');
+                    if (folha) folha.focus();
+                } else {
+                    const etapaLeituraEl = document.getElementById('etapaLeitura');
+                    if (etapaLeituraEl) etapaLeituraEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 80);
         }
 
         // Iniciar com Leitura em Tela Cheia & Grifos (Etapa 1)
         function iniciarLeituraComTema(id) {
-            iniciarEscritaComTema(id);
+            iniciarEscritaComTema(id, 'leitura');
         }
 
         // Navegação entre Etapa 1 (Leitura) e Etapa 2 (Split-Screen)
@@ -2159,29 +2183,25 @@ require_once __DIR__ . '/includes/header.php';
             const btnToggleSide = document.getElementById('btnToggleSideTextos');
             const iconSide = document.getElementById('iconSideTextos');
             const txtSide = document.getElementById('txtSideTextos');
-            const btnFloating = document.getElementById('btnFloatingTextos');
-            const barraAtalho = document.getElementById('barraAtalhoTextos');
 
             if (modo === 'split') {
                 if (colTextos) colTextos.className = "coluna-split lg:col-span-6 xl:col-span-6 space-y-4 transition-all block";
                 if (colRedacao) colRedacao.className = "coluna-split lg:col-span-6 xl:col-span-6 space-y-4 transition-all block";
-                if (btnFloating) btnFloating.classList.add('hidden');
-                if (barraAtalho) barraAtalho.classList.add('hidden');
                 if (btnToggleSide) {
-                    if (iconSide) iconSide.className = 'bi bi-chevron-left text-sm';
-                    if (txtSide) txtSide.textContent = 'Ocultar Textos';
+                    if (iconSide) iconSide.className = 'bi bi-arrows-angle-expand text-xs';
+                    if (txtSide) txtSide.textContent = 'Expandir Folha';
                     btnToggleSide.className = "px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-outfit font-bold text-xs flex items-center gap-2 border border-slate-200 dark:border-slate-600 transition-all";
+                    btnToggleSide.title = "Expandir folha de redação para largura total";
                 }
             } else if (modo === 'redacao-only') {
                 // Textos ocultos: Folha de Redação ganha 100% da tela!
                 if (colTextos) colTextos.className = "coluna-split hidden";
                 if (colRedacao) colRedacao.className = "coluna-split lg:col-span-12 xl:col-span-12 space-y-4 transition-all block";
-                if (btnFloating) btnFloating.classList.remove('hidden');
-                if (barraAtalho) barraAtalho.classList.remove('hidden');
                 if (btnToggleSide) {
-                    if (iconSide) iconSide.className = 'bi bi-chevron-right text-sm';
-                    if (txtSide) txtSide.textContent = 'Ver Textos Motivadores';
+                    if (iconSide) iconSide.className = 'bi bi-columns text-xs';
+                    if (txtSide) txtSide.textContent = 'Dividir com Textos';
                     btnToggleSide.className = "px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-700 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-300 font-outfit font-bold text-xs flex items-center gap-2 border border-indigo-200 dark:border-slate-600 shadow-sm transition-all";
+                    btnToggleSide.title = "Exibir textos motivadores ao lado da folha";
                 }
             }
         }
