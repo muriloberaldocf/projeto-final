@@ -293,3 +293,36 @@ function recordUserActivityStreak($pdo, $userId) {
 
     return $newStreak;
 }
+
+/**
+ * Catálogo Centralizado de Molduras de Avatar
+ */
+function getAvatarFramesCatalog() {
+    return [
+        'frame-indigo'  => ['name' => 'Índigo Padrão',       'xp' => 0,    'desc' => 'Borda violeta clássica'],
+        'frame-emerald' => ['name' => 'Esmeralda',           'xp' => 100,  'desc' => 'Verde vivo da vitória'],
+        'frame-cyan'    => ['name' => 'Azul Ciano',          'xp' => 300,  'desc' => 'Brilho ciano oceânico'],
+        'frame-purple'  => ['name' => 'Roxo Místico',        'xp' => 500,  'desc' => 'Aura de sabedoria'],
+        'frame-rose'    => ['name' => 'Rosa Neon',            'xp' => 750,  'desc' => 'Energia vibrante'],
+        'frame-rainbow' => ['name' => '🦛 Arco-Íris Lendária', 'xp' => 1000, 'desc' => 'Efeito multicor animado contínuo (1000 XP)'],
+        'frame-gold'    => ['name' => '👑 Dourada Suprema',   'xp' => 1500, 'desc' => 'Brilho metálico ouro com pulso (1500 XP)'],
+    ];
+}
+
+/**
+ * Catálogo Centralizado de Insígnias e Títulos de Avatares
+ */
+function getAvatarBadgesCatalog() {
+    return [
+        'bi-person-circle'    => ['name' => 'Estudante Padrão',     'xp' => 0],
+        'bi-backpack'         => ['name' => 'Mochileiro Focado',     'xp' => 20],
+        'bi-mortarboard'      => ['name' => 'Formando Vestibulando', 'xp' => 50],
+        'bi-rocket-takeoff'   => ['name' => 'Foguete da Aprovação',  'xp' => 100],
+        'bi-lightning-charge' => ['name' => 'Mago do Conhecimento',  'xp' => 200],
+        'bi-award'            => ['name' => 'Campeão de Simulados',  'xp' => 350],
+        'bi-gem'              => ['name' => 'Diamante Medicina',     'xp' => 500],
+        'bi-incognito'        => ['name' => 'Mestre Misterioso',     'xp' => 750],
+        'bi-crown'            => ['name' => 'Rei da Aprovação',      'xp' => 1000],
+        'bi-emoji-smile-fill' => ['name' => 'Estudante Lendário',    'xp' => 1500]
+    ];
+}

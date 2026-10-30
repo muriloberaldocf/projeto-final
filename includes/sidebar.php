@@ -8,124 +8,83 @@ $currentPage = $currentPage ?? basename($_SERVER['PHP_SELF']);
 $userAvatar = (!empty($user['avatar']) && trim($user['avatar']) !== '') ? $user['avatar'] : 'assets/img/default_avatar.jpg';
 $userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
-$userBadgeMap = [
-    'bi-person-circle' => 'Estudante Padrão',
-    'bi-backpack' => 'Mochileiro Focado',
-    'bi-mortarboard' => 'Formando Vestibulando',
-    'bi-rocket-takeoff' => 'Foguete da Aprovação',
-    'bi-lightning-charge' => 'Mago do Conhecimento',
-    'bi-award' => 'Campeão de Simulados',
-    'bi-gem' => 'Diamante Medicina',
-    'bi-incognito' => 'Mestre Misterioso',
-    'bi-crown' => 'Rei da Aprovação',
-    'bi-emoji-smile-fill' => 'Estudante Lendário'
-];
+$badgeCatalog = getAvatarBadgesCatalog();
 $userBadgeIcon = $user['avatar_icon'] ?? 'bi-person-circle';
-$userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
+$userBadgeName = $badgeCatalog[$userBadgeIcon]['name'] ?? 'Estudante Padrão';
 ?>
-<aside id="mainSidebar" class="lg:col-span-3 sticky top-20 space-y-3.5 z-30">
-    <div class="bg-white rounded-3xl border-2 border-slate-200 p-4 sm:p-5 shadow-[0_4px_0_0_#e2e8f0]">
-
-        <!-- MINI CARD DO PERFIL DO ALUNO (Oculto em profile.php para não duplicar dados) -->
-        <?php if ($currentPage !== 'profile.php'): ?>
-        <div class="sidebar-user-card flex items-center gap-3.5 p-3 mb-4 bg-slate-50 rounded-2xl border border-slate-200 transition-all">
-            <img src="<?= htmlspecialchars($userAvatar) ?>?v=<?= time() ?>" onerror="this.onerror=null;this.src='assets/img/default_avatar.jpg'" class="w-11 h-11 rounded-full <?= htmlspecialchars($userFrame) ?> object-cover shadow-sm shrink-0">
-            <div class="sidebar-text min-w-0 flex-1">
-                <h3 class="font-outfit font-bold text-slate-900 text-sm truncate mb-0"><?= htmlspecialchars($user['name'] ?? 'Estudante') ?></h3>
-                <div class="flex items-center gap-1 text-[11px] font-bold text-indigo-600 truncate mt-0.5" title="Título Equipado">
-                    <i class="bi <?= htmlspecialchars($userBadgeIcon) ?>"></i>
-                    <span class="truncate"><?= htmlspecialchars($userBadgeName) ?></span>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- LISTA DE LINKS DE NAVEGAÇÃO -->
+<aside id="mainSidebar" class="lg:col-span-3 sticky top-20 z-30">
+    <div class="bg-white rounded-3xl border-2 border-slate-200 p-3 sm:p-4 shadow-[0_4px_0_0_#e2e8f0]">
+        <!-- LISTA DE LINKS DE NAVEGAÇÃO COMPACTA & MODERNA -->
         <nav class="space-y-1.5">
             <!-- 1. TRILHA DE ESTUDOS -->
             <?php $isDashboard = ($currentPage === 'dashboard.php'); ?>
-            <a href="dashboard.php" title="Trilha de Estudos" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isDashboard ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <svg class="w-5 h-5 shrink-0 <?= $isDashboard ? 'text-amber-300' : 'text-slate-500' ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                </svg>
-                <span class="sidebar-text truncate">Trilha de Estudos</span>
+            <a href="dashboard.php" title="Trilha de Estudos" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-outfit font-extrabold text-sm transition-all <?= $isDashboard ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81]' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 <?= $isDashboard ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-600' ?>">
+                    <i class="bi bi-map-fill text-base"></i>
+                </div>
+                <span class="truncate">Trilha de Estudos</span>
             </a>
 
-            <!-- 2. RANKING DE AMIGOS -->
-            <?php $isLeaderboard = ($currentPage === 'leaderboard.php'); ?>
-            <a href="leaderboard.php" title="Ranking de Amigos" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isLeaderboard ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <svg class="w-5 h-5 shrink-0 <?= $isLeaderboard ? 'text-amber-300' : 'text-amber-500' ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4m6 17v-5m0 0a2 2 0 100-4 2 2 0 000 4zm0 5a2 2 0 100-4 2 2 0 000 4zM6 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4zM18 17v-3m0 0a2 2 0 100-4 2 2 0 000 4zm0 3a2 2 0 100-4 2 2 0 000 4z"/>
-                </svg>
-                <span class="sidebar-text truncate">Ranking de Amigos</span>
-            </a>
-
-            <!-- 3. SIMULADOS CRONOMETRADOS -->
+            <!-- 2. SIMULADOS -->
             <?php $isSimulado = ($currentPage === 'simulado.php'); ?>
-            <a href="simulado.php" title="Simulados Cronometrados" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isSimulado ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <i class="bi bi-clock-history text-lg shrink-0 <?= $isSimulado ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
-                <span class="sidebar-text truncate">Simulados Cronometrados</span>
+            <a href="simulado.php" title="Simulados Cronometrados" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-outfit font-extrabold text-sm transition-all <?= $isSimulado ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81]' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 <?= $isSimulado ? 'bg-white/20 text-white' : 'bg-amber-50 text-amber-600' ?>">
+                    <i class="bi bi-stopwatch-fill text-base"></i>
+                </div>
+                <span class="truncate">Simulados</span>
             </a>
 
-            <!-- 4. REDAÇÃO COM IA (NOVO) -->
+            <!-- 3. REDAÇÃO IA -->
             <?php $isRedacao = ($currentPage === 'redacao.php' || $currentPage === 'redacao_resultado.php'); ?>
-            <a href="redacao.php" title="Corretor de Redação com IA" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isRedacao ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <div class="flex items-center gap-3 truncate">
-                    <i class="bi bi-pen-fill text-lg shrink-0 <?= $isRedacao ? 'text-amber-300' : 'text-purple-600' ?>"></i>
-                    <span class="sidebar-text truncate">Redação com IA</span>
+            <a href="redacao.php" title="Redação com Correção por Inteligência Artificial" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-outfit font-extrabold text-sm transition-all <?= $isRedacao ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81]' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 <?= $isRedacao ? 'bg-white/20 text-white' : 'bg-purple-50 text-purple-600' ?>">
+                    <i class="bi bi-pen-fill text-base"></i>
                 </div>
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isRedacao ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-purple-100 text-purple-700' ?>">IA</span>
+                <span class="truncate">Redação com IA</span>
             </a>
 
-            <!-- 5. PROVAS & GABARITOS OFICIAIS (NOVO) -->
-            <?php $isProvas = ($currentPage === 'provas_oficiais.php'); ?>
-            <a href="provas_oficiais.php" title="Provas Anteriores & Gabaritos (USP, UNICAMP, UNESP, ENEM)" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isProvas ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <div class="flex items-center gap-3 truncate">
-                    <i class="bi bi-file-earmark-pdf-fill text-lg shrink-0 <?= $isProvas ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
-                    <span class="sidebar-text truncate">Provas & Gabaritos</span>
+            <!-- 4. GUIA SISU & CURSOS (Centraliza Cursos, Notas de Corte, Concorrência e Provas) -->
+            <?php $isCourseGuide = in_array($currentPage, ['course_guide.php', 'guia_concorrencia.php', 'provas_oficiais.php']); ?>
+            <a href="course_guide.php" title="Guia de Cursos, Notas de Corte do SiSU e Provas Anteriores" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-outfit font-extrabold text-sm transition-all <?= $isCourseGuide ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81]' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 <?= $isCourseGuide ? 'bg-white/20 text-white' : 'bg-blue-50 text-blue-600' ?>">
+                    <i class="bi bi-mortarboard-fill text-base"></i>
                 </div>
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isProvas ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-rose-100 text-rose-700' ?>">PDFs</span>
+                <span class="truncate">Guia SiSU & Cursos</span>
             </a>
 
-            <!-- 6. GUIA DE CONCORRÊNCIA & ACERTOS -->
-            <?php $isGuia = ($currentPage === 'guia_concorrencia.php' || $currentPage === 'calculadora_enem.php'); ?>
-            <a href="guia_concorrencia.php" title="Guia de Concorrência & Faixa de Acertos ENEM" class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isGuia ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <div class="flex items-center gap-3 truncate">
-                    <i class="bi bi-speedometer2 text-lg shrink-0 <?= $isGuia ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
-                    <span class="sidebar-text truncate">Guia de Concorrência</span>
-                </div>
-                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold tracking-wide uppercase <?= $isGuia ? 'bg-amber-400 text-slate-900 shadow-sm' : 'bg-indigo-100 text-indigo-700' ?>">ACERTOS</span>
-            </a>
-
-            <!-- 7. GUIA DE CURSOS & SISU -->
-            <?php $isCourseGuide = ($currentPage === 'course_guide.php'); ?>
-            <a href="course_guide.php" title="Catálogo de Cursos & Notas de Corte do SiSU" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isCourseGuide ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <i class="bi bi-mortarboard-fill text-lg shrink-0 <?= $isCourseGuide ? 'text-amber-300' : 'text-indigo-600' ?>"></i>
-                <span class="sidebar-text truncate">Cursos & Notas SiSU</span>
-            </a>
-
-            <!-- 7. RAIO-X & MÉTRICAS (NOVO) -->
+            <!-- 5. RAIO-X & DESEMPENHO -->
             <?php $isMetricas = ($currentPage === 'metricas.php'); ?>
-            <a href="metricas.php" title="Raio-X & Métricas de Desempenho" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isMetricas ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <i class="bi bi-graph-up-arrow text-lg shrink-0 <?= $isMetricas ? 'text-amber-300' : 'text-emerald-600' ?>"></i>
-                <span class="sidebar-text truncate">Raio-X & Métricas</span>
+            <a href="metricas.php" title="Métricas de Desempenho e Estatísticas Pedagógicas" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-outfit font-extrabold text-sm transition-all <?= $isMetricas ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81]' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 <?= $isMetricas ? 'bg-white/20 text-white' : 'bg-emerald-50 text-emerald-600' ?>">
+                    <i class="bi bi-graph-up-arrow text-base"></i>
+                </div>
+                <span class="truncate">Desempenho</span>
             </a>
 
-            <!-- 8. MEU PERFIL -->
-            <?php $isProfile = ($currentPage === 'profile.php'); ?>
-            <a href="profile.php" title="Meu Perfil" class="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-outfit font-bold text-sm transition-all <?= $isProfile ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81] font-extrabold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
-                <svg class="w-5 h-5 shrink-0 <?= $isProfile ? 'text-amber-300' : 'text-indigo-600' ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-                <span class="sidebar-text truncate">Meu Perfil</span>
+            <!-- 6. RANKING DE AMIGOS -->
+            <?php $isLeaderboard = ($currentPage === 'leaderboard.php'); ?>
+            <a href="leaderboard.php" title="Ranking de Amigos" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl font-outfit font-extrabold text-sm transition-all <?= $isLeaderboard ? 'bg-indigo-600 text-white shadow-[0_4px_0_0_#312e81]' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' ?>">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 <?= $isLeaderboard ? 'bg-white/20 text-white' : 'bg-amber-50 text-amber-500' ?>">
+                    <i class="bi bi-trophy-fill text-base"></i>
+                </div>
+                <span class="truncate">Ranking de Amigos</span>
             </a>
 
-            <div class="pt-2 border-t border-slate-200 mt-2">
-                <a href="api/auth.php?action=logout" title="Sair" class="flex items-center gap-3 px-3.5 py-2 rounded-2xl font-outfit font-bold text-xs text-slate-400 hover:text-rose-600 transition-all">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    <span class="sidebar-text truncate">Sair</span>
+            <!-- DIVISÓRIA COM PERFIL E SAIR -->
+            <div class="pt-2 border-t border-slate-200 mt-2 space-y-1">
+                <?php $isProfile = ($currentPage === 'profile.php'); ?>
+                <a href="profile.php" title="Meu Perfil" class="flex items-center gap-3 px-3.5 py-2 rounded-2xl font-outfit font-extrabold text-xs transition-all <?= $isProfile ? 'bg-indigo-600 text-white shadow-[0_3px_0_0_#312e81]' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' ?>">
+                    <div class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 <?= $isProfile ? 'text-white' : 'text-indigo-600' ?>">
+                        <i class="bi bi-person-fill text-sm"></i>
+                    </div>
+                    <span class="truncate">Meu Perfil</span>
+                </a>
+
+                <a href="api/auth.php?action=logout" title="Sair da Conta" class="flex items-center gap-3 px-3.5 py-2 rounded-2xl font-outfit font-bold text-xs text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all">
+                    <div class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0">
+                        <i class="bi bi-box-arrow-right text-sm"></i>
+                    </div>
+                    <span class="truncate">Sair</span>
                 </a>
             </div>
         </nav>

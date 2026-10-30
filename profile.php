@@ -14,29 +14,15 @@ $userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indi
 $currentAvatar = $user['avatar_icon'] ?? 'bi-person-circle';
 $userXp = (int) ($user['xp'] ?? 0);
 
-$frames = [
-    ['key' => 'frame-indigo',  'name' => 'Índigo Padrão',       'xp' => 0,    'desc' => 'Borda violeta clássica'],
-    ['key' => 'frame-emerald', 'name' => 'Esmeralda',           'xp' => 100,  'desc' => 'Verde vivo da vitória'],
-    ['key' => 'frame-cyan',    'name' => 'Azul Ciano',          'xp' => 300,  'desc' => 'Brilho ciano oceânico'],
-    ['key' => 'frame-purple',  'name' => 'Roxo Místico',        'xp' => 500,  'desc' => 'Aura de sabedoria'],
-    ['key' => 'frame-rose',    'name' => 'Rosa Neon',            'xp' => 750,  'desc' => 'Energia vibrante'],
-    ['key' => 'frame-rainbow', 'name' => '🦛 Arco-Íris Lendária', 'xp' => 1000, 'desc' => 'Efeito multicor animado contínuo (1000 XP)'],
-    ['key' => 'frame-gold',    'name' => '👑 Dourada Suprema',   'xp' => 1500, 'desc' => 'Brilho metálico ouro com pulso (1500 XP)'],
-];
+$frames = [];
+foreach (getAvatarFramesCatalog() as $key => $f) {
+    $frames[] = ['key' => $key, 'name' => $f['name'], 'xp' => $f['xp'], 'desc' => $f['desc']];
+}
 
-// Catálogo de Avatares / Insígnias e Títulos por XP
-$avatars = [
-    ['icon' => 'bi-person-circle', 'name' => 'Estudante Padrão', 'xp' => 0],
-    ['icon' => 'bi-backpack', 'name' => 'Mochileiro Focado', 'xp' => 20],
-    ['icon' => 'bi-mortarboard', 'name' => 'Formando Vestibulando', 'xp' => 50],
-    ['icon' => 'bi-rocket-takeoff', 'name' => 'Foguete da Aprovação', 'xp' => 100],
-    ['icon' => 'bi-lightning-charge', 'name' => 'Mago do Conhecimento', 'xp' => 200],
-    ['icon' => 'bi-award', 'name' => 'Campeão de Simulados', 'xp' => 350],
-    ['icon' => 'bi-gem', 'name' => 'Diamante Medicina', 'xp' => 500],
-    ['icon' => 'bi-incognito', 'name' => 'Mestre Misterioso', 'xp' => 750],
-    ['icon' => 'bi-crown', 'name' => 'Rei da Aprovação', 'xp' => 1000],
-    ['icon' => 'bi-emoji-smile-fill', 'name' => 'Estudante Lendário', 'xp' => 1500]
-];
+$avatars = [];
+foreach (getAvatarBadgesCatalog() as $icon => $b) {
+    $avatars[] = ['icon' => $icon, 'name' => $b['name'], 'xp' => $b['xp']];
+}
 
 $equippedBadge = ['icon' => 'bi-person-circle', 'name' => 'Estudante Padrão'];
 foreach ($avatars as $av) {
@@ -57,30 +43,6 @@ $myAchIds = $stmtMyAch->fetchAll(PDO::FETCH_COLUMN);
 $pageTitle = 'Meu Perfil & Avatares — HipoGabarito';
 require_once __DIR__ . '/includes/header.php';
 ?>
-    <style>
-        img.frame-indigo, .frame-indigo { outline: 4px solid #6842C2 !important; outline-offset: -2px !important; box-shadow: 0 0 14px rgba(104,66,194,0.7) !important; border-radius: 9999px !important; }
-        img.frame-emerald, .frame-emerald { outline: 4px solid #10b981 !important; outline-offset: -2px !important; box-shadow: 0 0 14px rgba(16,185,129,0.7) !important; border-radius: 9999px !important; }
-        img.frame-cyan, .frame-cyan { outline: 4px solid #06b6d4 !important; outline-offset: -2px !important; box-shadow: 0 0 16px rgba(6,182,212,0.75) !important; border-radius: 9999px !important; }
-        img.frame-purple, .frame-purple { outline: 4px solid #a855f7 !important; outline-offset: -2px !important; box-shadow: 0 0 16px rgba(168,85,247,0.75) !important; border-radius: 9999px !important; }
-        img.frame-rose, .frame-rose { outline: 4px solid #f43f5e !important; outline-offset: -2px !important; box-shadow: 0 0 18px rgba(244,63,94,0.8) !important; border-radius: 9999px !important; }
-        img.frame-rainbow, .frame-rainbow { outline: 4.5px solid #ff0055 !important; outline-offset: -2px !important; border-radius: 9999px !important; animation: rainbowRgbFast 1.8s linear infinite !important; }
-        img.frame-gold, .frame-gold { outline: 4px solid #f59e0b !important; outline-offset: -2px !important; border-radius: 9999px !important; animation: goldOutlineCycle 2.2s ease-in-out infinite alternate !important; }
-        @keyframes rainbowRgbFast {
-            0%   { outline-color: #ff0055 !important; box-shadow: 0 0 18px #ff0055, 0 0 32px rgba(255,0,85,0.85) !important; }
-            14%  { outline-color: #ff6600 !important; box-shadow: 0 0 18px #ff6600, 0 0 32px rgba(255,102,0,0.85) !important; }
-            28%  { outline-color: #ffee00 !important; box-shadow: 0 0 18px #ffee00, 0 0 32px rgba(255,238,0,0.85) !important; }
-            42%  { outline-color: #00ff66 !important; box-shadow: 0 0 18px #00ff66, 0 0 32px rgba(0,255,102,0.85) !important; }
-            57%  { outline-color: #00d5ff !important; box-shadow: 0 0 18px #00d5ff, 0 0 32px rgba(0,213,255,0.85) !important; }
-            71%  { outline-color: #9900ff !important; box-shadow: 0 0 18px #9900ff, 0 0 32px rgba(153,0,255,0.85) !important; }
-            85%  { outline-color: #ff00cc !important; box-shadow: 0 0 18px #ff00cc, 0 0 32px rgba(255,0,204,0.85) !important; }
-            100% { outline-color: #ff0055 !important; box-shadow: 0 0 18px #ff0055, 0 0 32px rgba(255,0,85,0.85) !important; }
-        }
-        @keyframes goldOutlineCycle {
-            0% { outline-color: #fbbf24 !important; box-shadow: 0 0 14px #f59e0b, 0 0 22px rgba(251,191,36,0.6) !important; }
-            50% { outline-color: #fef08a !important; box-shadow: 0 0 26px #fbbf24, 0 0 38px rgba(245,158,11,0.9) !important; }
-            100% { outline-color: #d97706 !important; box-shadow: 0 0 16px #d97706, 0 0 25px rgba(217,119,6,0.7) !important; }
-        }
-    </style>
 
     <!-- LAYOUT PRINCIPAL DO PERFIL -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

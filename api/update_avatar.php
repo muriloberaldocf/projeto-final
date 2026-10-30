@@ -14,21 +14,9 @@ if (!$userId) {
 $data = json_decode(file_get_contents('php://input'), true);
 $avatarIcon = trim($data['avatar_icon'] ?? 'bi-person-circle');
 
-// Catálogo de Avatares e XP necessário
-$avatarsCatalog = [
-    'bi-person-circle' => 0,
-    'bi-backpack' => 20,
-    'bi-mortarboard' => 50,
-    'bi-rocket-takeoff' => 100,
-    'bi-lightning-charge' => 200,
-    'bi-award' => 350,
-    'bi-gem' => 500,
-    'bi-incognito' => 750,
-    'bi-crown' => 1000,
-    'bi-emoji-smile-fill' => 1500
-];
+$badgesCatalog = getAvatarBadgesCatalog();
 
-if (!array_key_exists($avatarIcon, $avatarsCatalog)) {
+if (!array_key_exists($avatarIcon, $badgesCatalog)) {
     echo json_encode(['success' => false, 'message' => 'Avatar inválido']);
     exit;
 }
@@ -38,7 +26,7 @@ $stmtUser = $pdo->prepare("SELECT xp FROM users WHERE id = ?");
 $stmtUser->execute([$userId]);
 $userXp = (int) $stmtUser->fetchColumn();
 
-$requiredXp = $avatarsCatalog[$avatarIcon];
+$requiredXp = $badgesCatalog[$avatarIcon]['xp'];
 if ($userXp < $requiredXp) {
     echo json_encode(['success' => false, 'message' => "Você precisa de no mínimo {$requiredXp} XP para desbloquear esta recompensa do Hipopótamo!"]);
     exit;

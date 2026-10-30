@@ -229,6 +229,74 @@ $examRepository = [
 
     // --- ENEM (INEP) ---
     [
+        'id' => 'enem_2025_d1',
+        'banca' => 'enem',
+        'banca_label' => 'ENEM / INEP',
+        'banca_theme' => 'emerald',
+        'ano' => 2025,
+        'fase' => 'Dia 1',
+        'titulo' => 'ENEM 2025 — Dia 1 (Caderno 1 Azul)',
+        'descricao' => '45 questões de Linguagens e Códigos + 45 de Ciências Humanas + Proposta Oficial de Redação.',
+        'questoes_count' => 90,
+        'tempo_min' => 330,
+        'tipo' => 'Linguagens, Humanas & Redação',
+        'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_PV_impresso_D1_CD1.pdf',
+        'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf',
+        'simulado_exam' => 'enem',
+        'simulado_day' => 1
+    ],
+    [
+        'id' => 'enem_2025_d2',
+        'banca' => 'enem',
+        'banca_label' => 'ENEM / INEP',
+        'banca_theme' => 'emerald',
+        'ano' => 2025,
+        'fase' => 'Dia 2',
+        'titulo' => 'ENEM 2025 — Dia 2 (Caderno 7 Azul / 8 Verde)',
+        'descricao' => '45 questões de Matemática e suas Tecnologias + 45 questões de Ciências da Natureza.',
+        'questoes_count' => 90,
+        'tempo_min' => 300,
+        'tipo' => 'Matemática & Ciências da Natureza',
+        'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_PV_impresso_D2_CD7.pdf',
+        'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D2_CD7.pdf',
+        'simulado_exam' => 'enem',
+        'simulado_day' => 2
+    ],
+    [
+        'id' => 'enem_2024_d1',
+        'banca' => 'enem',
+        'banca_label' => 'ENEM / INEP',
+        'banca_theme' => 'emerald',
+        'ano' => 2024,
+        'fase' => 'Dia 1',
+        'titulo' => 'ENEM 2024 — Dia 1 (Caderno 1 Azul)',
+        'descricao' => '45 questões de Linguagens e Códigos + 45 de Ciências Humanas + Redação sobre Herança Africana.',
+        'questoes_count' => 90,
+        'tempo_min' => 330,
+        'tipo' => 'Linguagens, Humanas & Redação',
+        'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_PV_impresso_D1_CD1.pdf',
+        'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_GB_impresso_D1_CD1.pdf',
+        'simulado_exam' => 'enem',
+        'simulado_day' => 1
+    ],
+    [
+        'id' => 'enem_2024_d2',
+        'banca' => 'enem',
+        'banca_label' => 'ENEM / INEP',
+        'banca_theme' => 'emerald',
+        'ano' => 2024,
+        'fase' => 'Dia 2',
+        'titulo' => 'ENEM 2024 — Dia 2 (Caderno 7 Azul)',
+        'descricao' => '45 questões de Matemática e suas Tecnologias + 45 questões de Ciências da Natureza.',
+        'questoes_count' => 90,
+        'tempo_min' => 300,
+        'tipo' => 'Matemática & Ciências da Natureza',
+        'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_PV_impresso_D2_CD7.pdf',
+        'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_GB_impresso_D2_CD7.pdf',
+        'simulado_exam' => 'enem',
+        'simulado_day' => 2
+    ],
+    [
         'id' => 'enem_2023_d1',
         'banca' => 'enem',
         'banca_label' => 'ENEM / INEP',
@@ -242,7 +310,8 @@ $examRepository = [
         'tipo' => 'Linguagens, Humanas & Redação',
         'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_PV_impresso_D1_CD1.pdf',
         'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_GB_impresso_D1_CD1.pdf',
-        'simulado_exam' => 'enem'
+        'simulado_exam' => 'enem',
+        'simulado_day' => 1
     ],
     [
         'id' => 'enem_2023_d2',
@@ -258,7 +327,8 @@ $examRepository = [
         'tipo' => 'Matemática & Ciências da Natureza',
         'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_PV_impresso_D2_CD7.pdf',
         'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_GB_impresso_D2_CD7.pdf',
-        'simulado_exam' => 'enem'
+        'simulado_exam' => 'enem',
+        'simulado_day' => 2
     ],
     [
         'id' => 'enem_2022_d1',
@@ -274,7 +344,8 @@ $examRepository = [
         'tipo' => 'Linguagens, Humanas & Redação',
         'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_PV_impresso_D1_CD1.pdf',
         'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_GB_impresso_D1_CD1.pdf',
-        'simulado_exam' => 'enem'
+        'simulado_exam' => 'enem',
+        'simulado_day' => 1
     ],
     [
         'id' => 'enem_2022_d2',
@@ -290,7 +361,8 @@ $examRepository = [
         'tipo' => 'Matemática & Ciências da Natureza',
         'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_PV_impresso_D2_CD7.pdf',
         'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_GB_impresso_D2_CD7.pdf',
-        'simulado_exam' => 'enem'
+        'simulado_exam' => 'enem',
+        'simulado_day' => 2
     ],
     [
         'id' => 'enem_2021_d1',
@@ -306,7 +378,8 @@ $examRepository = [
         'tipo' => 'Linguagens, Humanas & Redação',
         'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_PV_impresso_D1_CD1.pdf',
         'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_GB_impresso_D1_CD1.pdf',
-        'simulado_exam' => 'enem'
+        'simulado_exam' => 'enem',
+        'simulado_day' => 1
     ],
     [
         'id' => 'enem_2021_d2',
@@ -322,7 +395,8 @@ $examRepository = [
         'tipo' => 'Matemática & Ciências da Natureza',
         'prova_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_PV_impresso_D2_CD7.pdf',
         'gabarito_url' => 'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_GB_impresso_D2_CD7.pdf',
-        'simulado_exam' => 'enem'
+        'simulado_exam' => 'enem',
+        'simulado_day' => 2
     ],
 
     // --- UERJ ---
@@ -391,7 +465,7 @@ require_once __DIR__ . '/includes/header.php';
                                 <i class="bi bi-check2-circle text-emerald-400"></i> <?= count($examRepository) ?> Cadernos Catalogados
                             </span>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-white border border-white/10">
-                                <i class="bi bi-clock-history text-amber-300"></i> Edições 2021 a 2024
+                                <i class="bi bi-clock-history text-amber-300"></i> Edições 2021 a 2025
                             </span>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 text-white border border-white/10">
                                 <i class="bi bi-patch-check-fill text-sky-400"></i> Gabaritos Oficiais
@@ -453,6 +527,7 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="sm:col-span-3">
                             <select id="anoFilter" onchange="applyFilters()" class="w-full px-3 py-2.5 rounded-xl border-2 border-slate-200 focus:border-indigo-600 text-xs font-bold text-slate-800 focus:outline-none cursor-pointer">
                                 <option value="">Todos os Anos</option>
+                                <option value="2025">2025</option>
                                 <option value="2024">2024</option>
                                 <option value="2023">2023</option>
                                 <option value="2022">2022</option>
@@ -536,7 +611,13 @@ require_once __DIR__ . '/includes/header.php';
                                 </a>
 
                                 <!-- BOTÃO SIMULAR ONLINE -->
-                                <a href="simulado.php?exam=<?= urlencode($exam['simulado_exam']) ?>" class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl font-outfit font-black text-xs bg-amber-400 hover:bg-amber-300 text-slate-900 shadow-xs transition-all" title="Resolver online no Simulado">
+                                <?php
+                                $simLink = 'simulado.php?exam=' . urlencode($exam['simulado_exam']) . '&year=' . urlencode((string)$exam['ano']);
+                                if (!empty($exam['simulado_day'])) {
+                                    $simLink .= '&day=' . urlencode((string)$exam['simulado_day']);
+                                }
+                                ?>
+                                <a href="<?= htmlspecialchars($simLink) ?>" class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl font-outfit font-black text-xs bg-amber-400 hover:bg-amber-300 text-slate-900 shadow-xs transition-all" title="Resolver online no Simulado">
                                     <i class="bi bi-play-circle-fill"></i>
                                     <span>Simular</span>
                                 </a>
@@ -644,6 +725,22 @@ require_once __DIR__ . '/includes/header.php';
             document.getElementById('faseFilter').value = '';
             setBancaFilter('all', document.querySelector('.banca-btn'));
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramBanca = urlParams.get('banca');
+            const paramAno = urlParams.get('ano');
+            if (paramAno) {
+                const anoSel = document.getElementById('anoFilter');
+                if (anoSel) anoSel.value = paramAno;
+            }
+            if (paramBanca) {
+                const btn = document.querySelector(`.banca-btn[onclick*="'${paramBanca}'"]`);
+                if (btn) setBancaFilter(paramBanca, btn);
+            } else if (paramAno) {
+                applyFilters();
+            }
+        });
     </script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

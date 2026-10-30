@@ -27,7 +27,76 @@ try {
     $inputRaw = file_get_contents('php://input');
     $inputJson = json_decode($inputRaw, true);
 
-    // Se for POST com respostas (ou ?action=finish)
+    // -------------------------------------------------------------
+    // 0. SUBMISSÃO DO CADERNO DE PROVA OFICIAL INEP + CARTÃO-RESPOSTA
+    // -------------------------------------------------------------
+    if ($method === 'POST' && isset($inputJson['inep_official_submission']) && $inputJson['inep_official_submission'] === true) {
+        $correctCount = max(0, (int)($inputJson['correct_answers'] ?? 0));
+        $totalQuestions = max(1, (int)($inputJson['total_questions'] ?? 90));
+        $timeSpent = max(1, (int)($inputJson['time_spent'] ?? 60));
+        $examType = trim($inputJson['exam'] ?? 'enem');
+        $bySubject = is_array($inputJson['by_subject'] ?? null) ? $inputJson['by_subject'] : [];
+
+        $score = round(($correctCount / $totalQuestions) * 100);
+
+        $xpGained = ($correctCount * 3);
+        if ($score >= 75) {
+            $xpGained += 30;
+        }
+        if ($score >= 90) {
+            $xpGained += 40;
+        }
+
+        $pdo->beginTransaction();
+
+        try {
+            $stmtSim = $pdo->prepare("
+                INSERT INTO simulados (user_id, exam_type, total_questions, time_limit_min, score, total_correct, time_spent_sec, xp_earned, started_at, finished_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ");
+            $stmtSim->execute([$userId, $examType, $totalQuestions, round($timeSpent / 60), $score, $correctCount, $timeSpent, $xpGained]);
+        } catch (Exception $e) {
+            // Ignora caso a tabela tenha diferenças de schema
+        }
+
+        $stmtUser = $pdo->prepare("UPDATE users SET xp = xp + ? WHERE id = ?");
+        $stmtUser->execute([$xpGained, $userId]);
+
+        $stmtGetXp = $pdo->prepare("SELECT xp FROM users WHERE id = ?");
+        $stmtGetXp->execute([$userId]);
+        $currentXp = (int)$stmtGetXp->fetchColumn();
+        $newLevel = floor($currentXp / 100) + 1;
+
+        $stmtLevel = $pdo->prepare("UPDATE users SET level = ? WHERE id = ?");
+        $stmtLevel->execute([$newLevel, $userId]);
+
+        try {
+            $stmtDaily = $pdo->prepare("
+                INSERT INTO user_daily_activity (user_id, activity_date, xp_earned, lessons_completed)
+                VALUES (?, CURDATE(), ?, 0)
+                ON DUPLICATE KEY UPDATE
+                    xp_earned = xp_earned + VALUES(xp_earned)
+            ");
+            $stmtDaily->execute([$userId, $xpGained]);
+        } catch (Exception $e) {}
+
+        recordUserActivityStreak($pdo, $userId);
+        $pdo->commit();
+
+        echo json_encode([
+            'status' => 'success',
+            'score' => $score,
+            'correct_answers' => $correctCount,
+            'total_questions' => $totalQuestions,
+            'xp_gained' => $xpGained,
+            'time_spent' => $timeSpent,
+            'by_subject' => $bySubject,
+            'by_difficulty' => []
+        ]);
+        exit;
+    }
+
+    //Se for POST com respostas (ou ?action=finish)
     if ($method === 'POST' && (isset($inputJson['answers']) || isset($_POST['answers']) || isset($_GET['action']) && $_GET['action'] === 'finish')) {
         $answers = $inputJson['answers'] ?? $_POST['answers'] ?? [];
         $timeSpent = (int)($inputJson['time_spent'] ?? $_POST['time_spent'] ?? 0);
@@ -216,28 +285,62 @@ try {
         LEFT JOIN subjects s ON u.subject_id = s.id
     ";
 
-    // Construir filtro de banca, ano e disciplina
+    // Construir filtro de banca, ano, dia e disciplina
     $year = (int)($_GET['year'] ?? $_POST['year'] ?? 0);
-    $subjectId = (int)($_GET['subject_id'] ?? $_POST['subject_id'] ?? 0);
+    $subjectInput = trim($_GET['subject_id'] ?? $_POST['subject_id'] ?? '0');
+    $day = (int)($_GET['day'] ?? $_POST['day'] ?? 0);
 
     $examFilter = "";
     if ($exam === 'enem') {
-        if ($year >= 2009 && $year <= 2024) {
+        if ($year >= 1998 && $year <= 2026) {
             $examFilter = " AND q.exam_source LIKE 'ENEM " . $year . "%'";
         } else {
             $examFilter = " AND q.exam_source LIKE '%ENEM%'";
         }
     } elseif ($exam === 'fuvest') {
-        $examFilter = " AND (q.exam_source LIKE '%FUVEST%' OR q.exam_source LIKE '%USP%')";
+        if ($year >= 2010 && $year <= 2026) {
+            $examFilter = " AND (q.exam_source LIKE 'FUVEST " . $year . "%' OR q.exam_source LIKE 'USP " . $year . "%')";
+        } else {
+            $examFilter = " AND (q.exam_source LIKE '%FUVEST%' OR q.exam_source LIKE '%USP%')";
+        }
     } elseif ($exam === 'unicamp') {
-        $examFilter = " AND q.exam_source LIKE '%UNICAMP%'";
+        if ($year >= 2010 && $year <= 2026) {
+            $examFilter = " AND q.exam_source LIKE 'UNICAMP " . $year . "%'";
+        } else {
+            $examFilter = " AND q.exam_source LIKE '%UNICAMP%'";
+        }
     } elseif ($exam === 'unesp') {
-        $examFilter = " AND q.exam_source LIKE '%UNESP%'";
+        if ($year >= 2010 && $year <= 2026) {
+            $examFilter = " AND q.exam_source LIKE 'UNESP " . $year . "%'";
+        } else {
+            $examFilter = " AND q.exam_source LIKE '%UNESP%'";
+        }
+    } elseif ($exam === 'uerj') {
+        if ($year >= 2010 && $year <= 2026) {
+            $examFilter = " AND q.exam_source LIKE 'UERJ " . $year . "%'";
+        } else {
+            $examFilter = " AND q.exam_source LIKE '%UERJ%'";
+        }
     }
     // misto = sem filtro de banca
 
-    if ($subjectId > 0) {
-        $examFilter .= " AND s.id = " . $subjectId;
+    // Filtro por Dia do ENEM (Dia 1: Linguagens [5] + Humanas [6]; Dia 2: Natureza [2,3,4] + Matemática [1])
+    if ($day === 1) {
+        $examFilter .= " AND (s.id IN (5, 6) OR q.exam_source LIKE '%1º DIA%')";
+    } elseif ($day === 2) {
+        $examFilter .= " AND (s.id IN (1, 2, 3, 4) OR q.exam_source LIKE '%2º DIA%')";
+    }
+
+    // Filtro por Área do Conhecimento ou Matéria (suporta 'natureza' = 2,3,4 ou IDs separados por vírgula)
+    if ($subjectInput === 'natureza' || $subjectInput === '2,3,4') {
+        $examFilter .= " AND s.id IN (2, 3, 4)";
+    } elseif (!empty($subjectInput) && $subjectInput !== '0') {
+        $subjectIds = array_filter(array_map('intval', explode(',', $subjectInput)));
+        if (count($subjectIds) === 1) {
+            $examFilter .= " AND s.id = " . reset($subjectIds);
+        } elseif (count($subjectIds) > 1) {
+            $examFilter .= " AND s.id IN (" . implode(',', $subjectIds) . ")";
+        }
     }
 
     // Buscar cada nível separadamente

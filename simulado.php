@@ -80,45 +80,241 @@ require_once __DIR__ . '/includes/header.php';
                             </div>
                         </div>
 
-                        <!-- Painel de Filtros Avançados do ENEM (Edição por Ano e Área do Conhecimento) -->
-                        <div id="panelEnemFiltros" class="bg-indigo-50/70 dark:bg-indigo-950/30 p-5 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 space-y-4">
+                        <!-- Painel de Filtros Avançados do ENEM (Edição por Ano, Área do Conhecimento e Cadernos Oficiais INEP) -->
+                        <div id="panelEnemFiltros" class="bg-indigo-50/70 dark:bg-indigo-950/30 p-5 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 space-y-5">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
                                         <i class="bi bi-sliders"></i>
                                     </div>
                                     <div>
-                                        <h3 class="font-outfit font-black text-xs sm:text-sm text-indigo-950 dark:text-indigo-200 mb-0">Edição Histórica & Área do Conhecimento</h3>
-                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-0">Banco oficial integrado com +3.500 questões reais do ENEM (2009 a 2023).</p>
+                                        <h3 class="font-outfit font-black text-xs sm:text-sm text-indigo-950 dark:text-indigo-200 mb-0">Provas Específicas do ENEM & Cadernos Oficiais (INEP)</h3>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-0">Selecione uma edição específica (incluindo ENEM 2025 e 2024) ou escolha os cadernos oficiais do INEP abaixo.</p>
                                     </div>
                                 </div>
-                                <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700 shadow-xs">
-                                    <i class="bi bi-patch-check-fill text-indigo-500"></i> Oficial INEP
-                                </span>
+                                <a href="https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-700 hover:border-indigo-400 shadow-xs transition">
+                                    <i class="bi bi-patch-check-fill text-indigo-500"></i> Portal INEP Oficial <i class="bi bi-box-arrow-up-right text-[9px] ml-0.5"></i>
+                                </a>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- 1. Atalhos de Provas Específicas do INEP (Cards de Seleção Rápida + PDFs Oficiais) -->
+                            <div class="space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] font-outfit font-extrabold uppercase tracking-wider text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
+                                        <i class="bi bi-journal-bookmark-fill text-indigo-600"></i> Selecione uma Prova Específica do ENEM (Portal INEP):
+                                    </span>
+                                    <a href="provas_oficiais.php?banca=enem" class="text-[11px] font-outfit font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                        <span>Ver todos os cadernos</span> <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="inepExamsQuickGrid">
+                                    <!-- ENEM 2025 - 1º DIA -->
+                                    <div class="inep-exam-card bg-white dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all flex flex-col justify-between gap-3 shadow-xs" data-year="2025" data-day="1">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-1.5">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-300">ENEM 2025 • NOVO</span>
+                                                <span class="text-[10px] font-bold text-slate-500">1º Dia • Caderno 1 Azul</span>
+                                            </div>
+                                            <h4 class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white mb-0.5">ENEM 2025 — 1º Dia (Linguagens e Humanas)</h4>
+                                            <p class="text-[11px] text-slate-500 mb-0 leading-snug">Caderno oficial INEP (Q. 01 a 90) com Cartão-Resposta e correção automática.</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-1.5">
+                                            <button type="button" onclick="openOfficialInepExamMode('2025', '1')" class="w-full py-2 px-3 rounded-xl font-outfit font-black text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                                                <i class="bi bi-pencil-square"></i> <span>Responder Dentro da Prova (INEP)</span>
+                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" onclick="selectSpecificInepExam('2025', '1', '0', 45, 135, this)" class="btn-inep-select flex-1 py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center justify-center gap-1">
+                                                    <i class="bi bi-Sliders"></i> <span>Modo Questões</span>
+                                                </button>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2025_PV_impresso_D1_CD1.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Abrir PDF em nova aba">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> <span>PDF</span>
+                                                </a>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Gabarito Oficial INEP">
+                                                    <i class="bi bi-patch-check-fill text-emerald-600"></i> <span>Gab</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ENEM 2025 - 2º DIA -->
+                                    <div class="inep-exam-card bg-white dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all flex flex-col justify-between gap-3 shadow-xs" data-year="2025" data-day="2">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-1.5">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-300">ENEM 2025 • NOVO</span>
+                                                <span class="text-[10px] font-bold text-slate-500">2º Dia • Caderno 7 Azul</span>
+                                            </div>
+                                            <h4 class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white mb-0.5">ENEM 2025 — 2º Dia (Natureza e Matemática)</h4>
+                                            <p class="text-[11px] text-slate-500 mb-0 leading-snug">Caderno oficial INEP (Q. 91 a 180) com Cartão-Resposta e correção automática.</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-1.5">
+                                            <button type="button" onclick="openOfficialInepExamMode('2025', '2')" class="w-full py-2 px-3 rounded-xl font-outfit font-black text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                                                <i class="bi bi-pencil-square"></i> <span>Responder Dentro da Prova (INEP)</span>
+                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" onclick="selectSpecificInepExam('2025', '2', '0', 45, 135, this)" class="btn-inep-select flex-1 py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center justify-center gap-1">
+                                                    <i class="bi bi-sliders"></i> <span>Modo Questões</span>
+                                                </button>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2025_PV_impresso_D2_CD7.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Abrir PDF em nova aba">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> <span>PDF</span>
+                                                </a>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D2_CD7.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Gabarito Oficial INEP">
+                                                    <i class="bi bi-patch-check-fill text-emerald-600"></i> <span>Gab</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ENEM 2024 - 1º DIA -->
+                                    <div class="inep-exam-card bg-white dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all flex flex-col justify-between gap-3 shadow-xs" data-year="2024" data-day="1">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-1.5">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-100 text-indigo-800 border border-indigo-200">ENEM 2024</span>
+                                                <span class="text-[10px] font-bold text-slate-500">1º Dia • Caderno 1 Azul</span>
+                                            </div>
+                                            <h4 class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white mb-0.5">ENEM 2024 — 1º Dia (Linguagens e Humanas)</h4>
+                                            <p class="text-[11px] text-slate-500 mb-0 leading-snug">Caderno oficial INEP (Q. 01 a 90) com Cartão-Resposta e correção automática.</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-1.5">
+                                            <button type="button" onclick="openOfficialInepExamMode('2024', '1')" class="w-full py-2 px-3 rounded-xl font-outfit font-black text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                                                <i class="bi bi-pencil-square"></i> <span>Responder Dentro da Prova (INEP)</span>
+                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" onclick="selectSpecificInepExam('2024', '1', '0', 45, 135, this)" class="btn-inep-select flex-1 py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center justify-center gap-1">
+                                                    <i class="bi bi-sliders"></i> <span>Modo Questões</span>
+                                                </button>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2024_PV_impresso_D1_CD1.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Abrir PDF em nova aba">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> <span>PDF</span>
+                                                </a>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2024_GB_impresso_D1_CD1.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Gabarito Oficial INEP">
+                                                    <i class="bi bi-patch-check-fill text-emerald-600"></i> <span>Gab</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ENEM 2024 - 2º DIA -->
+                                    <div class="inep-exam-card bg-white dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all flex flex-col justify-between gap-3 shadow-xs" data-year="2024" data-day="2">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-1.5">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-100 text-indigo-800 border border-indigo-200">ENEM 2024</span>
+                                                <span class="text-[10px] font-bold text-slate-500">2º Dia • Caderno 7 Azul</span>
+                                            </div>
+                                            <h4 class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white mb-0.5">ENEM 2024 — 2º Dia (Natureza e Matemática)</h4>
+                                            <p class="text-[11px] text-slate-500 mb-0 leading-snug">Caderno oficial INEP (Q. 91 a 180) com Cartão-Resposta e correção automática.</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-1.5">
+                                            <button type="button" onclick="openOfficialInepExamMode('2024', '2')" class="w-full py-2 px-3 rounded-xl font-outfit font-black text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                                                <i class="bi bi-pencil-square"></i> <span>Responder Dentro da Prova (INEP)</span>
+                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" onclick="selectSpecificInepExam('2024', '2', '0', 45, 135, this)" class="btn-inep-select flex-1 py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center justify-center gap-1">
+                                                    <i class="bi bi-sliders"></i> <span>Modo Questões</span>
+                                                </button>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2024_PV_impresso_D2_CD7.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Abrir PDF em nova aba">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> <span>PDF</span>
+                                                </a>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2024_GB_impresso_D2_CD7.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Gabarito Oficial INEP">
+                                                    <i class="bi bi-patch-check-fill text-emerald-600"></i> <span>Gab</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ENEM 2023 - 1º DIA -->
+                                    <div class="inep-exam-card bg-white dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all flex flex-col justify-between gap-3 shadow-xs" data-year="2023" data-day="1">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-1.5">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-slate-100 text-slate-700 border border-slate-300">ENEM 2023</span>
+                                                <span class="text-[10px] font-bold text-slate-500">1º Dia • Caderno 1 Azul</span>
+                                            </div>
+                                            <h4 class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white mb-0.5">ENEM 2023 — 1º Dia (Linguagens e Humanas)</h4>
+                                            <p class="text-[11px] text-slate-500 mb-0 leading-snug">Caderno oficial INEP (Q. 01 a 90) com Cartão-Resposta e correção automática.</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-1.5">
+                                            <button type="button" onclick="openOfficialInepExamMode('2023', '1')" class="w-full py-2 px-3 rounded-xl font-outfit font-black text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                                                <i class="bi bi-pencil-square"></i> <span>Responder Dentro da Prova (INEP)</span>
+                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" onclick="selectSpecificInepExam('2023', '1', '0', 45, 135, this)" class="btn-inep-select flex-1 py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center justify-center gap-1">
+                                                    <i class="bi bi-sliders"></i> <span>Modo Questões</span>
+                                                </button>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2023_PV_impresso_D1_CD1.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Abrir PDF em nova aba">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> <span>PDF</span>
+                                                </a>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2023_GB_impresso_D1_CD1.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Gabarito Oficial INEP">
+                                                    <i class="bi bi-patch-check-fill text-emerald-600"></i> <span>Gab</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ENEM 2023 - 2º DIA -->
+                                    <div class="inep-exam-card bg-white dark:bg-slate-800 rounded-2xl p-3.5 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all flex flex-col justify-between gap-3 shadow-xs" data-year="2023" data-day="2">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-1 mb-1.5">
+                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-slate-100 text-slate-700 border border-slate-300">ENEM 2023</span>
+                                                <span class="text-[10px] font-bold text-slate-500">2º Dia • Caderno 7 Azul</span>
+                                            </div>
+                                            <h4 class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white mb-0.5">ENEM 2023 — 2º Dia (Natureza e Matemática)</h4>
+                                            <p class="text-[11px] text-slate-500 mb-0 leading-snug">Caderno oficial INEP (Q. 91 a 180) com Cartão-Resposta e correção automática.</p>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-1.5">
+                                            <button type="button" onclick="openOfficialInepExamMode('2023', '2')" class="w-full py-2 px-3 rounded-xl font-outfit font-black text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                                                <i class="bi bi-pencil-square"></i> <span>Responder Dentro da Prova (INEP)</span>
+                                            </button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button type="button" onclick="selectSpecificInepExam('2023', '2', '0', 45, 135, this)" class="btn-inep-select flex-1 py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center justify-center gap-1">
+                                                    <i class="bi bi-sliders"></i> <span>Modo Questões</span>
+                                                </button>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2023_PV_impresso_D2_CD7.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Abrir PDF em nova aba">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> <span>PDF</span>
+                                                </a>
+                                                <a href="https://download.inep.gov.br/enem/provas_e_gabaritos/2023_GB_impresso_D2_CD7.pdf" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 rounded-xl font-outfit font-bold text-[10px] bg-slate-100 hover:bg-emerald-50 text-slate-700 border border-slate-200 transition flex items-center gap-1" title="Gabarito Oficial INEP">
+                                                    <i class="bi bi-patch-check-fill text-emerald-600"></i> <span>Gab</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Seletores Customizados (Edição por Ano, Dia de Aplicação e Área do Conhecimento) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2 border-t border-indigo-200/60 dark:border-indigo-800/60">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                         <i class="bi bi-calendar3 text-indigo-600"></i> Edição / Ano do ENEM:
                                     </label>
-                                    <select id="selectEnemYear" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
+                                    <select id="selectEnemYear" onchange="onCustomEnemFilterChange()" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
                                         <option value="0">Qualquer Ano (Mix Aleatório das Provas)</option>
-                                        <option value="2023">ENEM 2023 Oficial</option>
-                                        <option value="2022">ENEM 2022 Oficial</option>
-                                        <option value="2021">ENEM 2021 Oficial</option>
-                                        <option value="2020">ENEM 2020 Oficial</option>
-                                        <option value="2019">ENEM 2019 Oficial</option>
-                                        <option value="2018">ENEM 2018 Oficial</option>
-                                        <option value="2017">ENEM 2017 Oficial</option>
-                                        <option value="2016">ENEM 2016 Oficial</option>
-                                        <option value="2015">ENEM 2015 Oficial</option>
-                                        <option value="2014">ENEM 2014 Oficial</option>
-                                        <option value="2013">ENEM 2013 Oficial</option>
-                                        <option value="2012">ENEM 2012 Oficial</option>
-                                        <option value="2011">ENEM 2011 Oficial</option>
-                                        <option value="2010">ENEM 2010 Oficial</option>
-                                        <option value="2009">ENEM 2009 Oficial</option>
+                                        <option value="2025">ENEM 2025 Oficial (INEP)</option>
+                                        <option value="2024">ENEM 2024 Oficial (INEP)</option>
+                                        <option value="2023">ENEM 2023 Oficial (INEP)</option>
+                                        <option value="2022">ENEM 2022 Oficial (INEP)</option>
+                                        <option value="2021">ENEM 2021 Oficial (INEP)</option>
+                                        <option value="2020">ENEM 2020 Oficial (INEP)</option>
+                                        <option value="2019">ENEM 2019 Oficial (INEP)</option>
+                                        <option value="2018">ENEM 2018 Oficial (INEP)</option>
+                                        <option value="2017">ENEM 2017 Oficial (INEP)</option>
+                                        <option value="2016">ENEM 2016 Oficial (INEP)</option>
+                                        <option value="2015">ENEM 2015 Oficial (INEP)</option>
+                                        <option value="2014">ENEM 2014 Oficial (INEP)</option>
+                                        <option value="2013">ENEM 2013 Oficial (INEP)</option>
+                                        <option value="2012">ENEM 2012 Oficial (INEP)</option>
+                                        <option value="2011">ENEM 2011 Oficial (INEP)</option>
+                                        <option value="2010">ENEM 2010 Oficial (INEP)</option>
+                                        <option value="2009">ENEM 2009 Oficial (INEP)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                                        <i class="bi bi-journal-text text-indigo-600"></i> Caderno / Dia de Prova:
+                                    </label>
+                                    <select id="selectEnemDay" onchange="onCustomEnemFilterChange()" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
+                                        <option value="0">Ambos os Dias (1º e 2º Dia)</option>
+                                        <option value="1">1º Dia — Linguagens e Ciências Humanas</option>
+                                        <option value="2">2º Dia — Ciências da Natureza e Matemática</option>
                                     </select>
                                 </div>
 
@@ -126,13 +322,29 @@ require_once __DIR__ . '/includes/header.php';
                                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                                         <i class="bi bi-bookmark-check text-indigo-600"></i> Área do Conhecimento:
                                     </label>
-                                    <select id="selectEnemSubject" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
+                                    <select id="selectEnemSubject" onchange="onCustomEnemFilterChange()" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-outfit font-bold text-slate-800 dark:text-white focus:border-indigo-500 focus:outline-none transition shadow-xs">
                                         <option value="0">Todas as Áreas (Simulado Geral Completo)</option>
                                         <option value="5">Linguagens, Códigos e suas Tecnologias</option>
                                         <option value="6">Ciências Humanas e suas Tecnologias</option>
-                                        <option value="4">Ciências da Natureza e suas Tecnologias</option>
+                                        <option value="natureza">Ciências da Natureza (Física, Química e Biologia)</option>
                                         <option value="1">Matemática e suas Tecnologias</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <!-- Barra Dinâmica de Download Direto do Caderno INEP para o Ano Selecionado -->
+                            <div id="inepDirectDownloadBar" class="hidden bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-indigo-200 dark:border-indigo-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-base shrink-0">
+                                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                                    </div>
+                                    <div>
+                                        <div id="inepBarTitle" class="font-outfit font-extrabold text-xs text-slate-900 dark:text-white">Cadernos Oficiais INEP — ENEM 2025</div>
+                                        <div class="text-[11px] text-slate-500">Arquivos originais em PDF hospedados diretamente no portal <code>download.inep.gov.br</code></div>
+                                    </div>
+                                </div>
+                                <div id="inepBarLinks" class="flex flex-wrap items-center gap-2">
+                                    <!-- Preenchido via JS conforme o ano selecionado -->
                                 </div>
                             </div>
                         </div>
@@ -385,6 +597,129 @@ require_once __DIR__ . '/includes/header.php';
                         <button id="btnNext" onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-xl text-xs transition flex items-center gap-1">
                             Próxima <i class="bi bi-arrow-right"></i>
                         </button>
+                    </div>
+                </div>
+
+                <!-- STATE 2B: Modo Prova Oficial INEP (Caderno PDF Oficial + Cartão-Resposta Interativo) -->
+                <div id="screenInepOfficial" class="hidden bg-white rounded-3xl border-2 border-slate-200 overflow-hidden shadow-[0_4px_0_0_#e2e8f0] flex flex-col">
+                    <!-- Barra Superior Oficial -->
+                    <div class="bg-slate-900 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-white border-b border-slate-800">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <button onclick="confirmExitInepOfficial()" class="text-slate-400 hover:text-white transition text-xs font-bold flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </button>
+                            <div class="h-4 w-px bg-slate-700 hidden sm:block"></div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">Prova Oficial INEP</span>
+                                    <span id="inepOfficialHeaderTitle" class="font-outfit font-extrabold text-xs sm:text-sm text-white">ENEM 2025 — 1º Dia (Caderno 1 Azul)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Abas do Visualizador PDF (Caderno vs Gabarito) -->
+                        <div class="flex items-center gap-1.5 bg-slate-800 p-1 rounded-xl border border-slate-700">
+                            <button id="tabBtnInepProva" onclick="switchInepPdfTab('prova')" class="px-3 py-1 rounded-lg text-[11px] font-outfit font-extrabold bg-indigo-600 text-white transition flex items-center gap-1.5">
+                                <i class="bi bi-book-half"></i> Caderno de Prova
+                            </button>
+                            <button id="tabBtnInepGabarito" onclick="switchInepPdfTab('gabarito')" class="px-3 py-1 rounded-lg text-[11px] font-outfit font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5">
+                                <i class="bi bi-file-earmark-check"></i> Folha de Gabarito INEP
+                            </button>
+                            <a id="inepExternalPdfLink" href="#" target="_blank" rel="noopener noreferrer" title="Abrir PDF em nova guia" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white transition flex items-center gap-1">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <div class="flex items-center gap-1.5 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+                                <i class="bi bi-stopwatch text-amber-400"></i>
+                                <span id="inepTimeRemaining" class="font-outfit font-bold text-xs sm:text-sm tracking-wider">05:30:00</span>
+                            </div>
+                            <button onclick="finishInepOfficialExam(false)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-outfit font-extrabold px-3.5 py-1.5 rounded-xl text-xs transition shadow-[0_2px_0_0_#059669] flex items-center gap-1.5">
+                                <i class="bi bi-send-check-fill"></i> Entregar Cartão-Resposta
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Corpo Dividido: Caderno de Prova (Esquerda) + Cartão-Resposta Interativo (Direita) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[700px]">
+                        <!-- Coluna Esquerda: Visualizador do Caderno Oficial INEP (PDF Embutido) -->
+                        <div class="lg:col-span-7 xl:col-span-8 bg-slate-800 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 relative">
+                            <div id="inepPdfLoadingOverlay" class="absolute inset-0 bg-slate-900/90 z-10 flex flex-col items-center justify-center text-white p-6 text-center">
+                                <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 text-2xl mb-3 animate-pulse">
+                                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                                </div>
+                                <p class="font-outfit font-extrabold text-sm mb-1">Carregando Caderno Oficial do INEP...</p>
+                                <p class="text-xs text-slate-400 max-w-md">Baixando e renderizando a prova original diretamente dos servidores do INEP para você responder ao lado.</p>
+                            </div>
+                            <iframe id="inepPdfIframe" src="about:blank" class="w-full flex-1" style="height: calc(100vh - 130px); min-height: 680px;" onload="onInepIframeLoad()"></iframe>
+                        </div>
+
+                        <!-- Coluna Direita: Cartão-Resposta Interativo Padrão ENEM -->
+                        <div class="lg:col-span-5 xl:col-span-4 bg-slate-50 flex flex-col" style="height: calc(100vh - 130px); min-height: 680px;">
+                            <!-- Cabeçalho do Cartão-Resposta -->
+                            <div class="p-4 bg-white border-b border-slate-200 space-y-3 shrink-0">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-outfit font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
+                                            <i class="bi bi-ui-radios-grid text-indigo-600"></i> Cartão-Resposta Oficial
+                                        </h3>
+                                        <p class="text-[11px] text-slate-500" id="inepSheetSubtitle">Leia as questões no caderno ao lado e preencha o gabarito abaixo</p>
+                                    </div>
+                                    <span id="inepAnsweredBadge" class="text-[11px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-xl border border-indigo-200">
+                                        0/90 marcadas
+                                    </span>
+                                </div>
+
+                                <!-- Seletor de Idioma (Exibido apenas no 1º Dia: Questões 01 a 05) -->
+                                <div id="inepLangSelectorBox" class="p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 flex items-center justify-between gap-2">
+                                    <span class="text-[11px] font-extrabold text-indigo-950 flex items-center gap-1.5">
+                                        <i class="bi bi-translate text-indigo-600"></i> Língua Estrangeira (Q01–Q05):
+                                    </span>
+                                    <div class="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-indigo-200">
+                                        <button type="button" id="btnLangIngles" onclick="setInepLang('ingles')" class="px-2.5 py-1 rounded-lg text-[11px] font-outfit font-extrabold bg-indigo-600 text-white transition">
+                                            Inglês
+                                        </button>
+                                        <button type="button" id="btnLangEspanhol" onclick="setInepLang('espanhol')" class="px-2.5 py-1 rounded-lg text-[11px] font-outfit font-bold text-slate-600 hover:text-slate-900 transition">
+                                            Espanhol
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Modo de Verificação + Filtros Rápidos -->
+                                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                                        <input type="checkbox" id="chkInepInstantFeedback" onchange="toggleInepInstantCheck(this.checked)" class="sr-only peer">
+                                        <div class="w-8 h-4.5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all relative peer-checked:bg-emerald-600"></div>
+                                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                                            Conferir gabarito na hora
+                                        </span>
+                                    </label>
+
+                                    <div class="flex items-center gap-1">
+                                        <button type="button" onclick="filterInepSheet('all')" id="fltInep_all" class="inep-flt-btn px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-slate-900 text-white">Todas</button>
+                                        <button type="button" onclick="filterInepSheet('area1')" id="fltInep_area1" class="inep-flt-btn px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">1ª Área (45)</button>
+                                        <button type="button" onclick="filterInepSheet('area2')" id="fltInep_area2" class="inep-flt-btn px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">2ª Área (45)</button>
+                                        <button type="button" onclick="filterInepSheet('pending')" id="fltInep_pending" class="inep-flt-btn px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Pendentes</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Lista Rolável de Questões (Bolhas A B C D E) -->
+                            <div id="inepBubbleSheetContainer" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
+                                <!-- Populated by JS -->
+                            </div>
+
+                            <!-- Rodapé do Cartão-Resposta -->
+                            <div class="p-3 bg-white border-t border-slate-200 flex items-center justify-between gap-2 shrink-0">
+                                <div class="text-[11px] text-slate-500 font-semibold" id="inepFooterStats">
+                                    Progresso salvo automaticamente
+                                </div>
+                                <button type="button" onclick="finishInepOfficialExam(false)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-outfit font-extrabold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs">
+                                    <i class="bi bi-check2-all"></i> Finalizar e Corrigir Prova
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -656,18 +991,6 @@ require_once __DIR__ . '/includes/header.php';
                 clearSimuladoState();
             }
         }
-                    timerProgressBar: true
-                });
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Simulado Restaurado!',
-                    text: 'Seu progresso, tempo e respostas foram mantidos com segurança.'
-                });
-            } catch (err) {
-                console.error('Erro ao restaurar simulado salvo:', err);
-                clearSimuladoState();
-            }
-        }
 
         // ============================================================
         // CONFIGURAÇÃO DO SIMULADO
@@ -712,6 +1035,758 @@ require_once __DIR__ . '/includes/header.php';
             el.classList.remove('border-slate-200', 'text-slate-700');
         }
 
+        // Catálogo de links oficiais do INEP (download.inep.gov.br) para cada ano
+        const INEP_OFFICIAL_PDFS = {
+            '2025': {
+                d1_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf',
+                d2_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D2_CD7.pdf',
+            },
+            '2024': {
+                d1_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_GB_impresso_D1_CD1.pdf',
+                d2_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2024_GB_impresso_D2_CD7.pdf',
+            },
+            '2023': {
+                d1_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_GB_impresso_D1_CD1.pdf',
+                d2_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2023_GB_impresso_D2_CD7.pdf',
+            },
+            '2022': {
+                d1_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_GB_impresso_D1_CD1.pdf',
+                d2_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2022_GB_impresso_D2_CD7.pdf',
+            },
+            '2021': {
+                d1_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_GB_impresso_D1_CD1.pdf',
+                d2_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2021_GB_impresso_D2_CD7.pdf',
+            },
+            '2020': {
+                d1_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2020_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2020_GB_impresso_D1_CD1.pdf',
+                d2_prova: 'https://download.inep.gov.br/enem/provas_e_gabaritos/2020_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/enem/provas_e_gabaritos/2020_GB_impresso_D2_CD7.pdf',
+            },
+            '2019': {
+                d1_prova: 'https://download.inep.gov.br/educacao_basica/enem/provas/2019/2019_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/educacao_basica/enem/gabaritos/2019/gabarito_1_dia_caderno_1_azul_aplicacao_regular.pdf',
+                d2_prova: 'https://download.inep.gov.br/educacao_basica/enem/provas/2019/2019_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/educacao_basica/enem/gabaritos/2019/gabarito_2_dia_caderno_7_azul_aplicacao_regular.pdf',
+            },
+            '2018': {
+                d1_prova: 'https://download.inep.gov.br/educacao_basica/enem/provas/2018/2018_PV_impresso_D1_CD1.pdf',
+                d1_gab:   'https://download.inep.gov.br/educacao_basica/enem/gabaritos/2018/GAB_ENEM_2018_DIA_1_AZUL.pdf',
+                d2_prova: 'https://download.inep.gov.br/educacao_basica/enem/provas/2018/2018_PV_impresso_D2_CD7.pdf',
+                d2_gab:   'https://download.inep.gov.br/educacao_basica/enem/gabaritos/2018/GAB_ENEM_2018_DIA_2_AZUL.pdf',
+            }
+        };
+
+        function selectSpecificInepExam(year, day, subjectVal, qCount, timeMins, btnEl) {
+            const yearSel = document.getElementById('selectEnemYear');
+            const daySel = document.getElementById('selectEnemDay');
+            const subjSel = document.getElementById('selectEnemSubject');
+
+            if (yearSel) yearSel.value = year;
+            if (daySel) daySel.value = day;
+            if (subjSel) subjSel.value = subjectVal || '0';
+
+            // Atualizar quantidade de questões se correspondente a um botão pill
+            if (qCount) {
+                const pills = document.querySelectorAll('.pill-selector');
+                pills.forEach(p => {
+                    if (p.textContent.includes(`${qCount} Questões`)) {
+                        selectQuestionCount(qCount, timeMins, p);
+                    }
+                });
+            }
+
+            highlightSelectedInepCard(year, day);
+            updateInepDownloadBar();
+        }
+
+        function highlightSelectedInepCard(year, day) {
+            document.querySelectorAll('.inep-exam-card').forEach(card => {
+                const cYear = card.getAttribute('data-year');
+                const cDay = card.getAttribute('data-day');
+                const btn = card.querySelector('.btn-inep-select');
+
+                if (cYear === String(year) && cDay === String(day)) {
+                    card.classList.add('border-indigo-600', 'ring-2', 'ring-indigo-500/30', 'bg-indigo-50/40');
+                    card.classList.remove('border-slate-200');
+                    if (btn) {
+                        btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                        btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                        btn.innerHTML = `<i class="bi bi-check-circle-fill"></i> <span>Prova Selecionada</span>`;
+                    }
+                } else {
+                    card.classList.remove('border-indigo-600', 'ring-2', 'ring-indigo-500/30', 'bg-indigo-50/40');
+                    card.classList.add('border-slate-200');
+                    if (btn) {
+                        btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                        btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                        btn.innerHTML = `<i class="bi bi-check2-circle"></i> <span>Selecionar Prova</span>`;
+                    }
+                }
+            });
+        }
+
+        function onCustomEnemFilterChange() {
+            const y = document.getElementById('selectEnemYear')?.value || '0';
+            const d = document.getElementById('selectEnemDay')?.value || '0';
+            highlightSelectedInepCard(y, d);
+            updateInepDownloadBar();
+        }
+
+        function updateInepDownloadBar() {
+            const y = document.getElementById('selectEnemYear')?.value || '0';
+            const bar = document.getElementById('inepDirectDownloadBar');
+            const titleEl = document.getElementById('inepBarTitle');
+            const linksEl = document.getElementById('inepBarLinks');
+            if (!bar || !titleEl || !linksEl) return;
+
+            if (y === '0') {
+                bar.classList.add('hidden');
+                return;
+            }
+
+            bar.classList.remove('hidden');
+            titleEl.textContent = `Cadernos e Gabaritos Oficiais INEP — ENEM ${y}`;
+
+            const info = INEP_OFFICIAL_PDFS[y];
+            const hasInteractiveGabarito = !!INEP_OFFICIAL_GABARITOS[`${y}_D1`];
+            if (info) {
+                linksEl.innerHTML = `
+                    ${hasInteractiveGabarito ? `
+                    <button type="button" onclick="openOfficialInepExamMode('${y}', '1')" class="px-2.5 py-1.5 rounded-xl font-outfit font-extrabold text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white transition inline-flex items-center gap-1 shadow-xs">
+                        <i class="bi bi-pencil-square"></i> Responder 1º Dia na Prova
+                    </button>
+                    <button type="button" onclick="openOfficialInepExamMode('${y}', '2')" class="px-2.5 py-1.5 rounded-xl font-outfit font-extrabold text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white transition inline-flex items-center gap-1 shadow-xs">
+                        <i class="bi bi-pencil-square"></i> Responder 2º Dia na Prova
+                    </button>
+                    ` : ''}
+                    <a href="${info.d1_prova}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl font-outfit font-bold text-[11px] bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 transition inline-flex items-center gap-1">
+                        <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> PDF 1º Dia
+                    </a>
+                    <a href="${info.d1_gab}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl font-outfit font-bold text-[11px] bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 transition inline-flex items-center gap-1">
+                        <i class="bi bi-check2-circle text-emerald-600"></i> Gabarito D1
+                    </a>
+                    <a href="${info.d2_prova}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl font-outfit font-bold text-[11px] bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 transition inline-flex items-center gap-1">
+                        <i class="bi bi-file-earmark-pdf-fill text-rose-500"></i> PDF 2º Dia
+                    </a>
+                    <a href="${info.d2_gab}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl font-outfit font-bold text-[11px] bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 transition inline-flex items-center gap-1">
+                        <i class="bi bi-check2-circle text-emerald-600"></i> Gabarito D2
+                    </a>
+                `;
+            } else {
+                linksEl.innerHTML = `
+                    <a href="https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem/provas-e-gabaritos" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl font-outfit font-extrabold text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white transition inline-flex items-center gap-1.5 shadow-xs">
+                        <i class="bi bi-box-arrow-up-right"></i> Acessar Cadernos ENEM ${y} no Portal INEP
+                    </a>
+                `;
+            }
+        }
+
+        // ============================================================
+        // MODO PROVA OFICIAL INEP (RESPONDER DENTRO DA PROVA DO ENEM)
+        // ============================================================
+        const INEP_OFFICIAL_GABARITOS = {
+            '2025_D1': {
+                ingles:   ['D','D','D','E','A'],
+                espanhol: ['B','A','D','D','C'],
+                q6_45:    'E,C,D,C,E,B,C,E,C,A,E,C,A,E,B,C,B,C,B,E,B,A,B,A,B,D,E,B,C,E,D,A,B,C,A,B,A,D,D,C'.split(','),
+                q46_90:   'E,D,E,C,A,D,C,E,E,D,C,A,D,B,D,E,B,B,A,C,D,D,E,C,B,A,D,A,B,B,C,A,B,A,C,E,E,D,D,B,C,B,C,E,A'.split(',')
+            },
+            '2025_D2': {
+                q91_135:  'D,D,C,D,C,B,D,D,C,D,A,E,A,A,E,A,E,C,E,E,B,D,B,B,C,C,D,C,B,B,B,D,*,B,B,D,C,E,A,E,E,*,A,B,A'.split(','),
+                q136_180: 'C,B,E,C,E,C,C,A,D,D,B,E,C,B,D,D,D,A,C,B,E,C,C,D,E,A,B,B,A,D,E,D,E,A,B,E,A,A,*,C,C,B,E,A,D'.split(',')
+            },
+            '2024_D1': {
+                ingles:   ['C','A','A','A','E'],
+                espanhol: ['C','D','D','D','A'],
+                q6_45:    'E,C,B,E,C,E,D,D,C,B,D,E,D,D,C,E,C,B,D,C,B,C,E,A,D,B,B,D,B,D,D,C,B,E,D,A,D,E,E,B'.split(','),
+                q46_90:   'C,E,C,E,B,E,B,C,D,B,A,D,D,E,B,B,A,B,C,D,C,A,E,C,E,D,A,D,B,A,E,A,B,E,A,D,C,E,D,A,D,A,C,B,C'.split(',')
+            },
+            '2024_D2': {
+                q91_135:  'B,C,E,A,A,C,D,E,D,C,A,A,E,D,D,D,E,B,B,D,D,B,E,C,C,A,E,D,B,B,A,A,A,C,C,A,E,E,*,C,B,B,C,E,D'.split(','),
+                q136_180: 'A,B,B,A,B,B,A,D,D,D,B,B,C,E,C,E,A,D,C,E,B,C,C,C,D,B,A,D,C,B,E,D,A,E,C,A,D,A,C,D,B,C,E,C,E'.split(',')
+            },
+            '2023_D1': {
+                ingles:   ['B','B','D','A','B'],
+                espanhol: ['A','A','E','B','A'],
+                q6_45:    'D,A,C,E,E,D,C,C,D,B,A,D,B,D,E,D,C,C,E,B,C,A,C,E,A,C,A,A,C,A,A,C,A,C,B,B,E,A,A,E'.split(','),
+                q46_90:   'C,D,A,E,E,C,A,B,A,A,C,E,A,A,D,E,C,B,D,A,A,B,C,D,C,A,B,A,D,C,D,E,A,B,A,A,B,C,D,D,E,B,A,D,B'.split(',')
+            },
+            '2023_D2': {
+                q91_135:  'D,B,E,A,B,D,A,B,D,C,A,C,D,B,E,C,D,D,D,B,C,A,A,A,B,B,A,C,C,C,A,D,E,B,E,C,C,C,E,D,A,E,E,E,D'.split(','),
+                q136_180: 'B,C,C,D,E,E,A,B,C,B,E,D,C,E,A,B,B,E,B,D,A,B,D,D,A,D,D,A,*,E,C,A,A,D,D,C,C,B,E,B,E,A,B,C,C'.split(',')
+            },
+            '2022_D1': {
+                ingles:   ['D','C','B','D','E'],
+                espanhol: ['E','D','C','A','A'],
+                q6_45:    'E,A,A,A,C,A,B,B,D,B,E,B,A,C,C,B,E,E,E,C,C,B,B,D,C,A,A,A,D,C,C,A,B,E,D,B,D,E,C,E'.split(','),
+                q46_90:   'D,E,A,B,E,E,D,A,E,B,A,A,E,C,B,E,C,B,A,B,C,D,D,A,A,A,D,B,C,E,D,A,E,A,C,D,B,B,C,D,C,B,E,C,A'.split(',')
+            },
+            '2022_D2': {
+                q91_135:  'A,D,B,A,D,A,B,E,A,B,C,E,E,E,A,C,C,B,D,D,A,D,D,C,B,B,C,C,A,E,B,A,E,B,E,B,E,A,C,C,C,D,D,D,E'.split(','),
+                q136_180: 'E,C,D,A,B,E,B,D,C,E,E,C,D,B,D,C,C,C,C,B,C,*,C,B,A,A,C,D,B,A,A,A,C,E,B,A,B,D,D,E,D,A,E,B,E'.split(',')
+            },
+            '2021_D1': {
+                ingles:   ['C','A','A','B','B'],
+                espanhol: ['C','A','E','A','A'],
+                q6_45:    'B,D,C,D,E,A,D,C,E,D,B,E,D,D,D,A,B,B,B,B,D,E,B,C,E,A,D,A,B,D,B,A,C,A,C,D,C,D,D,C'.split(','),
+                q46_90:   'B,A,D,C,B,A,D,B,C,E,D,D,E,B,B,A,D,B,C,A,B,E,E,C,C,A,E,A,B,E,B,A,A,E,C,B,B,A,B,A,A,E,E,B,B'.split(',')
+            },
+            '2021_D2': {
+                q91_135:  'E,D,E,C,A,B,E,D,A,B,C,B,E,B,A,C,C,D,C,B,B,E,E,B,B,C,B,D,A,A,E,C,D,C,B,D,C,D,B,B,B,A,D,C,D'.split(','),
+                q136_180: 'E,E,*,E,B,A,B,D,D,C,E,C,C,B,C,C,E,C,D,C,A,E,B,A,D,E,A,B,B,D,B,D,E,D,C,E,D,C,C,A,D,D,C,A,B'.split(',')
+            }
+        };
+
+        let isInepOfficialActive = false;
+        let currentInepYear = '2025';
+        let currentInepDay = '1';
+        let currentInepLang = 'ingles'; // 'ingles' ou 'espanhol'
+        let inepInstantFeedback = false;
+        let inepSheetFilter = 'all'; // 'all', 'area1', 'area2', 'pending'
+        let inepUserAnswers = {}; // { [qNum]: 'A' | 'B' | 'C' | 'D' | 'E' }
+        let inepTimerInterval = null;
+        let inepSecondsRemaining = 0;
+        let inepTotalSeconds = 0;
+        let inepCurrentPdfTab = 'prova';
+
+        function getInepCorrectLetter(year, day, qNum, lang) {
+            const key = `${year}_D${day}`;
+            const gab = INEP_OFFICIAL_GABARITOS[key];
+            if (!gab) return null;
+
+            if (String(day) === '1') {
+                if (qNum >= 1 && qNum <= 5) {
+                    return (lang === 'espanhol' ? gab.espanhol : gab.ingles)[qNum - 1];
+                } else if (qNum >= 6 && qNum <= 45) {
+                    return gab.q6_45[qNum - 6];
+                } else if (qNum >= 46 && qNum <= 90) {
+                    return gab.q46_90[qNum - 46];
+                }
+            } else {
+                if (qNum >= 91 && qNum <= 135) {
+                    return gab.q91_135[qNum - 91];
+                } else if (qNum >= 136 && qNum <= 180) {
+                    return gab.q136_180[qNum - 136];
+                }
+            }
+            return null;
+        }
+
+        function getInepSubjectAreaName(day, qNum) {
+            if (String(day) === '1') {
+                return qNum <= 45 ? 'Linguagens, Códigos e suas Tecnologias' : 'Ciências Humanas e suas Tecnologias';
+            } else {
+                return qNum <= 135 ? 'Ciências da Natureza e suas Tecnologias' : 'Matemática e suas Tecnologias';
+            }
+        }
+
+        function openOfficialInepExamMode(year, day) {
+            const pdfInfo = INEP_OFFICIAL_PDFS[year];
+            const gabKey = `${year}_D${day}`;
+            if (!pdfInfo || !INEP_OFFICIAL_GABARITOS[gabKey]) {
+                Swal.fire('Aviso', 'O gabarito interativo desta edição não está disponível.', 'warning');
+                return;
+            }
+
+            currentInepYear = String(year);
+            currentInepDay = String(day);
+            currentInepLang = 'ingles';
+            inepSheetFilter = 'all';
+            inepUserAnswers = {};
+            inepCurrentPdfTab = 'prova';
+
+            // Tentar restaurar respostas salvas para esta mesma prova oficial
+            const storageKey = `inep_official_${CURRENT_USER_ID}_${currentInepYear}_D${currentInepDay}`;
+            try {
+                const saved = localStorage.getItem(storageKey);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.answers) {
+                        inepUserAnswers = parsed.answers;
+                        currentInepLang = parsed.lang || 'ingles';
+                    }
+                }
+            } catch (e) {}
+
+            // Ocultar Sidebar e Header para imersão completa na prova
+            const sidebar = document.getElementById('mainSidebar');
+            if (sidebar) sidebar.classList.add('hidden');
+
+            const headerNav = document.querySelector('header');
+            if (headerNav) headerNav.classList.add('hidden');
+
+            const simuladoSec = document.getElementById('simuladoSection');
+            if (simuladoSec) {
+                simuladoSec.classList.remove('lg:col-span-9');
+                simuladoSec.classList.add('lg:col-span-12');
+            }
+
+            document.getElementById('screenSelect').classList.add('hidden');
+            document.getElementById('screenExam').classList.add('hidden');
+            document.getElementById('screenResults').classList.add('hidden');
+            document.getElementById('screenInepOfficial').classList.remove('hidden');
+
+            // Configurar cabeçalho e seletor de idioma
+            const cadernoDesc = currentInepDay === '1' ? '1º Dia (Caderno 1 Azul — Questões 01 a 90)' : '2º Dia (Caderno 7 Azul — Questões 91 a 180)';
+            document.getElementById('inepOfficialHeaderTitle').textContent = `ENEM ${currentInepYear} — ${cadernoDesc}`;
+
+            const langBox = document.getElementById('inepLangSelectorBox');
+            if (langBox) {
+                if (currentInepDay === '1') {
+                    langBox.classList.remove('hidden');
+                    setInepLang(currentInepLang, false);
+                } else {
+                    langBox.classList.add('hidden');
+                }
+            }
+
+            // Atualizar botões de filtro de área
+            const fltArea1 = document.getElementById('fltInep_area1');
+            const fltArea2 = document.getElementById('fltInep_area2');
+            if (fltArea1 && fltArea2) {
+                if (currentInepDay === '1') {
+                    fltArea1.textContent = 'Linguagens (01-45)';
+                    fltArea2.textContent = 'Humanas (46-90)';
+                } else {
+                    fltArea1.textContent = 'Natureza (91-135)';
+                    fltArea2.textContent = 'Matemática (136-180)';
+                }
+            }
+
+            // Carregar PDF no iframe via proxy local
+            switchInepPdfTab('prova');
+
+            // Iniciar cronômetro oficial (1º Dia: 5h30 = 330 min | 2º Dia: 5h00 = 300 min)
+            inepTotalSeconds = (currentInepDay === '1' ? 330 : 300) * 60;
+            inepSecondsRemaining = inepTotalSeconds;
+            isInepOfficialActive = true;
+            startInepOfficialTimer();
+
+            renderInepBubbleSheet();
+        }
+
+        function saveInepOfficialProgress() {
+            const storageKey = `inep_official_${CURRENT_USER_ID}_${currentInepYear}_D${currentInepDay}`;
+            try {
+                localStorage.setItem(storageKey, JSON.stringify({
+                    answers: inepUserAnswers,
+                    lang: currentInepLang,
+                    updatedAt: Date.now()
+                }));
+            } catch (e) {}
+        }
+
+        function clearInepOfficialProgress() {
+            const storageKey = `inep_official_${CURRENT_USER_ID}_${currentInepYear}_D${currentInepDay}`;
+            try {
+                localStorage.removeItem(storageKey);
+            } catch (e) {}
+        }
+
+        function switchInepPdfTab(tab) {
+            inepCurrentPdfTab = tab;
+            const pdfInfo = INEP_OFFICIAL_PDFS[currentInepYear];
+            if (!pdfInfo) return;
+
+            const rawUrl = currentInepDay === '1'
+                ? (tab === 'gabarito' ? pdfInfo.d1_gab : pdfInfo.d1_prova)
+                : (tab === 'gabarito' ? pdfInfo.d2_gab : pdfInfo.d2_prova);
+
+            const proxyUrl = `api/inep_pdf_proxy.php?url=${encodeURIComponent(rawUrl)}`;
+            const iframe = document.getElementById('inepPdfIframe');
+            const overlay = document.getElementById('inepPdfLoadingOverlay');
+            const extLink = document.getElementById('inepExternalPdfLink');
+
+            if (extLink) extLink.href = rawUrl;
+
+            const btnProva = document.getElementById('tabBtnInepProva');
+            const btnGab = document.getElementById('tabBtnInepGabarito');
+            if (btnProva && btnGab) {
+                if (tab === 'prova') {
+                    btnProva.className = 'px-3 py-1 rounded-lg text-[11px] font-outfit font-extrabold bg-indigo-600 text-white transition flex items-center gap-1.5';
+                    btnGab.className = 'px-3 py-1 rounded-lg text-[11px] font-outfit font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5';
+                } else {
+                    btnGab.className = 'px-3 py-1 rounded-lg text-[11px] font-outfit font-extrabold bg-emerald-600 text-white transition flex items-center gap-1.5';
+                    btnProva.className = 'px-3 py-1 rounded-lg text-[11px] font-outfit font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5';
+                }
+            }
+
+            if (iframe) {
+                if (overlay) overlay.classList.remove('hidden');
+                iframe.src = proxyUrl;
+            }
+        }
+
+        function onInepIframeLoad() {
+            const overlay = document.getElementById('inepPdfLoadingOverlay');
+            if (overlay) overlay.classList.add('hidden');
+        }
+
+        function setInepLang(lang, shouldRender = true) {
+            currentInepLang = lang;
+            const btnIng = document.getElementById('btnLangIngles');
+            const btnEsp = document.getElementById('btnLangEspanhol');
+            if (btnIng && btnEsp) {
+                if (lang === 'ingles') {
+                    btnIng.className = 'px-2.5 py-1 rounded-lg text-[11px] font-outfit font-extrabold bg-indigo-600 text-white transition';
+                    btnEsp.className = 'px-2.5 py-1 rounded-lg text-[11px] font-outfit font-bold text-slate-600 hover:text-slate-900 transition';
+                } else {
+                    btnEsp.className = 'px-2.5 py-1 rounded-lg text-[11px] font-outfit font-extrabold bg-indigo-600 text-white transition';
+                    btnIng.className = 'px-2.5 py-1 rounded-lg text-[11px] font-outfit font-bold text-slate-600 hover:text-slate-900 transition';
+                }
+            }
+            saveInepOfficialProgress();
+            if (shouldRender) renderInepBubbleSheet();
+        }
+
+        function toggleInepInstantCheck(enabled) {
+            inepInstantFeedback = !!enabled;
+            renderInepBubbleSheet();
+        }
+
+        function filterInepSheet(flt) {
+            inepSheetFilter = flt;
+            document.querySelectorAll('.inep-flt-btn').forEach(b => {
+                b.className = 'inep-flt-btn px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200';
+            });
+            const activeBtn = document.getElementById(`fltInep_${flt}`);
+            if (activeBtn) {
+                activeBtn.className = 'inep-flt-btn px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-slate-900 text-white';
+            }
+            renderInepBubbleSheet();
+        }
+
+        function renderInepBubbleSheet() {
+            const container = document.getElementById('inepBubbleSheetContainer');
+            if (!container) return;
+
+            const startQ = currentInepDay === '1' ? 1 : 91;
+            const endQ = currentInepDay === '1' ? 90 : 180;
+            const midQ = currentInepDay === '1' ? 45 : 135;
+
+            const answeredKeys = Object.keys(inepUserAnswers);
+            const answeredCount = answeredKeys.length;
+            const badge = document.getElementById('inepAnsweredBadge');
+            if (badge) {
+                if (inepInstantFeedback && answeredCount > 0) {
+                    let hits = 0;
+                    answeredKeys.forEach(qStr => {
+                        const qN = parseInt(qStr, 10);
+                        const corr = getInepCorrectLetter(currentInepYear, currentInepDay, qN, currentInepLang);
+                        if (corr === '*' || inepUserAnswers[qN] === corr) hits++;
+                    });
+                    const pct = Math.round((hits / answeredCount) * 100);
+                    badge.textContent = `Acertos: ${hits}/${answeredCount} (${pct}%)`;
+                    badge.className = 'text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200';
+                } else {
+                    badge.textContent = `${answeredCount}/90 marcadas`;
+                    badge.className = answeredCount === 90
+                        ? 'text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200'
+                        : 'text-[11px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-xl border border-indigo-200';
+                }
+            }
+
+            let html = '';
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+
+            for (let qNum = startQ; qNum <= endQ; qNum++) {
+                // Aplicar filtro
+                if (inepSheetFilter === 'area1' && qNum > midQ) continue;
+                if (inepSheetFilter === 'area2' && qNum <= midQ) continue;
+                if (inepSheetFilter === 'pending' && inepUserAnswers[qNum]) continue;
+
+                // Separador de Área de Conhecimento
+                if (qNum === startQ || qNum === midQ + 1) {
+                    const areaTitle = getInepSubjectAreaName(currentInepDay, qNum);
+                    const areaIcon = qNum <= midQ ? 'bi-journal-bookmark-fill text-indigo-600' : 'bi-compass-fill text-amber-600';
+                    html += `
+                        <div class="pt-2 pb-1 px-1 flex items-center gap-2">
+                            <i class="bi ${areaIcon} text-xs"></i>
+                            <span class="font-outfit font-extrabold text-[11px] uppercase tracking-wider text-slate-700">${areaTitle}</span>
+                            <div class="flex-1 h-px bg-slate-200"></div>
+                        </div>
+                    `;
+                }
+
+                const chosen = inepUserAnswers[qNum] || null;
+                const correctLetter = getInepCorrectLetter(currentInepYear, currentInepDay, qNum, currentInepLang);
+                const isAnulada = correctLetter === '*';
+
+                let rowBorder = 'border-slate-200 bg-white';
+                let statusHtml = '';
+
+                if (inepInstantFeedback && chosen) {
+                    if (isAnulada || chosen === correctLetter) {
+                        rowBorder = 'border-emerald-300 bg-emerald-50/40';
+                        statusHtml = `<span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="bi bi-check-circle-fill"></i> ${isAnulada ? 'Anulada (+1)' : 'Certo'}</span>`;
+                    } else {
+                        rowBorder = 'border-rose-300 bg-rose-50/40';
+                        statusHtml = `<span class="text-[10px] font-extrabold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="bi bi-x-circle-fill"></i> Gab: ${correctLetter}</span>`;
+                    }
+                } else if (chosen) {
+                    rowBorder = 'border-indigo-200 bg-indigo-50/20';
+                    statusHtml = `<span class="text-[10px] font-bold text-indigo-600">Letra ${chosen}</span>`;
+                } else if (isAnulada && inepInstantFeedback) {
+                    statusHtml = `<span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Anulada INEP</span>`;
+                }
+
+                const langTag = (currentInepDay === '1' && qNum <= 5)
+                    ? `<span class="text-[9px] font-bold uppercase text-indigo-500 ml-1">(${currentInepLang === 'ingles' ? 'ING' : 'ESP'})</span>`
+                    : '';
+
+                let bubblesHtml = '';
+                letters.forEach(letter => {
+                    const isPicked = chosen === letter;
+                    let btnClass = 'bg-slate-100 text-slate-700 border-slate-300 hover:border-indigo-400 hover:bg-indigo-50';
+
+                    if (inepInstantFeedback && chosen) {
+                        if (letter === correctLetter) {
+                            btnClass = 'bg-emerald-600 text-white border-emerald-700 shadow-xs ring-2 ring-emerald-300';
+                        } else if (isPicked && letter !== correctLetter && !isAnulada) {
+                            btnClass = 'bg-rose-600 text-white border-rose-700';
+                        } else if (isPicked && isAnulada) {
+                            btnClass = 'bg-emerald-600 text-white border-emerald-700';
+                        } else {
+                            btnClass = 'bg-white text-slate-400 border-slate-200 opacity-60';
+                        }
+                    } else if (isPicked) {
+                        btnClass = 'bg-slate-900 text-white border-slate-900 shadow-xs ring-2 ring-indigo-500/30';
+                    }
+
+                    bubblesHtml += `
+                        <button type="button" onclick="selectInepBubble(${qNum}, '${letter}')"
+                            class="w-8 h-8 rounded-full font-outfit font-extrabold text-xs border transition-all flex items-center justify-center ${btnClass}">
+                            ${letter}
+                        </button>
+                    `;
+                });
+
+                html += `
+                    <div id="inepRow_${qNum}" class="px-3 py-2 rounded-2xl border ${rowBorder} flex items-center justify-between gap-2 transition">
+                        <div class="flex items-center gap-1.5 min-w-[78px]">
+                            <span class="font-outfit font-black text-xs text-slate-800">Q.${String(qNum).padStart(2, '0')}</span>
+                            ${langTag}
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            ${bubblesHtml}
+                        </div>
+                        <div class="min-w-[68px] text-right">
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (!html) {
+                html = `
+                    <div class="text-center py-10 text-slate-400 text-xs font-semibold">
+                        <i class="bi bi-check2-all text-2xl text-emerald-500 block mb-1"></i>
+                        Nenhuma questão pendente neste filtro!
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function selectInepBubble(qNum, letter) {
+            if (inepUserAnswers[qNum] === letter) {
+                delete inepUserAnswers[qNum];
+            } else {
+                inepUserAnswers[qNum] = letter;
+            }
+            saveInepOfficialProgress();
+            renderInepBubbleSheet();
+        }
+
+        function startInepOfficialTimer() {
+            if (inepTimerInterval) clearInterval(inepTimerInterval);
+            updateInepTimerDisplay();
+            inepTimerInterval = setInterval(() => {
+                inepSecondsRemaining = Math.max(0, inepSecondsRemaining - 1);
+                updateInepTimerDisplay();
+                if (inepSecondsRemaining <= 0) {
+                    clearInterval(inepTimerInterval);
+                    finishInepOfficialExam(true);
+                }
+            }, 1000);
+        }
+
+        function updateInepTimerDisplay() {
+            const el = document.getElementById('inepTimeRemaining');
+            if (!el) return;
+            const hrs = Math.floor(inepSecondsRemaining / 3600);
+            const mins = Math.floor((inepSecondsRemaining % 3600) / 60);
+            const secs = inepSecondsRemaining % 60;
+            el.textContent = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function confirmExitInepOfficial() {
+            Swal.fire({
+                title: 'Sair da Prova Oficial?',
+                text: 'Suas marcações no cartão-resposta ficam salvas automaticamente no seu navegador para quando você voltar.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4f46e5',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Voltar à Seleção',
+                cancelButtonText: 'Continuar na Prova'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    isInepOfficialActive = false;
+                    if (inepTimerInterval) clearInterval(inepTimerInterval);
+
+                    const sidebar = document.getElementById('mainSidebar');
+                    if (sidebar) sidebar.classList.remove('hidden');
+
+                    const headerNav = document.querySelector('header');
+                    if (headerNav) headerNav.classList.remove('hidden');
+
+                    const simuladoSec = document.getElementById('simuladoSection');
+                    if (simuladoSec) {
+                        simuladoSec.classList.remove('lg:col-span-12');
+                        simuladoSec.classList.add('lg:col-span-9');
+                    }
+
+                    document.getElementById('screenInepOfficial').classList.add('hidden');
+                    document.getElementById('screenSelect').classList.remove('hidden');
+                }
+            });
+        }
+
+        function finishInepOfficialExam(isTimeOut = false) {
+            const answeredCount = Object.keys(inepUserAnswers).length;
+            if (!isTimeOut && answeredCount === 0) {
+                Swal.fire('Cartão-Resposta Vazio', 'Marque pelo menos uma questão no Cartão-Resposta antes de finalizar e corrigir a prova.', 'warning');
+                return;
+            }
+
+            const confirmTitle = answeredCount < 90
+                ? `Corrigir com ${answeredCount}/90 questões?`
+                : 'Entregar Cartão-Resposta Oficial?';
+            const confirmText = answeredCount < 90
+                ? `Você marcou ${answeredCount} das 90 questões do caderno. Deseja corrigir a prova agora (avaliando as ${answeredCount} respondidas ou todas as 90)?`
+                : 'Você preencheu todas as 90 questões! Deseja corrigir pelo Gabarito Oficial do INEP e contabilizar seu XP?';
+
+            if (!isTimeOut) {
+                Swal.fire({
+                    title: confirmTitle,
+                    text: confirmText,
+                    icon: 'question',
+                    showCancelButton: true,
+                    showDenyButton: answeredCount < 90,
+                    confirmButtonColor: '#10b981',
+                    denyButtonColor: '#4f46e5',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: answeredCount < 90 ? `Corrigir as ${answeredCount} marcadas` : 'Sim, corrigir agora',
+                    denyButtonText: `Avaliar sobre todas as 90`,
+                    cancelButtonText: 'Voltar ao Cartão'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        submitInepOfficialExam(true); // Avalia sobre as respondidas
+                    } else if (result.isDenied) {
+                        submitInepOfficialExam(false); // Avalia sobre as 90
+                    }
+                });
+            } else {
+                submitInepOfficialExam(false);
+            }
+        }
+
+        function submitInepOfficialExam(onlyAnswered = false) {
+            isInepOfficialActive = false;
+            if (inepTimerInterval) clearInterval(inepTimerInterval);
+
+            const startQ = currentInepDay === '1' ? 1 : 91;
+            const endQ = currentInepDay === '1' ? 90 : 180;
+
+            let totalEvaluated = 0;
+            let totalCorrect = 0;
+            const bySubject = {};
+
+            for (let qNum = startQ; qNum <= endQ; qNum++) {
+                const chosen = inepUserAnswers[qNum] || null;
+                if (onlyAnswered && !chosen) continue;
+
+                const areaName = getInepSubjectAreaName(currentInepDay, qNum);
+                if (!bySubject[areaName]) {
+                    bySubject[areaName] = { total: 0, correct: 0 };
+                }
+
+                const correctLetter = getInepCorrectLetter(currentInepYear, currentInepDay, qNum, currentInepLang);
+                const isCorrect = chosen && (correctLetter === '*' || chosen === correctLetter);
+
+                totalEvaluated++;
+                bySubject[areaName].total++;
+                if (isCorrect) {
+                    totalCorrect++;
+                    bySubject[areaName].correct++;
+                }
+            }
+
+            const timeSpentSecs = Math.max(1, inepTotalSeconds - inepSecondsRemaining);
+            clearInepOfficialProgress();
+
+            Swal.fire({
+                title: 'Corrigindo pelo Gabarito Oficial INEP...',
+                text: 'Calculando nota e salvando seu desempenho',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            fetch('api/simulado.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    inep_official_submission: true,
+                    year: currentInepYear,
+                    day: currentInepDay,
+                    total_questions: totalEvaluated,
+                    correct_answers: totalCorrect,
+                    time_spent: timeSpentSecs,
+                    by_subject: bySubject
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                Swal.close();
+                if (res.status === 'success') {
+                    const sidebar = document.getElementById('mainSidebar');
+                    if (sidebar) sidebar.classList.remove('hidden');
+
+                    const headerNav = document.querySelector('header');
+                    if (headerNav) headerNav.classList.remove('hidden');
+
+                    const simuladoSec = document.getElementById('simuladoSection');
+                    if (simuladoSec) {
+                        simuladoSec.classList.remove('lg:col-span-12');
+                        simuladoSec.classList.add('lg:col-span-9');
+                    }
+
+                    document.getElementById('screenInepOfficial').classList.add('hidden');
+                    showResultsScreen(res);
+                } else {
+                    Swal.fire('Erro', res.message || 'Falha ao registrar resultado.', 'error');
+                }
+            })
+            .catch(err => {
+                Swal.close();
+                console.error(err);
+                Swal.fire('Erro', 'Ocorreu um erro de comunicação com o servidor.', 'error');
+            });
+        }
+
         function startSimulado() {
             Swal.fire({
                 title: 'Carregando Simulado...',
@@ -721,15 +1796,18 @@ require_once __DIR__ . '/includes/header.php';
             });
 
             let yearParam = '';
+            let dayParam = '';
             let subjectParam = '';
             if (selectedExam === 'enem') {
                 const y = document.getElementById('selectEnemYear')?.value || '0';
+                const d = document.getElementById('selectEnemDay')?.value || '0';
                 const s = document.getElementById('selectEnemSubject')?.value || '0';
                 if (y !== '0') yearParam = `&year=${encodeURIComponent(y)}`;
+                if (d !== '0') dayParam = `&day=${encodeURIComponent(d)}`;
                 if (s !== '0') subjectParam = `&subject_id=${encodeURIComponent(s)}`;
             }
 
-            fetch(`api/simulado.php?exam=${selectedExam}&count=${selectedCount}${yearParam}${subjectParam}`)
+            fetch(`api/simulado.php?exam=${selectedExam}&count=${selectedCount}${yearParam}${dayParam}${subjectParam}`)
                 .then(res => res.json())
                 .then(data => {
                     Swal.close();
@@ -1334,7 +2412,8 @@ require_once __DIR__ . '/includes/header.php';
         // SISTEMA DE FOCO TOTAL & ANTI-DISTRAÇÃO ("MANTENHA O FOCO!!!")
         // ============================================================
         function handleFocusLost() {
-            if (!isExamActive || focusWarningActive) return;
+            if (!isExamActive || isInepOfficialActive || focusWarningActive) return;
+            if (document.activeElement && document.activeElement.tagName === 'IFRAME') return;
             focusWarningActive = true;
 
             Swal.fire({
@@ -1370,8 +2449,34 @@ require_once __DIR__ . '/includes/header.php';
             }
         });
 
-        // Inicialização: Verificar e restaurar simulado se a página foi recarregada
+        // Inicialização: Verificar parâmetros da URL e restaurar simulado se a página foi recarregada
         document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramExam = urlParams.get('exam');
+            const paramYear = urlParams.get('year');
+            const paramDay  = urlParams.get('day');
+            const paramSubj = urlParams.get('subject_id');
+
+            if (paramExam) {
+                const examCard = document.querySelector(`.exam-card[onclick*="'${paramExam}'"]`);
+                if (examCard) selectExamType(paramExam, examCard);
+            }
+            if (paramYear) {
+                const yearSel = document.getElementById('selectEnemYear');
+                if (yearSel) yearSel.value = paramYear;
+            }
+            if (paramDay) {
+                const daySel = document.getElementById('selectEnemDay');
+                if (daySel) daySel.value = paramDay;
+            }
+            if (paramSubj) {
+                const subjSel = document.getElementById('selectEnemSubject');
+                if (subjSel) subjSel.value = paramSubj;
+            }
+            if (paramYear || paramDay) {
+                onCustomEnemFilterChange();
+            }
+
             checkAndRestoreSimulado();
         });
     </script>

@@ -23,20 +23,9 @@ if (isset($_SESSION['user_id'])) {
 $userAvatar = (!empty($user['avatar']) && trim($user['avatar']) !== '') ? $user['avatar'] : 'assets/img/default_avatar.jpg';
 $userFrame = !empty($user['avatar_frame']) ? $user['avatar_frame'] : 'frame-indigo';
 
-$userBadgeMap = [
-    'bi-person-circle' => 'Estudante Padrão',
-    'bi-backpack' => 'Mochileiro Focado',
-    'bi-mortarboard' => 'Formando Vestibulando',
-    'bi-rocket-takeoff' => 'Foguete da Aprovação',
-    'bi-lightning-charge' => 'Mago do Conhecimento',
-    'bi-award' => 'Campeão de Simulados',
-    'bi-gem' => 'Diamante Medicina',
-    'bi-incognito' => 'Mestre Misterioso',
-    'bi-crown' => 'Rei da Aprovação',
-    'bi-emoji-smile-fill' => 'Estudante Lendário'
-];
+$badgeCatalog = getAvatarBadgesCatalog();
 $userBadgeIcon = $user['avatar_icon'] ?? 'bi-person-circle';
-$userBadgeName = $userBadgeMap[$userBadgeIcon] ?? 'Estudante Padrão';
+$userBadgeName = $badgeCatalog[$userBadgeIcon]['name'] ?? 'Estudante Padrão';
 
 $pageTitle = $pageTitle ?? 'HipoGabarito — Plataforma Gamificada de Estudos';
 ?>

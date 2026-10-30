@@ -14,15 +14,7 @@ if (!$userId) {
 $data = json_decode(file_get_contents('php://input'), true);
 $frame = trim($data['frame'] ?? 'frame-indigo');
 
-$frameCatalog = [
-    'frame-indigo'  => ['name' => 'Índigo Padrão', 'min_xp' => 0],
-    'frame-emerald' => ['name' => 'Esmeralda', 'min_xp' => 100],
-    'frame-cyan'    => ['name' => 'Azul Ciano', 'min_xp' => 300],
-    'frame-purple'  => ['name' => 'Roxo Místico', 'min_xp' => 500],
-    'frame-rose'    => ['name' => 'Rosa Neon', 'min_xp' => 750],
-    'frame-rainbow' => ['name' => 'Arco-Íris Lendária', 'min_xp' => 1000],
-    'frame-gold'    => ['name' => 'Dourada Suprema', 'min_xp' => 1500],
-];
+$frameCatalog = getAvatarFramesCatalog();
 
 if (!array_key_exists($frame, $frameCatalog)) {
     echo json_encode(['success' => false, 'message' => 'Moldura inválida.']);
@@ -33,7 +25,7 @@ $stmtUser = $pdo->prepare("SELECT xp FROM users WHERE id = ?");
 $stmtUser->execute([$userId]);
 $userXp = (int) $stmtUser->fetchColumn();
 
-$requiredXp = $frameCatalog[$frame]['min_xp'];
+$requiredXp = $frameCatalog[$frame]['xp'];
 
 if ($userXp < $requiredXp) {
     echo json_encode([
