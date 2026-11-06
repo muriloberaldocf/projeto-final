@@ -986,6 +986,12 @@ html.dark .exam-badge-aprova {
     border-color: #384660 !important;
 }
 
+html.dark .lesson-stage-badge {
+    background: rgba(104, 66, 194, 0.22) !important;
+    color: #c4b5fd !important;
+    border-color: #6842c2 !important;
+}
+
 html.dark .exam-badge-aprova i {
     color: #a5b4fc !important;
 }

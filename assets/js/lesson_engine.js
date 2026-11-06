@@ -332,6 +332,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let isAnswerChecked = false;
     let isBossChallenge = (lessonMode === 'boss' || lessonStage === 4);
     let lessonDataCache = null;
+    let lessonStartTime = null;
+
+    function formatLessonDuration(seconds) {
+        const sec = Math.max(1, Math.round(seconds));
+        const mins = Math.floor(sec / 60);
+        const remSecs = sec % 60;
+        if (mins === 0) {
+            return `${remSecs}s`;
+        }
+        return `${mins}m ${remSecs.toString().padStart(2, '0')}s`;
+    }
 
     // Elementos do DOM
     const theoryScreen = document.getElementById('theoryScreen');
@@ -372,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     isBossChallenge = true;
                     modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> ETAPA 4: DESAFIO BOSS</span>`;
                 } else {
-                    modeBadge.innerHTML = `<span class="badge bg-indigo-subtle text-indigo-700 border border-indigo-200 font-monospace"><i class="bi bi-layers-fill me-1"></i> ETAPA ${lessonStage} DE 4</span>`;
+                    modeBadge.innerHTML = `<span class="lesson-stage-badge"><i class="bi bi-layers-fill me-1"></i> ETAPA ${lessonStage} DE 4</span>`;
                 }
             }
 
@@ -434,6 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     function startQuiz() {
         if (typeof sounds !== 'undefined') sounds.playClick();
+        if (!lessonStartTime) {
+            lessonStartTime = Date.now();
+        }
 
         if (theoryScreen) theoryScreen.style.display = 'none';
         if (theoryHeaderControls) {
@@ -481,6 +495,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. LÓGICA DO QUIZ & QUESTÕES
     // ==========================================================================
     function loadQuestion(index) {
+        if (!lessonStartTime) {
+            lessonStartTime = Date.now();
+        }
+
         if (index >= questions.length) {
             finishLesson();
             return;
@@ -615,7 +633,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const isCorrect = (selectedOption === currentQ.correct_option.toLowerCase());
 
         if (isCorrect) {
-            correctAnswersCount++;
             currentStreakCount++;
             if (currentStreakCount > maxStreakInSession) {
                 maxStreakInSession = currentStreakCount;
@@ -991,6 +1008,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLastStage = (lessonStage >= 4);
             const isSkipMode = (lessonMode === 'skip_ahead' || res.is_skip_ahead);
 
+            // Tempo total gasto na lição
+            const elapsedSecs = lessonStartTime ? Math.max(1, Math.round((Date.now() - lessonStartTime) / 1000)) : 0;
+            const formattedTime = formatLessonDuration(elapsedSecs);
+
+            // Mascote Dinâmico conforme scorePercent e aprovação
+            let mascotImg = 'assets/img/mascote_positivo.png';
+            let mascotAlt = 'Mascote HipoGabarito';
+            if (scorePercent >= 90) {
+                mascotImg = 'assets/img/mascote_comemorando.png';
+                mascotAlt = 'Mascote Comemorando';
+            } else if (passed) {
+                mascotImg = 'assets/img/mascote_positivo.png';
+                mascotAlt = 'Mascote Joinha Positivo';
+            } else if (scorePercent > 30) {
+                mascotImg = 'assets/img/mascote_emburrado.png';
+                mascotAlt = 'Mascote Emburrado Quase Passou';
+            } else {
+                mascotImg = 'assets/img/mascote_fogo.png';
+                mascotAlt = 'Mascote Muito Pistola Fogo';
+            }
+
             if (passed) {
                 if (typeof sounds !== 'undefined') sounds.playComplete();
             } else {
@@ -1028,10 +1066,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 body.innerHTML = `
                     ${levelUpHtml}
                     <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 ${isSkipMode ? 'border-amber-300' : 'border-emerald-200'}">
-                        <div class="mb-3">
-                            <span class="d-inline-flex align-items-center justify-content-center ${isSkipMode ? 'bg-amber-100 text-warning' : 'bg-emerald-100 text-success'} rounded-circle" style="width: 76px; height: 76px; font-size: 38px;">
-                                <i class="${isSkipMode ? 'bi bi-lightning-charge-fill' : 'bi bi-trophy-fill'}"></i>
-                            </span>
+                        <!-- MASCOTE DINÂMICO HIPOGABARITO -->
+                        <div class="mb-3 d-flex justify-content-center">
+                            <div class="position-relative d-inline-block">
+                                <img src="${mascotImg}" alt="${mascotAlt}" class="img-fluid drop-shadow" style="width: 140px; height: 140px; object-fit: contain; animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                            </div>
                         </div>
                         <div class="mb-2">
                             <span class="badge ${isSkipMode ? 'bg-warning-subtle text-warning border border-warning' : 'bg-success-subtle text-success border border-success'} fw-bold px-3 py-1.5 fs-6 rounded-pill">
@@ -1041,30 +1080,38 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="fw-bold font-outfit text-dark mb-1">${winTitle}</h3>
                         <p class="text-secondary small mb-4">${winDesc}</p>
 
-                        <!-- PAINEL 3D DAS MÉTRICAS PEDIDAS PELO ESTUDANTE -->
-                        <div class="row g-3 mb-4">
+                        <!-- PAINEL 4 MÉTRICAS SOLICITADAS: XP, COMBO TOTAL, TEMPO E ACERTOS -->
+                        <div class="row g-2 g-sm-3 mb-4">
                             <!-- 1. XP GANHO -->
-                            <div class="col-4">
-                                <div class="p-3 bg-indigo-50 border-2 border-indigo-200 rounded-3 text-center shadow-xs">
-                                    <span class="d-block text-indigo-600 font-outfit fw-bold text-xs uppercase">XP Ganho</span>
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-indigo-50 border-2 border-indigo-200 rounded-3 text-center shadow-xs h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-indigo-600 font-outfit fw-bold text-xs uppercase"><i class="bi bi-lightning-charge-fill me-1"></i>XP Ganho</span>
                                     <span class="fs-4 fw-extrabold text-indigo-700 font-outfit">+${res.xp_gained}</span>
-                                    <span class="d-block text-muted" style="font-size: 10px;">Base + Bônus</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Total recebido</span>
                                 </div>
                             </div>
-                            <!-- 2. PORCENTAGEM DE ACERTO -->
-                            <div class="col-4">
-                                <div class="p-3 bg-emerald-50 border-2 border-emerald-200 rounded-3 text-center shadow-xs">
-                                    <span class="d-block text-emerald-700 font-outfit fw-bold text-xs uppercase">Acertos</span>
+                            <!-- 2. SEQUÊNCIA DE ACERTOS TOTAL (COMBO GERAL) -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-amber-50 border-2 border-amber-300 rounded-3 text-center shadow-xs h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-amber-800 font-outfit fw-bold text-xs uppercase"><i class="bi bi-fire me-1 text-danger"></i>Combo Total</span>
+                                    <span class="fs-4 fw-extrabold text-amber-600 font-outfit">${consecutiveStreak}x 🔥</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Acertos consecutivos</span>
+                                </div>
+                            </div>
+                            <!-- 3. TEMPO GASTO NA LIÇÃO -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-sky-50 border-2 border-sky-200 rounded-3 text-center shadow-xs h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-sky-700 font-outfit fw-bold text-xs uppercase"><i class="bi bi-stopwatch-fill me-1 text-sky-500"></i>Tempo</span>
+                                    <span class="fs-4 fw-extrabold text-sky-700 font-outfit">${formattedTime}</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Duração da sessão</span>
+                                </div>
+                            </div>
+                            <!-- 4. TAXA DE ACERTO -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-emerald-50 border-2 border-emerald-200 rounded-3 text-center shadow-xs h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-emerald-700 font-outfit fw-bold text-xs uppercase"><i class="bi bi-check-circle-fill me-1 text-emerald-500"></i>Acertos</span>
                                     <span class="fs-4 fw-extrabold text-emerald-600 font-outfit">${scorePercent}%</span>
                                     <span class="d-block text-muted" style="font-size: 10px;">${correctAnswersCount} de ${questions.length} certas</span>
-                                </div>
-                            </div>
-                            <!-- 3. SEQUÊNCIA DE ACERTOS ATUAL (COMBO STREAK) -->
-                            <div class="col-4">
-                                <div class="p-3 bg-amber-50 border-2 border-amber-300 rounded-3 text-center shadow-xs">
-                                    <span class="d-block text-amber-800 font-outfit fw-bold text-xs uppercase">Combo Atual</span>
-                                    <span class="fs-4 fw-extrabold text-amber-600 font-outfit">${consecutiveStreak}x 🔥</span>
-                                    <span class="d-block text-muted" style="font-size: 10px;">Acertos Seguidos</span>
                                 </div>
                             </div>
                         </div>
@@ -1109,38 +1156,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else {
-                // TELA DE DERROTA / REPROVADO (< 60%) COM AS MESMAS MÉTRICAS
+                // TELA DE DERROTA / REPROVADO (< 60%) COM MASCOTE E AS 4 MÉTRICAS
+                const failTitle = scorePercent <= 30 ? 'Eita! Foi uma lição difícil...' : 'Quase lá! Vamos tentar de novo?';
+                const failBadge = scorePercent <= 30 ? 'PRECISA REVISAR COM ATENÇÃO' : `QUASE PASSOU (${scorePercent}%)`;
+
                 body.innerHTML = `
                     <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 border-rose-200">
-                        <div class="mb-3">
-                            <i class="bi bi-emoji-frown fs-1 text-danger"></i>
+                        <!-- MASCOTE DINÂMICO HIPOGABARITO -->
+                        <div class="mb-3 d-flex justify-content-center">
+                            <div class="position-relative d-inline-block">
+                                <img src="${mascotImg}" alt="${mascotAlt}" class="img-fluid drop-shadow" style="width: 140px; height: 140px; object-fit: contain; animation: shakeX 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97);">
+                            </div>
                         </div>
                         <div class="mb-2">
                             <span class="badge bg-danger-subtle text-danger border border-danger fw-bold px-3 py-1.5 fs-6 rounded-pill">
-                                <i class="bi bi-x-circle-fill me-1"></i> NÃO ATINGIU A NOTA (${scorePercent}%)
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> ${failBadge}
                             </span>
                         </div>
-                        <h3 class="fw-bold font-outfit text-dark mb-1">Quase lá! Vamos tentar de novo?</h3>
+                        <h3 class="fw-bold font-outfit text-dark mb-1">${failTitle}</h3>
                         <p class="text-secondary small mb-4">Você acertou <strong>${correctAnswersCount} de ${questions.length}</strong> questões (${scorePercent}%). Para avançar para a próxima etapa, é preciso atingir pelo menos <strong>60%</strong>.</p>
 
-                        <!-- MÉTRICAS DE DESEMPENHO -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-4">
-                                <div class="p-3 bg-light border rounded-3 text-center">
-                                    <span class="d-block text-muted font-outfit fw-bold text-xs uppercase">XP Ganho</span>
+                        <!-- 4 MÉTRICAS DE DESEMPENHO -->
+                        <div class="row g-2 g-sm-3 mb-4">
+                            <!-- 1. XP GANHO -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-light border rounded-3 text-center h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-muted font-outfit fw-bold text-xs uppercase"><i class="bi bi-lightning-charge me-1"></i>XP Ganho</span>
                                     <span class="fs-4 fw-bold text-secondary font-outfit">+0</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Sem nota mínima</span>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <div class="p-3 bg-rose-50 border border-rose-200 rounded-3 text-center">
-                                    <span class="d-block text-danger font-outfit fw-bold text-xs uppercase">Aproveitamento</span>
-                                    <span class="fs-4 fw-extrabold text-danger font-outfit">${scorePercent}%</span>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="p-3 bg-amber-50 border border-amber-200 rounded-3 text-center">
-                                    <span class="d-block text-amber-800 font-outfit fw-bold text-xs uppercase">Sequência Atual</span>
+                            <!-- 2. SEQUÊNCIA DE ACERTOS TOTAL (COMBO GERAL) -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-amber-50 border border-amber-200 rounded-3 text-center h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-amber-800 font-outfit fw-bold text-xs uppercase"><i class="bi bi-fire me-1 text-danger"></i>Combo Total</span>
                                     <span class="fs-4 fw-extrabold text-amber-600 font-outfit">${consecutiveStreak}x 🔥</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Acertos consecutivos</span>
+                                </div>
+                            </div>
+                            <!-- 3. TEMPO GASTO NA LIÇÃO -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-sky-50 border border-sky-200 rounded-3 text-center h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-sky-700 font-outfit fw-bold text-xs uppercase"><i class="bi bi-stopwatch-fill me-1 text-sky-500"></i>Tempo</span>
+                                    <span class="fs-4 fw-extrabold text-sky-700 font-outfit">${formattedTime}</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Duração da sessão</span>
+                                </div>
+                            </div>
+                            <!-- 4. TAXA DE ACERTO -->
+                            <div class="col-6 col-md-3">
+                                <div class="p-3 bg-rose-50 border border-rose-200 rounded-3 text-center h-100 d-flex flex-column justify-content-center">
+                                    <span class="d-block text-danger font-outfit fw-bold text-xs uppercase"><i class="bi bi-graph-down-arrow me-1 text-danger"></i>Acertos</span>
+                                    <span class="fs-4 fw-extrabold text-danger font-outfit">${scorePercent}%</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">${correctAnswersCount} de ${questions.length} certas</span>
                                 </div>
                             </div>
                         </div>

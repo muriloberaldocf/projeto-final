@@ -381,7 +381,7 @@ function unlockAchievement($pdo, $userId, $code) {
  */
 function getConsecutiveCorrectStreak($pdo, $userId) {
     try {
-        $stmt = $pdo->prepare("SELECT is_correct FROM user_answers WHERE user_id = ? ORDER BY id DESC LIMIT 50");
+        $stmt = $pdo->prepare("SELECT is_correct FROM user_answers WHERE user_id = ? ORDER BY id DESC LIMIT 500");
         $stmt->execute([$userId]);
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         

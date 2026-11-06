@@ -65,11 +65,11 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
     <!-- HEADER DA LIÇÃO -->
     <header class="lesson-header">
         <div class="lesson-header-inner">
-            <a href="dashboard.php?subject=<?= urlencode($subjectSlug) ?>" class="btn btn-aprova-light btn-sm rounded-circle p-1 px-2" title="Voltar à Trilha">
+            <a href="dashboard.php?subject=<?= urlencode($subjectSlug) ?>" class="btn btn-aprova-light btn-sm rounded-circle p-1 px-2 d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Voltar à Trilha">
                 <i class="bi bi-x-lg"></i>
             </a>
             
-            <a href="dashboard.php" class="d-flex align-items-center text-decoration-none">
+            <a href="dashboard.php" class="d-none d-sm-flex align-items-center text-decoration-none">
                 <img src="assets/img/hipogabarito_logo.png?v=<?= time() ?>" alt="HipoGabarito" class="hipo-brand-logo" style="height: 32px; width: auto; object-fit: contain;">
             </a>
             
@@ -87,14 +87,14 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
             </div>
 
             <!-- Modo Quiz: Barra de Progresso e Botão Rever Teoria (Oculto inicialmente) -->
-            <div id="quizHeaderControls" class="d-flex align-items-center gap-3 flex-grow-1" style="display: none !important;">
+            <div id="quizHeaderControls" class="d-flex align-items-center gap-2 gap-sm-3 flex-grow-1" style="display: none !important;">
                 <div class="progress-bar-container flex-grow-1">
                     <div class="progress-bar-fill" id="lessonProgress"></div>
                 </div>
-                <button type="button" id="btnOpenReviewModal" class="btn btn-sm btn-light border text-indigo-700 fw-bold px-3 py-1.5 rounded-pill font-outfit text-nowrap" data-bs-toggle="modal" data-bs-target="#theoryReviewModal" title="Consultar Teoria">
-                    <i class="bi bi-book-half me-1"></i> <span class="d-none d-md-inline">Rever</span> Teoria
+                <button type="button" id="btnOpenReviewModal" class="btn btn-sm btn-light border text-indigo-700 fw-bold px-2 py-1 sm:px-3 sm:py-1.5 rounded-pill font-outfit text-nowrap" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#theoryReviewModal" title="Consultar Teoria">
+                    <i class="bi bi-book-half"></i> <span class="d-none d-sm-inline">Teoria</span>
                 </button>
-                <button id="themeToggleBtnQuiz" onclick="toggleTheme()" class="theme-toggle-btn ms-1" title="Alternar Modo Escuro" type="button">
+                <button id="themeToggleBtnQuiz" onclick="toggleTheme()" class="theme-toggle-btn ms-0.5 ms-sm-1" title="Alternar Modo Escuro" type="button">
                     <i class="bi bi-moon-stars-fill" id="themeIconQuiz"></i>
                 </button>
             </div>
@@ -158,15 +158,15 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
     <!-- CONTAINER 2: CORPO DA QUESTÃO / QUIZ (ETAPA 2) -->
     <main class="lesson-body" id="quizScreen" style="display: none;">
         <!-- CARD DO ENUNCIADO DA QUESTÃO -->
-        <div class="question-container-card mb-4">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="exam-badge-aprova" id="examTag">
+        <div class="question-container-card mb-3 mb-md-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
+                <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                    <span class="exam-badge-aprova text-nowrap" id="examTag">
                         <i class="bi bi-patch-question-fill text-indigo-600"></i> EXERCÍCIO
                     </span>
                     <span id="modeBadge"></span>
                 </div>
-                <div class="text-xs text-muted fw-bold font-monospace" id="questionCounter">
+                <div class="text-xs text-muted fw-bold font-monospace text-nowrap flex-shrink-0" id="questionCounter">
                     <!-- Atualizado via JS -->
                 </div>
             </div>
