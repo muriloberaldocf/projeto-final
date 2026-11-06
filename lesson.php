@@ -3,6 +3,7 @@ require_once __DIR__ . '/config/db.php';
 checkAuth();
 
 $lessonId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$stage = filter_input(INPUT_GET, 'stage', FILTER_VALIDATE_INT) ?: 1;
 $mode = $_GET['mode'] ?? '';
 
 if (!$lessonId) {
@@ -54,6 +55,7 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
     <link rel="stylesheet" href="assets/css/dark-mode.css?v=<?= time() ?>">
     <script>
         window.LESSON_ID = <?= $lessonId ?>;
+        window.LESSON_STAGE = <?= (int)$stage ?>;
         window.LESSON_MODE = '<?= htmlspecialchars($mode) ?>';
         window.SUBJECT_SLUG = '<?= htmlspecialchars($subjectSlug) ?>';
     </script>
@@ -72,12 +74,15 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
             </a>
             
             <!-- Modo Teoria: Badge da Etapa 1 e Botão Pular -->
-            <div id="theoryHeaderControls" class="d-flex align-items-center justify-content-end gap-2 flex-grow-1">
-                <span class="badge bg-indigo-subtle text-indigo-700 font-monospace px-3 py-1.5 rounded-pill border border-indigo-200 d-none d-sm-inline-flex align-items-center gap-1">
+            <div id="theoryHeaderControls" class="d-flex align-items-center justify-content-end gap-1.5 sm:gap-2 flex-grow-1">
+                <span class="badge bg-indigo-subtle text-indigo-700 font-monospace px-3 py-1.5 rounded-pill border border-indigo-200 d-none d-md-inline-flex align-items-center gap-1">
                     <i class="bi bi-journal-text"></i> ETAPA 1: GUIA TEÓRICO
                 </span>
-                <button type="button" id="btnSkipToQuiz" class="btn btn-sm btn-light border fw-bold text-indigo-700 px-3 py-1.5 rounded-pill font-outfit">
-                    Pular para Exercícios <i class="bi bi-arrow-right ms-1"></i>
+                <button type="button" id="btnSkipToQuiz" class="btn btn-sm btn-light border fw-bold text-indigo-700 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-pill font-outfit text-nowrap" style="font-size: 11px;">
+                    <span class="d-none d-sm-inline">Pular para </span>Exercícios <i class="bi bi-arrow-right ms-0.5"></i>
+                </button>
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="theme-toggle-btn ms-1" title="Alternar Modo Escuro" type="button">
+                    <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
                 </button>
             </div>
 
@@ -88,6 +93,9 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
                 </div>
                 <button type="button" id="btnOpenReviewModal" class="btn btn-sm btn-light border text-indigo-700 fw-bold px-3 py-1.5 rounded-pill font-outfit text-nowrap" data-bs-toggle="modal" data-bs-target="#theoryReviewModal" title="Consultar Teoria">
                     <i class="bi bi-book-half me-1"></i> <span class="d-none d-md-inline">Rever</span> Teoria
+                </button>
+                <button id="themeToggleBtnQuiz" onclick="toggleTheme()" class="theme-toggle-btn ms-1" title="Alternar Modo Escuro" type="button">
+                    <i class="bi bi-moon-stars-fill" id="themeIconQuiz"></i>
                 </button>
             </div>
         </div>
@@ -242,12 +250,29 @@ $subjectName = $lessonInfo['subject_name'] ?? 'Matemática';
     <script src="assets/js/theory_parser.js?v=<?= time() ?>"></script>
     <script src="assets/js/lesson_engine.js?v=<?= time() ?>"></script>
     <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            localStorage.setItem('hipogabarito_theme', isDark ? 'dark' : 'light');
+            updateThemeIcons();
+            updateLogos();
+        }
+        function updateThemeIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+            ['themeIcon', 'themeIconQuiz'].forEach(function(id) {
+                const icon = document.getElementById(id);
+                if (icon) icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+            });
+        }
+        function updateLogos() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.querySelectorAll('.hipo-brand-logo, img[src*="hipogabarito_logo"]').forEach(function(img) {
+                img.src = isDark ? 'assets/img/hipogabarito_logo_dark.png?v=5' : 'assets/img/hipogabarito_logo.png?v=5';
+            });
+        }
         document.addEventListener('DOMContentLoaded', function() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.querySelectorAll('.hipo-brand-logo, img[src*="hipogabarito_logo"]').forEach(function(img) {
-                    img.src = 'assets/img/hipogabarito_logo_dark.png?v=5';
-                });
-            }
+            updateThemeIcons();
+            updateLogos();
         });
     </script>
 </body>

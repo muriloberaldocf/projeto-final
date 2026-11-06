@@ -156,7 +156,7 @@ if (isset($_SESSION['user_id'])) {
 
                         <div>
                             <label class="block text-xs font-bold text-slate-600 mb-1">E-mail</label>
-                            <input type="email" id="inputEmail" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 font-medium text-sm focus:border-[#6842C2] focus:outline-none" placeholder="estudante@aprovaquest.com" required>
+                            <input type="email" id="inputEmail" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 font-medium text-sm focus:border-[#6842C2] focus:outline-none" placeholder="estudante@hipogabarito.com.br" required>
                         </div>
 
                         <div>
@@ -170,13 +170,6 @@ if (isset($_SESSION['user_id'])) {
                     </form>
 
                     <div id="errorMessage" class="hidden p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold text-center"></div>
-
-                    <!-- ACESSO DEMO -->
-                    <div class="pt-4 border-t border-slate-200 text-center">
-                        <button type="button" onclick="demoLogin()" class="w-full py-3 px-4 rounded-2xl font-outfit font-extrabold text-xs bg-[#f1eff5] text-[#6842C2] hover:bg-[#e4ddf7] border border-[#d8cef2] transition-all flex items-center justify-center gap-2">
-                            <i class="bi bi-lightning-fill text-amber-500 fs-6"></i> ACESSAR COMO ALUNO DEMO
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -235,17 +228,6 @@ if (isset($_SESSION['user_id'])) {
                 }
             });
         });
-
-        function demoLogin() {
-            if (typeof sounds !== 'undefined') sounds.playClick();
-            fetch('api/auth.php?action=demo_login')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = data.redirect;
-                    }
-                });
-        }
     </script>
 
     <!-- DARK MODE TOGGLE -->

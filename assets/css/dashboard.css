@@ -1,6 +1,6 @@
 /* ============================================================
-   APROVAQUEST — DUOLINGO-INSPIRED 80% UX GAME DESIGN SYSTEM
-   Paleta Autêntica: Indigo (#4f46e5), Ciano (#06b6d4), Dourado (#f59e0b), Esmeralda (#10b981)
+   HIPOGABARITO — DUOLINGO-INSPIRED 80% UX GAME DESIGN SYSTEM
+   Paleta Autêntica: Roxo Marca (#6842C2), Ciano (#A98BE0), Dourado (#f59e0b), Esmeralda (#10b981)
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
@@ -181,10 +181,15 @@ body {
 .duo-node-wrapper:nth-child(8n+8) { transform: translateX(-45px); }
 
 @media (max-width: 576px) {
-    .duo-node-wrapper:nth-child(8n+2), .duo-node-wrapper:nth-child(8n+4) { transform: translateX(25px); }
-    .duo-node-wrapper:nth-child(8n+3) { transform: translateX(45px); }
-    .duo-node-wrapper:nth-child(8n+6), .duo-node-wrapper:nth-child(8n+8) { transform: translateX(-25px); }
-    .duo-node-wrapper:nth-child(8n+7) { transform: translateX(-45px); }
+    .duo-node-wrapper:nth-child(8n+2), .duo-node-wrapper:nth-child(8n+4) { transform: translateX(20px); }
+    .duo-node-wrapper:nth-child(8n+3) { transform: translateX(36px); }
+    .duo-node-wrapper:nth-child(8n+6), .duo-node-wrapper:nth-child(8n+8) { transform: translateX(-20px); }
+    .duo-node-wrapper:nth-child(8n+7) { transform: translateX(-36px); }
+
+    .duo-node-btn {
+        width: 72px;
+        height: 72px;
+    }
 }
 
 /* ============================================================

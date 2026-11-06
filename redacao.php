@@ -117,6 +117,19 @@ require_once __DIR__ . '/includes/header.php';
             overflow-y: auto;
             letter-spacing: 0.01em;
         }
+        @media (max-width: 640px) {
+            .redacao-gutter {
+                width: 32px;
+                font-size: 11px;
+            }
+            .redacao-folha-sync {
+                padding: 16px 12px 16px 24px;
+                font-size: 14px;
+                background-image: 
+                    repeating-linear-gradient(to bottom, transparent, transparent 31px, #e2e8f0 31px, #e2e8f0 32px),
+                    linear-gradient(to right, transparent 12px, rgba(239, 68, 68, 0.22) 12px, rgba(239, 68, 68, 0.22) 14px, transparent 14px);
+            }
+        }
         html.dark .folha-pautada-box {
             border-color: #334155;
             background: #18202e;
@@ -1119,9 +1132,8 @@ require_once __DIR__ . '/includes/header.php';
                         Modelo de Inteligência Artificial:
                     </label>
                     <select id="modalModelSelect" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none">
-                        <option value="gemini-3.5-flash" selected>Gemini 3.5 Flash (Geração 3.5 - Ultrarrápido, Moderno & Mais Inteligente)</option>
-                        <option value="gemini-3-flash-preview">Gemini 3 Flash Preview</option>
-                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                        <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Recomendado - Rápido & Inteligente)</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Raciocínio Profundo)</option>
                     </select>
                 </div>
 
@@ -3050,23 +3062,32 @@ require_once __DIR__ . '/includes/header.php';
                     });
                 } else {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="bi bi-magic text-xl"></i><span>Corrigir com IA (Gemini 3.5) 🚀</span>`;
+                    btn.innerHTML = `<i class="bi bi-magic text-xl"></i><span>Corrigir com IA (Gemini) 🚀</span>`;
+
+                    const isKeyError = ['missing_key', 'invalid_or_leaked_key', 'prepayment_depleted', 'forbidden'].includes(data.error_type) || data.http_code === 403 || data.http_code === 402;
 
                     Swal.fire({
                         icon: 'error',
-                        title: 'Não foi possível corrigir',
+                        title: isKeyError ? 'Configuração de Chave da IA' : 'Não foi possível corrigir',
                         text: data.message || 'Erro inesperado ao processar a redação.',
+                        showCancelButton: isKeyError,
+                        confirmButtonText: isKeyError ? 'Configurar Nova Chave 🔑' : 'OK',
+                        cancelButtonText: 'Fechar',
                         confirmButtonColor: '#4f46e5'
+                    }).then((res) => {
+                        if (isKeyError && res.isConfirmed) {
+                            openApiKeyModal();
+                        }
                     });
                 }
             })
             .catch(err => {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="bi bi-magic text-xl"></i><span>Corrigir com IA (Gemini 3.5) 🚀</span>`;
+                btn.innerHTML = `<i class="bi bi-magic text-xl"></i><span>Corrigir com IA (Gemini) 🚀</span>`;
                 Swal.fire({
                     icon: 'error',
                     title: 'Falha na Conexão',
-                    text: 'Tempo limite ou erro de rede. Tente novamente.',
+                    text: 'Tempo limite ou erro de rede ao comunicar com o servidor. Tente novamente.',
                     confirmButtonColor: '#4f46e5'
                 });
             });

@@ -188,3 +188,55 @@ img.frame-gold, .frame-gold {
     50%  { outline-color: #fef08a !important; box-shadow: 0 0 26px #fbbf24, 0 0 38px rgba(245, 158, 11, 0.9) !important; }
     100% { outline-color: #d97706 !important; box-shadow: 0 0 16px #d97706, 0 0 25px rgba(217, 119, 6, 0.7) !important; }
 }
+
+/* ============================================================
+   RESPONSIVIDADE MOBILE & TABLET (BOTTOM NAV & PADDING GLOBAL)
+   ============================================================ */
+@media (max-width: 1023px) {
+    main {
+        padding-bottom: 5.5rem !important; /* Espaço para não cobrir conteúdo com a barra inferior */
+    }
+}
+
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
+
+/* Transição Fluida e Sombra Reativa da Bottom Navigation Bar */
+#bottomNavBar {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    will-change: transform, opacity;
+}
+
+#bottomNavBar.nav-hidden {
+    transform: translateY(115%) scale(0.96) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+}
+
+#bottomNavBar.nav-visible {
+    transform: translateY(0%) scale(1) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Rolagem Horizontal Macia sem Scrollbar Feio */
+.scrollbar-none::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+}
+.scrollbar-none::-webkit-scrollbar-thumb,
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+@media (max-width: 640px) {
+    .scrollbar-none::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-none {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}

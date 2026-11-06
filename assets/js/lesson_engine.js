@@ -318,6 +318,7 @@ window.parseTheoryCardsToHTML = parseTheoryCardsToHTML;
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const lessonId = window.LESSON_ID;
+    const lessonStage = window.LESSON_STAGE || 1;
     const lessonMode = window.LESSON_MODE || '';
     if (!lessonId) return;
 
@@ -326,8 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
     let selectedOption = null;
     let correctAnswersCount = 0;
+    let currentStreakCount = 0;
+    let maxStreakInSession = 0;
     let isAnswerChecked = false;
-    let isBossChallenge = (lessonMode === 'boss');
+    let isBossChallenge = (lessonMode === 'boss' || lessonStage === 4);
     let lessonDataCache = null;
 
     // Elementos do DOM
@@ -351,12 +354,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const explanationBox = document.getElementById('explanationBox');
     const btnContinue = document.getElementById('btnContinue');
 
-    // Carregar Dados da Lição e Questões via API
-    fetch(`api/get_lesson.php?id=${lessonId}&mode=${lessonMode}`)
+    // Carregar Dados da Lição e Questões via API (considerando a etapa 1 a 4)
+    fetch(`api/get_lesson.php?id=${lessonId}&stage=${lessonStage}&mode=${lessonMode}`)
         .then(res => res.json())
         .then(data => {
             if (!data.success || !data.questions || data.questions.length === 0) {
-                alert('Não foram encontradas questões para este tópico.');
+                alert('Não foram encontradas questões para esta etapa.');
                 window.location.href = 'dashboard.php';
                 return;
             }
@@ -364,9 +367,13 @@ document.addEventListener('DOMContentLoaded', () => {
             lessonDataCache = data;
             questions = data.questions;
 
-            if (data.is_boss_mode && modeBadge) {
-                isBossChallenge = true;
-                modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> DESAFIO BOSS (VARIAÇÃO #${data.boss_variant})</span>`;
+            if (modeBadge) {
+                if (data.is_boss_mode) {
+                    isBossChallenge = true;
+                    modeBadge.innerHTML = `<span class="badge bg-danger text-white font-monospace"><i class="bi bi-shield-lock-fill me-1"></i> ETAPA 4: DESAFIO BOSS</span>`;
+                } else {
+                    modeBadge.innerHTML = `<span class="badge bg-indigo-subtle text-indigo-700 border border-indigo-200 font-monospace"><i class="bi bi-layers-fill me-1"></i> ETAPA ${lessonStage} DE 4</span>`;
+                }
             }
 
             // 1. Preencher Detalhes do Hero Header da Teoria
@@ -496,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         btnCheck.disabled = true;
 
-        examTag.textContent = isBossChallenge ? 'CHEFÃO BOSS' : (q.exam_source || 'VESTIBULAR');
+        examTag.textContent = isBossChallenge ? 'CHEFÃO BOSS' : (q.topic_title ? `📚 ${q.topic_title} • ${q.exam_source || 'VESTIBULAR'}` : (q.exam_source || 'VESTIBULAR'));
         
         // Sanitização de segurança: remover qualquer link, URL ou imagem markdown
         let cleanText = (q.question_text || '')
@@ -607,6 +614,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentQ = questions[currentIndex];
         const isCorrect = (selectedOption === currentQ.correct_option.toLowerCase());
 
+        if (isCorrect) {
+            correctAnswersCount++;
+            currentStreakCount++;
+            if (currentStreakCount > maxStreakInSession) {
+                maxStreakInSession = currentStreakCount;
+            }
+        } else {
+            currentStreakCount = 0;
+        }
+
         fetch('api/save_answer.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -615,7 +632,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 chosen_option: selectedOption,
                 is_correct: isCorrect
             })
-        }).catch(err => console.error(err));
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.combo_milestone) {
+                showComboMilestoneToast(data.combo_milestone);
+            }
+        })
+        .catch(err => console.error(err));
 
         const hideResolution = isBossChallenge || currentQ.hide_resolution || currentQ.is_boss;
 
@@ -953,6 +977,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 lesson_id: lessonId,
+                stage: lessonStage,
                 score_percent: scorePercent,
                 mode: lessonMode
             })
@@ -960,8 +985,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.json())
         .then(res => {
             const body = document.getElementById('quizScreen');
-            const passed = (res.passed !== undefined) ? res.passed : (scorePercent >= 60);
+            const passed = (res.passed !== undefined) ? res.passed : (scorePercent >= (lessonMode === 'skip_ahead' ? 70 : 60));
             const redirectUrl = window.SUBJECT_SLUG ? ('dashboard.php?subject=' + encodeURIComponent(window.SUBJECT_SLUG)) : 'dashboard.php';
+            const consecutiveStreak = res.consecutive_streak !== undefined ? res.consecutive_streak : maxStreakInSession;
+            const isLastStage = (lessonStage >= 4);
+            const isSkipMode = (lessonMode === 'skip_ahead' || res.is_skip_ahead);
 
             if (passed) {
                 if (typeof sounds !== 'undefined') sounds.playComplete();
@@ -972,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let levelUpHtml = '';
             if (passed && res.leveled_up) {
                 levelUpHtml = `
-                    <div class="alert alert-warning border-warning shadow-sm rounded-3 py-3 mb-4 text-center">
+                    <div class="alert alert-warning border-warning shadow-sm rounded-4 py-3 mb-4 text-center">
                         <i class="bi bi-stars text-warning fs-3 d-block mb-1"></i>
                         <h4 class="fw-bold text-dark mb-0 font-outfit">SUBIU DE NÍVEL!</h4>
                         <span class="badge bg-warning text-dark font-monospace mt-1 px-3 py-1 fs-6">NÍVEL ${res.level} CONQUISTADO</span>
@@ -981,57 +1009,107 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (passed) {
-                // TELA DE VITÓRIA / APROVADO (>= 60%)
+                // TELA DE VITÓRIA / APROVADO NA ETAPA
+                const nextStageNum = Math.min(4, lessonStage + 1);
+                const nextStageUrl = `lesson.php?id=${lessonId}&stage=${nextStageNum}&skip_theory=1`;
+
+                const winTitle = isSkipMode 
+                    ? '⚡ Salto Quântico Conquistado!' 
+                    : (isLastStage ? '🎉 Lição 100% Dominada!' : `Etapa ${lessonStage} Concluída com Sucesso!`);
+
+                const winBadgeText = isSkipMode
+                    ? `⚡ SIMULADO CUMULATIVO GABARITADO (${res.unlocked_previous_count || 1} LIÇÕES PULADAS)`
+                    : `ETAPA ${lessonStage} DE 4 SUPERADA!`;
+
+                const winDesc = isSkipMode
+                    ? `Parabéns! Você provou domínio completo em todos os conteúdos acumulados e desbloqueou todas as lições até aqui com <strong>+${res.xp_gained} XP</strong>!`
+                    : (isLastStage ? 'Você completou todas as 4 etapas deste conteúdo e conquistou maestria máxima!' : `Você atingiu a pontuação mínima e liberou a <strong>Etapa ${nextStageNum} de 4</strong>!`);
+
                 body.innerHTML = `
                     ${levelUpHtml}
-                    <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 border-emerald-200">
+                    <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 ${isSkipMode ? 'border-amber-300' : 'border-emerald-200'}">
                         <div class="mb-3">
-                            <i class="bi bi-emoji-laughing fs-1 text-success"></i>
-                        </div>
-                        <div class="mb-2">
-                            <span class="badge bg-success-subtle text-success border border-success fw-bold px-3 py-1.5 fs-6 rounded-pill">
-                                <i class="bi bi-check-circle-fill me-1"></i> APROVADO (${scorePercent}%)
+                            <span class="d-inline-flex align-items-center justify-content-center ${isSkipMode ? 'bg-amber-100 text-warning' : 'bg-emerald-100 text-success'} rounded-circle" style="width: 76px; height: 76px; font-size: 38px;">
+                                <i class="${isSkipMode ? 'bi bi-lightning-charge-fill' : 'bi bi-trophy-fill'}"></i>
                             </span>
                         </div>
-                        <h3 class="fw-bold font-outfit text-dark mb-1">${isBossChallenge ? 'Desafio Boss Superado!' : 'Fase Concluída com Sucesso!'}</h3>
-                        <p class="text-secondary small mb-4">Parabéns! Você alcançou a nota de corte mínima de 60% e dominou esta etapa!</p>
+                        <div class="mb-2">
+                            <span class="badge ${isSkipMode ? 'bg-warning-subtle text-warning border border-warning' : 'bg-success-subtle text-success border border-success'} fw-bold px-3 py-1.5 fs-6 rounded-pill">
+                                <i class="bi bi-check-circle-fill me-1"></i> ${winBadgeText}
+                            </span>
+                        </div>
+                        <h3 class="fw-bold font-outfit text-dark mb-1">${winTitle}</h3>
+                        <p class="text-secondary small mb-4">${winDesc}</p>
 
+                        <!-- PAINEL 3D DAS MÉTRICAS PEDIDAS PELO ESTUDANTE -->
                         <div class="row g-3 mb-4">
+                            <!-- 1. XP GANHO -->
                             <div class="col-4">
-                                <div class="p-3 bg-light border rounded-3">
-                                    <span class="d-block small text-muted font-monospace">XP BASE</span>
-                                    <span class="fs-5 fw-bold text-primary">+${res.base_xp || 35}</span>
+                                <div class="p-3 bg-indigo-50 border-2 border-indigo-200 rounded-3 text-center shadow-xs">
+                                    <span class="d-block text-indigo-600 font-outfit fw-bold text-xs uppercase">XP Ganho</span>
+                                    <span class="fs-4 fw-extrabold text-indigo-700 font-outfit">+${res.xp_gained}</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Base + Bônus</span>
                                 </div>
                             </div>
+                            <!-- 2. PORCENTAGEM DE ACERTO -->
                             <div class="col-4">
-                                <div class="p-3 bg-light border rounded-3">
-                                    <span class="d-block small text-muted font-monospace">BÔNUS</span>
-                                    <span class="fs-5 fw-bold text-success">+${res.accuracy_bonus || 0}</span>
+                                <div class="p-3 bg-emerald-50 border-2 border-emerald-200 rounded-3 text-center shadow-xs">
+                                    <span class="d-block text-emerald-700 font-outfit fw-bold text-xs uppercase">Acertos</span>
+                                    <span class="fs-4 fw-extrabold text-emerald-600 font-outfit">${scorePercent}%</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">${correctAnswersCount} de ${questions.length} certas</span>
                                 </div>
                             </div>
+                            <!-- 3. SEQUÊNCIA DE ACERTOS ATUAL (COMBO STREAK) -->
                             <div class="col-4">
-                                <div class="p-3 bg-indigo-subtle border border-indigo-subtle rounded-3">
-                                    <span class="d-block small text-primary font-monospace fw-bold">TOTAL XP</span>
-                                    <span class="fs-4 fw-extrabold text-primary">+${res.xp_gained}</span>
+                                <div class="p-3 bg-amber-50 border-2 border-amber-300 rounded-3 text-center shadow-xs">
+                                    <span class="d-block text-amber-800 font-outfit fw-bold text-xs uppercase">Combo Atual</span>
+                                    <span class="fs-4 fw-extrabold text-amber-600 font-outfit">${consecutiveStreak}x 🔥</span>
+                                    <span class="d-block text-muted" style="font-size: 10px;">Acertos Seguidos</span>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- BARRA DE ETAPAS DA LIÇÃO (1 A 4) -->
+                        <div class="p-3 bg-light rounded-4 border mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="fw-bold font-outfit small text-secondary">${isSkipMode ? 'Modo de Trilha:' : 'Progresso na Lição:'}</span>
+                                <span class="badge bg-indigo-100 text-indigo-700 font-outfit fw-bold">${isSkipMode ? 'Simulado Concluído 🚀' : `${lessonStage} / 4 Concluídas`}</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <div class="flex-fill rounded-pill" style="height: 8px; background-color: #10b981;"></div>
+                                <div class="flex-fill rounded-pill" style="height: 8px; background-color: #10b981;"></div>
+                                <div class="flex-fill rounded-pill" style="height: 8px; background-color: #10b981;"></div>
+                                <div class="flex-fill rounded-pill" style="height: 8px; background-color: #10b981;"></div>
+                            </div>
+                        </div>
+
+                        <!-- OFENSIVA DIÁRIA -->
                         <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 border mb-4">
                             <div class="d-flex align-items-center gap-2">
                                 <i class="bi bi-fire text-warning fs-4"></i>
-                                <span class="fw-bold font-outfit text-dark">Ofensiva Diária</span>
+                                <span class="fw-bold font-outfit text-dark">Ofensiva de Dias Consecutivos</span>
                             </div>
                             <span class="badge bg-warning text-dark font-monospace px-3 py-1.5 fs-6">${res.streak_days} DIAS</span>
                         </div>
 
-                        <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-aprova-primary py-3 fw-bold w-100 fs-6 shadow">
-                            VOLTAR À TRILHA DE ESTUDOS
-                        </button>
+                        <div class="d-flex flex-column flex-sm-row gap-2">
+                            ${!isLastStage ? `
+                                <button type="button" onclick="window.location.href='${nextStageUrl}'" class="btn btn-aprova-primary py-3 fw-bold flex-fill fs-6 shadow">
+                                    IR PARA ETAPA ${nextStageNum} <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                                <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-light border py-3 fw-bold flex-fill fs-6 text-secondary">
+                                    Voltar à Trilha
+                                </button>
+                            ` : `
+                                <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-aprova-primary py-3 fw-bold w-100 fs-6 shadow">
+                                    CONCLUIR & VOLTAR À TRILHA
+                                </button>
+                            `}
+                        </div>
                     </div>
                 `;
             } else {
-                // TELA DE DERROTA / REPROVADO (< 60%)
+                // TELA DE DERROTA / REPROVADO (< 60%) COM AS MESMAS MÉTRICAS
                 body.innerHTML = `
                     <div class="card card-aprova text-center p-4 p-md-5 my-3 shadow-lg border-2 border-rose-200">
                         <div class="mb-3">
@@ -1039,25 +1117,40 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="mb-2">
                             <span class="badge bg-danger-subtle text-danger border border-danger fw-bold px-3 py-1.5 fs-6 rounded-pill">
-                                <i class="bi bi-x-circle-fill me-1"></i> REPROVADO (${scorePercent}%)
+                                <i class="bi bi-x-circle-fill me-1"></i> NÃO ATINGIU A NOTA (${scorePercent}%)
                             </span>
                         </div>
-                        <h3 class="fw-bold font-outfit text-dark mb-1">Não foi desta vez!</h3>
-                        <p class="text-secondary small mb-4">Você teve <strong>${scorePercent}%</strong> de acertos. É necessário acertar no mínimo <strong>60%</strong> das questões para ser aprovado nesta atividade.</p>
+                        <h3 class="fw-bold font-outfit text-dark mb-1">Quase lá! Vamos tentar de novo?</h3>
+                        <p class="text-secondary small mb-4">Você acertou <strong>${correctAnswersCount} de ${questions.length}</strong> questões (${scorePercent}%). Para avançar para a próxima etapa, é preciso atingir pelo menos <strong>60%</strong>.</p>
 
-                        <div class="p-3 bg-rose-50 border border-rose-200 rounded-3 mb-4 text-start">
-                            <div class="d-flex align-items-center gap-2 text-rose-700 fw-bold small mb-1 font-outfit">
-                                <i class="bi bi-lightbulb-fill fs-5"></i> Dica de Estudo:
+                        <!-- MÉTRICAS DE DESEMPENHO -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <div class="p-3 bg-light border rounded-3 text-center">
+                                    <span class="d-block text-muted font-outfit fw-bold text-xs uppercase">XP Ganho</span>
+                                    <span class="fs-4 fw-bold text-secondary font-outfit">+0</span>
+                                </div>
                             </div>
-                            <p class="text-rose-900 small mb-0">Revise os conceitos no Guia Teórico antes de tentar novamente!</p>
+                            <div class="col-4">
+                                <div class="p-3 bg-rose-50 border border-rose-200 rounded-3 text-center">
+                                    <span class="d-block text-danger font-outfit fw-bold text-xs uppercase">Aproveitamento</span>
+                                    <span class="fs-4 fw-extrabold text-danger font-outfit">${scorePercent}%</span>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-3 bg-amber-50 border border-amber-200 rounded-3 text-center">
+                                    <span class="d-block text-amber-800 font-outfit fw-bold text-xs uppercase">Sequência Atual</span>
+                                    <span class="fs-4 fw-extrabold text-amber-600 font-outfit">${consecutiveStreak}x 🔥</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-flex flex-column flex-sm-row gap-2">
                             <button type="button" onclick="window.location.reload()" class="btn btn-aprova-primary py-3 fw-bold flex-fill fs-6 shadow">
-                                <i class="bi bi-arrow-clockwise me-1"></i> Tentar Novamente
+                                <i class="bi bi-arrow-clockwise me-1"></i> Tentar Esta Etapa Novamente
                             </button>
-                            <button type="button" onclick="showTheoryScreen()" class="btn btn-light border py-3 fw-bold flex-fill fs-6 text-secondary">
-                                <i class="bi bi-book-half me-1"></i> Rever Teoria
+                            <button type="button" onclick="window.location.href='${redirectUrl}'" class="btn btn-light border py-3 fw-bold flex-fill fs-6 text-secondary">
+                                <i class="bi bi-map me-1"></i> Voltar à Trilha
                             </button>
                         </div>
                     </div>
@@ -1071,3 +1164,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/**
+ * Toast de Conquista / Combo de Acertos Consecutivos (Mural)
+ */
+function showComboMilestoneToast(milestone) {
+    let container = document.getElementById('comboToastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'comboToastContainer';
+        container.className = 'fixed top-6 right-6 z-[9999] pointer-events-none flex flex-col gap-2 max-w-sm';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'pointer-events-auto bg-slate-900/95 text-white p-4 rounded-2xl border-2 border-amber-400 shadow-[0_8px_20px_rgba(0,0,0,0.3)] backdrop-blur-md transform translate-y-[-20px] opacity-0 transition-all duration-300 flex items-center gap-3.5';
+    toast.innerHTML = `
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-900 flex items-center justify-center text-2xl font-black shrink-0 shadow-md animate-bounce">
+            🎯
+        </div>
+        <div>
+            <div class="flex items-center gap-1.5 mb-0.5">
+                <span class="text-[10px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/30">Mural de Conquistas</span>
+                <span class="text-xs text-amber-400 font-extrabold">+${milestone.xp_bonus || 100} XP</span>
+            </div>
+            <h4 class="font-outfit font-black text-sm text-white leading-tight mb-0.5">${milestone.title || 'Sequência Incrível!'}</h4>
+            <p class="text-xs text-slate-300 font-medium leading-snug mb-0">${milestone.description || 'Publicado no mural para seus amigos!'}</p>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    // Animar entrada
+    requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+    });
+
+    // Auto-remover após 4.5s
+    setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-20px]', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+    }, 4500);
+}

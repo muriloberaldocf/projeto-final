@@ -205,13 +205,14 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </main>
 
-    <!-- MODAL DE FASE TAILWIND -->
-    <div id="stageModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
-        <div class="bg-white rounded-3xl border-4 border-slate-200 shadow-2xl w-full max-w-sm p-4 text-center transform scale-95 transition-transform duration-200 relative" id="stageModalCard">
-            <button onclick="closeStageModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
+    <!-- MODAL DE FASE TAILWIND (ESTILO BOTTOM SHEET NO MOBILE E MODAL NO DESKTOP) -->
+    <div id="stageModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-3 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl border-t-4 sm:border-4 border-slate-200 shadow-2xl w-full max-w-sm p-5 sm:p-4 text-center transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-200 relative max-h-[90vh] overflow-y-auto" id="stageModalCard">
+            <!-- Barra de arraste para Mobile -->
+            <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-3 sm:hidden"></div>
+
+            <button type="button" onclick="closeStageModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition-all z-20 cursor-pointer flex items-center justify-center">
+                <i class="bi bi-x-lg text-lg"></i>
             </button>
 
             <div class="w-16 h-16 mx-auto mb-2 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl">
@@ -226,8 +227,42 @@ require_once __DIR__ . '/includes/header.php';
             <p id="modalStageDesc" class="text-xs text-slate-500 mb-3 font-medium leading-relaxed">Conclua os exercícios desta fase para avançar na trilha!</p>
 
             <div class="mb-3">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">Sua Pontuação</span>
-                <div id="modalStageStars" class="flex items-center justify-center gap-1"></div>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1.5">Progresso de Etapas (1 a 4)</span>
+                <!-- SELETOR DE ETAPAS DA LIÇÃO -->
+                <div id="modalStageStepper" class="grid grid-cols-4 gap-1.5 p-1 bg-slate-100 rounded-2xl mb-2">
+                    <!-- Gerado dinamicamente -->
+                </div>
+                <div id="modalStageStars" class="flex items-center justify-center gap-1 mt-1"></div>
+            </div>
+
+            <!-- BANNER ESPECIAL DE SIMULADO CUMULATIVO (JUMP AHEAD) -->
+            <div id="modalSkipAheadBox" class="hidden mb-3 p-3 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 text-left transition-all">
+                <div class="flex items-start gap-2.5 mb-2">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-base flex-shrink-0 shadow-sm">
+                        ⚡
+                    </div>
+                    <div>
+                        <h4 class="font-outfit font-black text-xs text-amber-950 uppercase tracking-wide leading-tight">Pular para Aqui!</h4>
+                        <p class="text-[11px] text-amber-800 font-medium leading-snug">
+                            Faça um <strong>Simulado Cumulativo</strong> com os assuntos desta matéria até aqui. Se passar (70%+), gabarita todas as anteriores!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tópicos que caem no simulado -->
+                <div class="mb-2.5">
+                    <span class="text-[10px] font-extrabold text-amber-900 uppercase tracking-wider block mb-1">
+                        Conteúdos Inclusos neste Teste:
+                    </span>
+                    <div id="modalSkipAheadTopics" class="flex flex-wrap gap-1 max-h-20 overflow-y-auto pr-1">
+                        <!-- Pílulas de tópicos dinâmicas -->
+                    </div>
+                </div>
+
+                <button type="button" id="btnDoSkipAhead" class="w-full py-2.5 px-3 rounded-xl font-outfit font-black text-xs bg-amber-500 text-slate-950 hover:bg-amber-400 border border-amber-400 shadow-[0_3px_0_0_#b45309] active:translate-y-0.5 active:shadow-[0_1px_0_0_#b45309] transition-all flex items-center justify-center gap-1.5">
+                    <i class="bi bi-lightning-charge-fill text-slate-950"></i>
+                    <span>FAZER SIMULADO CUMULATIVO (+SUPER XP)</span>
+                </button>
             </div>
 
             <div class="space-y-2">
@@ -247,7 +282,7 @@ require_once __DIR__ . '/includes/header.php';
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
                     </svg>
-                    RESOLVER QUESTÕES (+35 XP)
+                    <span>PRATICAR ETAPA 1 (+35 XP)</span>
                 </button>
 
                 <button type="button" id="btnBossStage" style="display: none;" class="w-full py-2.5 px-4 rounded-2xl font-outfit font-extrabold text-xs bg-rose-600 text-white shadow-[0_4px_0_0_#9f1239] hover:bg-rose-700 active:translate-y-0.5 active:shadow-[0_1px_0_0_#9f1239] transition-all items-center justify-center gap-2">
@@ -263,7 +298,9 @@ require_once __DIR__ . '/includes/header.php';
     <!-- MODAL DE TEORIA / LEITURA DO CONTEXTO DA FASE -->
     <div id="theoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
         <div class="bg-white rounded-3xl border-2 border-slate-200 shadow-2xl w-full max-w-3xl p-6 sm:p-7 relative transform scale-95 transition-transform duration-200" id="theoryModalCard">
-            <button onclick="closeTheoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+            <button type="button" onclick="closeTheoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-all z-20 cursor-pointer flex items-center justify-center">
+                <i class="bi bi-x-lg text-lg"></i>
+            </button>
             <div class="flex items-center gap-3 mb-4 pb-3 border-b border-slate-100">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl shadow-sm border border-indigo-200 flex-shrink-0">
                     <i class="bi bi-book-half"></i>
@@ -504,11 +541,69 @@ require_once __DIR__ . '/includes/header.php';
         function openStageModal(lesson, stageNumber, isBoss) {
             if (typeof sounds !== 'undefined') sounds.playClick();
 
-            document.getElementById('modalStageBadge').textContent = isBoss ? 'DESAFIO BOSS 👑' : `FASE ${stageNumber}`;
+            document.getElementById('modalStageBadge').textContent = isBoss ? 'DESAFIO BOSS 👑' : `LIÇÃO ${stageNumber}`;
             document.getElementById('modalStageTitle').textContent = lesson.title;
-            document.getElementById('modalStageDesc').textContent = isBoss 
-                ? 'Questões de alto nível com bônus máximo de XP!' 
-                : 'Responda aos exercícios para conquistar estrelas e subir de nível.';
+            document.getElementById('modalStageDesc').textContent = 'Cada lição possui 4 etapas de maestria. Avance etapa por etapa para dominar o conteúdo!';
+
+            const maxStage = lesson.max_stage || 1;
+            let selectedStage = lesson.stage || 1;
+
+            // Renderizar Stepper das 4 Etapas
+            const stepper = document.getElementById('modalStageStepper');
+            stepper.innerHTML = '';
+
+            for (let i = 1; i <= 4; i++) {
+                const isUnlocked = (i <= maxStage);
+                const isCurrent = (i === selectedStage);
+                const stepBtn = document.createElement('button');
+                stepBtn.type = 'button';
+                stepBtn.className = `py-2 rounded-xl text-xs font-outfit font-black transition-all flex flex-col items-center justify-center gap-0.5 ${
+                    isCurrent 
+                        ? 'bg-indigo-600 text-white shadow-sm' 
+                        : (isUnlocked ? 'bg-white text-indigo-700 hover:bg-indigo-50 border border-slate-200' : 'bg-slate-200 text-slate-400 opacity-60 cursor-not-allowed')
+                }`;
+                stepBtn.innerHTML = `
+                    <span class="text-[9px] uppercase tracking-wider">${i === 4 ? 'BOSS' : 'ETAPA'}</span>
+                    <span class="text-sm leading-none">${i}</span>
+                `;
+
+                if (isUnlocked) {
+                    stepBtn.onclick = () => {
+                        selectedStage = i;
+                        updateModalActionButtons(lesson, selectedStage);
+                    };
+                }
+                stepper.appendChild(stepBtn);
+            }
+
+            function updateModalActionButtons(les, curStage) {
+                // Atualizar visual do stepper
+                Array.from(stepper.children).forEach((btn, idx) => {
+                    const stepNum = idx + 1;
+                    const isUnlocked = (stepNum <= maxStage);
+                    const isCur = (stepNum === curStage);
+                    btn.className = `py-2 rounded-xl text-xs font-outfit font-black transition-all flex flex-col items-center justify-center gap-0.5 ${
+                        isCur 
+                            ? 'bg-indigo-600 text-white shadow-sm' 
+                            : (isUnlocked ? 'bg-white text-indigo-700 hover:bg-indigo-50 border border-slate-200' : 'bg-slate-200 text-slate-400 opacity-60 cursor-not-allowed')
+                    }`;
+                });
+
+                const btnPlay = document.getElementById('btnPlayStage');
+                const xpAmount = (curStage === 4) ? 50 : 35;
+                btnPlay.innerHTML = `
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${curStage === 4 ? 'DESAFIO BOSS ETAPA 4 (+50 XP)' : `PRATICAR ETAPA ${curStage} DE 4 (+${xpAmount} XP)`}</span>
+                `;
+                btnPlay.onclick = () => {
+                    if (typeof sounds !== 'undefined') sounds.playClick();
+                    window.location.href = `lesson.php?id=${les.id}&stage=${curStage}`;
+                };
+            }
+
+            updateModalActionButtons(lesson, selectedStage);
 
             const starsContainer = document.getElementById('modalStageStars');
             let starsCount = 0;
@@ -524,12 +619,6 @@ require_once __DIR__ . '/includes/header.php';
                 starsContainer.innerHTML += (s <= starsCount) ? SVG_ICONS.STAR_GOLD : SVG_ICONS.STAR_GRAY;
             }
 
-            const btnPlay = document.getElementById('btnPlayStage');
-            btnPlay.onclick = () => {
-                if (typeof sounds !== 'undefined') sounds.playClick();
-                window.location.href = `lesson.php?id=${lesson.id}`;
-            };
-
             // Configurar Botão de Teoria & Conceitos da Fase
             const btnTheory = document.getElementById('btnTheoryStage');
             btnTheory.onclick = () => {
@@ -537,7 +626,7 @@ require_once __DIR__ . '/includes/header.php';
                 openTheoryModal(lesson);
             };
 
-            // Configurar Botão do Toda Matéria (Abre diretamente o artigo no site oficial)
+            // Configurar Botão do Toda Matéria
             const btnVideo = document.getElementById('btnVideoStage');
             btnVideo.onclick = () => {
                 if (typeof sounds !== 'undefined') sounds.playClick();
@@ -546,21 +635,42 @@ require_once __DIR__ . '/includes/header.php';
             };
 
             const btnBoss = document.getElementById('btnBossStage');
-            if (lesson.is_completed || isBoss) {
-                btnBoss.style.display = 'flex';
-                btnBoss.onclick = () => {
+            btnBoss.style.display = 'none'; // Agora o Boss é a Etapa 4 integrada!
+
+            // Configurar Banner de Simulado de Avanço Cumulativo
+            const skipAheadBox = document.getElementById('modalSkipAheadBox');
+            const skipAheadTopics = document.getElementById('modalSkipAheadTopics');
+            const btnDoSkipAhead = document.getElementById('btnDoSkipAhead');
+
+            if (lesson.can_skip_ahead && Array.isArray(lesson.cumulative_topics) && lesson.cumulative_topics.length > 0) {
+                skipAheadBox.classList.remove('hidden');
+                skipAheadTopics.innerHTML = '';
+                
+                lesson.cumulative_topics.forEach(top => {
+                    const pill = document.createElement('span');
+                    pill.className = 'inline-block text-[10px] font-bold px-2 py-0.5 rounded-lg bg-white/90 text-amber-950 border border-amber-200 shadow-2xs';
+                    pill.textContent = top.title;
+                    skipAheadTopics.appendChild(pill);
+                });
+
+                const extraXp = 100 + (lesson.cumulative_topics.length * 25);
+                btnDoSkipAhead.innerHTML = `
+                    <i class="bi bi-lightning-charge-fill text-slate-950 text-sm"></i>
+                    <span>FAZER SIMULADO CUMULATIVO (+${extraXp} XP)</span>
+                `;
+                btnDoSkipAhead.onclick = () => {
                     if (typeof sounds !== 'undefined') sounds.playClick();
-                    window.location.href = `lesson.php?id=${lesson.id}&mode=boss`;
+                    window.location.href = `lesson.php?id=${lesson.id}&mode=skip_ahead&skip_theory=1`;
                 };
             } else {
-                btnBoss.style.display = 'none';
+                skipAheadBox.classList.add('hidden');
             }
 
             const modal = document.getElementById('stageModal');
             const card = document.getElementById('stageModalCard');
             modal.classList.remove('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-95');
-            card.classList.add('scale-100');
+            card.classList.remove('scale-95', 'translate-y-full');
+            card.classList.add('scale-100', 'translate-y-0');
         }
 
         function closeStageModal() {
@@ -568,8 +678,8 @@ require_once __DIR__ . '/includes/header.php';
             const modal = document.getElementById('stageModal');
             const card = document.getElementById('stageModalCard');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            card.classList.remove('scale-100');
-            card.classList.add('scale-95');
+            card.classList.remove('scale-100', 'translate-y-0');
+            card.classList.add('scale-95', 'translate-y-full');
         }
 
         // CONTROLADORES DO MODAL DE TEORIA & CONCEITOS

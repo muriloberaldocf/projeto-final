@@ -4,25 +4,26 @@
  * Suporte a Gemini 2.5 Pro (melhor modelo para raciocínio profundo e correção ENEM)
  */
 
+require_once __DIR__ . '/db.php';
+
 if (!function_exists('getGeminiConfig')) {
     function getGeminiConfig() {
-        // 1. Tentar ler do .env ou ambiente
-        $apiKey = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? '');
-        $model = getenv('GEMINI_MODEL') ?: ($_ENV['GEMINI_MODEL'] ?? 'gemini-3.5-flash');
-
-        // 2. Tentar chave salva na sessão ou chave padrão fallback
-        if (empty($apiKey) && !empty($_SESSION['custom_gemini_api_key'])) {
+        // 1. Tentar ler da sessão (caso o usuário tenha inserido no modal)
+        $apiKey = '';
+        if (!empty($_SESSION['custom_gemini_api_key'])) {
             $apiKey = trim($_SESSION['custom_gemini_api_key']);
         }
 
-        // Chave padrão do projeto descompactado (se nenhuma outra for fornecida)
+        // 2. Tentar ler do .env ou ambiente
         if (empty($apiKey)) {
-            $apiKey = 'AIzaSyCKgW63-lLo5Ihx11a4tgRZduzxm5aMJdg';
+            $apiKey = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? '');
         }
+
+        $model = getenv('GEMINI_MODEL') ?: ($_ENV['GEMINI_MODEL'] ?? 'gemini-3.5-flash-lite');
 
         return [
             'api_key' => trim($apiKey),
-            'model'   => trim($model ?: 'gemini-3.5-flash'),
+            'model'   => trim($model ?: 'gemini-3.5-flash-lite'),
         ];
     }
 }
@@ -65,17 +66,23 @@ if (!function_exists('callGeminiForEssay')) {
                 ]
             ],
             'generationConfig' => [
-                'temperature'       => 0.4, // Menor temperatura para avaliação analítica rigorosa e consistente
+                'temperature'       => 0.2, // Baixa temperatura para avaliação analítica, criteriosa e rigorosa
                 'responseMimeType'  => 'application/json'
             ]
         ];
 
-        // Tentar primeiro com o modelo principal (ex: gemini-3.5-flash)
+        // Tentar primeiro com o modelo principal configurado
         $result = executeGeminiCurl($model, $apiKey, $requestBody);
 
-        // Se falhar por sobrecarga transitória (503 / 500) ou modelo indisponível, tentar com fallback gemini-2.5-flash
-        if (!$result['success'] && in_array($result['http_code'] ?? 0, [500, 503, 404]) && $model !== 'gemini-2.5-flash') {
-            $result = executeGeminiCurl('gemini-2.5-flash', $apiKey, $requestBody);
+        // Se falhar por sobrecarga transitória (503 / 500) ou modelo indisponível, tentar automaticamente modelos alternativos
+        if (!$result['success'] && in_array($result['http_code'] ?? 0, [500, 503, 404])) {
+            $fallbackModels = ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest'];
+            foreach ($fallbackModels as $fb) {
+                if ($fb !== $model) {
+                    $result = executeGeminiCurl($fb, $apiKey, $requestBody);
+                    if ($result['success']) break;
+                }
+            }
         }
 
         return $result;
@@ -140,6 +147,24 @@ if (!function_exists('executeGeminiCurl')) {
             ];
         }
 
+        if ($httpCode === 403) {
+            $errMsg = $data['error']['message'] ?? 'Acesso negado pela API do Google.';
+            if (stripos($errMsg, 'leaked') !== false || stripos($errMsg, 'API key') !== false) {
+                return [
+                    'success' => false,
+                    'http_code' => 403,
+                    'error_type' => 'invalid_or_leaked_key',
+                    'message' => 'A chave de API do Gemini configurada foi bloqueada pelo Google (reportada como vazada/inválida). Clique no botão "IA: ..." no topo da página ou configure uma nova chave gratuita em aistudio.google.com/app/apikey.'
+                ];
+            }
+            return [
+                'success' => false,
+                'http_code' => 403,
+                'error_type' => 'forbidden',
+                'message' => 'Acesso negado pela API do Gemini (Erro 403): ' . $errMsg
+            ];
+        }
+
         if ($httpCode >= 400) {
             $errMsg = $data['error']['message'] ?? "Código HTTP {$httpCode}";
             return [
@@ -150,8 +175,16 @@ if (!function_exists('executeGeminiCurl')) {
             ];
         }
 
-        // Extrair texto da resposta
-        $candidateText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        // Extrair texto da resposta iterando pelas partes (para lidar com partes de pensamento/texto)
+        $candidateText = '';
+        if (!empty($data['candidates'][0]['content']['parts'])) {
+            foreach ($data['candidates'][0]['content']['parts'] as $part) {
+                if (!empty($part['text'])) {
+                    $candidateText .= $part['text'];
+                }
+            }
+        }
+
         if (empty($candidateText)) {
             return [
                 'success' => false,
@@ -162,9 +195,33 @@ if (!function_exists('executeGeminiCurl')) {
 
         // Limpar possíveis blocos markdown ```json ... ```
         $cleanJson = trim(preg_replace('/^```(?:json)?\s*|\s*```$/i', '', trim($candidateText)));
+        
+        // Se ainda contiver texto antes do primeiro { ou depois do último }, extrair o objeto JSON
+        if (substr($cleanJson, 0, 1) !== '{') {
+            $firstBrace = strpos($cleanJson, '{');
+            $lastBrace = strrpos($cleanJson, '}');
+            if ($firstBrace !== false && $lastBrace !== false && $lastBrace > $firstBrace) {
+                $cleanJson = substr($cleanJson, $firstBrace, $lastBrace - $firstBrace + 1);
+            }
+        }
+
         $parsedJson = json_decode($cleanJson, true);
 
+        // Se falhou por trailing commas geradas pela IA (vírgulas antes de } ou ]), sanitizar e tentar novamente
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsedJson)) {
+            $sanitizedJson = preg_replace('/,\s*([}\]])/m', '$1', $cleanJson);
+            $parsedJson = json_decode($sanitizedJson, true);
+        }
+
+        // Se ainda falhar, tentar remover possíveis caracteres de controle invisíveis
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsedJson)) {
+            $sanitizedJson = preg_replace('/[\x00-\x1F\x7F]/u', ' ', $cleanJson);
+            $sanitizedJson = preg_replace('/,\s*([}\]])/m', '$1', $sanitizedJson);
+            $parsedJson = json_decode($sanitizedJson, true);
+        }
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsedJson)) {
+            @file_put_contents(__DIR__ . '/../storage_gemini_error.log', date('Y-m-d H:i:s') . "\nJSON ERROR: " . json_last_error_msg() . "\nRAW CLEAN TEXT:\n" . $cleanJson . "\n\n", FILE_APPEND);
             return [
                 'success' => false,
                 'http_code' => $httpCode,

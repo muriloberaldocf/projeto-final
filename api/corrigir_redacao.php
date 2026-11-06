@@ -5,24 +5,32 @@
  * OCR de redação manuscrita / foto, Detector de IA e atribuição de XP gamificado.
  */
 header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', '0');
+ob_start();
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/gemini.php';
+
+function sendJsonResponse(array $payload) {
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 // 1. Autenticação
 $userId = $_SESSION['user_id'] ?? 0;
 if (!$userId) {
-    echo json_encode(['success' => false, 'message' => 'Sessão expirada. Faça login novamente para corrigir.']);
-    exit;
+    sendJsonResponse(['success' => false, 'message' => 'Sessão expirada. Faça login novamente para corrigir.']);
 }
 
 // 2. Proteção CSRF
 $csrfToken = $_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
 if (!validateCsrfToken($csrfToken)) {
-    echo json_encode(['success' => false, 'message' => 'Token de segurança inválido. Recarregue a página e tente novamente.']);
-    exit;
+    sendJsonResponse(['success' => false, 'message' => 'Token de segurança inválido. Recarregue a página e tente novamente.']);
 }
 
-// Permitir tempo para processamento do Gemini 2.5 Pro e OCR
+// Permitir tempo para processamento do Gemini e OCR
 set_time_limit(180);
 
 // 3. Obter dados enviados
@@ -56,6 +64,11 @@ if ($temaId) {
     $tituloTema = $temaCustom;
 }
 
+$blocoMotivadores = !empty($textosMotivadores) ? "\n\nTEXTOS MOTIVADORES:\n{$textosMotivadores}" : '';
+$blocoTextoAluno = ($tipoEnvio === 'texto' && !empty($textoDigitado))
+    ? "\n----------------------------------------------------------------------\nTEXTO DA REDAÇÃO DO ALUNO PARA CORREÇÃO:\n\"\"\"\n{$textoDigitado}\n\"\"\"\n"
+    : "\n----------------------------------------------------------------------\n(A redação do aluno foi enviada em arquivo/imagem anexa. Realize a leitura óptica OCR completa.)\n";
+
 // 5. Validar conteúdo e arquivos
 $arquivoSalvoRelativo = null;
 $inlineFileData = null;
@@ -67,22 +80,19 @@ if ($tipoEnvio === 'arquivo' && isset($_FILES['arquivo_redacao']) && $_FILES['ar
     
     // Limite de 15MB para fotos e scans
     if ($file['size'] > 15 * 1024 * 1024) {
-        echo json_encode(['success' => false, 'message' => 'O arquivo enviado é muito pesado (máximo 15MB).']);
-        exit;
+        sendJsonResponse(['success' => false, 'message' => 'O arquivo enviado é muito pesado (máximo 15MB).']);
     }
 
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
     if (!in_array($ext, $allowedExts)) {
-        echo json_encode(['success' => false, 'message' => 'Formato não suportado. Envie uma foto JPG, PNG, WEBP ou arquivo PDF da sua redação.']);
-        exit;
+        sendJsonResponse(['success' => false, 'message' => 'Formato não suportado. Envie uma foto JPG, PNG, WEBP ou arquivo PDF da sua redação.']);
     }
 
     $mime = mime_content_type($file['tmp_name']);
     $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
     if (!in_array($mime, $allowedMimes)) {
-        echo json_encode(['success' => false, 'message' => 'Tipo de arquivo não permitido por segurança.']);
-        exit;
+        sendJsonResponse(['success' => false, 'message' => 'Tipo de arquivo não permitido por segurança.']);
     }
 
     // Salvar arquivo físico
@@ -95,8 +105,7 @@ if ($tipoEnvio === 'arquivo' && isset($_FILES['arquivo_redacao']) && $_FILES['ar
     $arquivoSalvoRelativo = 'uploads/redacoes/' . $filename;
 
     if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
-        echo json_encode(['success' => false, 'message' => 'Não foi possível salvar o arquivo da redação no servidor.']);
-        exit;
+        sendJsonResponse(['success' => false, 'message' => 'Não foi possível salvar o arquivo da redação no servidor.']);
     }
 
     $inlineFileData = [
@@ -108,16 +117,14 @@ if ($tipoEnvio === 'arquivo' && isset($_FILES['arquivo_redacao']) && $_FILES['ar
 
 } elseif (!empty($textoDigitado)) {
     if (mb_strlen($textoDigitado) < 150) {
-        echo json_encode(['success' => false, 'message' => 'Sua redação está muito curta (mínimo de 150 caracteres para uma avaliação pedagógica válida).']);
-        exit;
+        sendJsonResponse(['success' => false, 'message' => 'Sua redação está muito curta (mínimo de 150 caracteres para uma avaliação pedagógica válida).']);
     }
     $temConteudo = true;
     $textoOriginalBanco = $textoDigitado;
 }
 
 if (!$temConteudo) {
-    echo json_encode(['success' => false, 'message' => 'Você precisa digitar o texto da redação ou anexar uma foto da sua folha de resposta.']);
-    exit;
+    sendJsonResponse(['success' => false, 'message' => 'Você precisa digitar o texto da redação ou anexar uma foto da sua folha de resposta.']);
 }
 
 // 6. Construir Diretrizes Específicas por Banca (ENEM, UNESP, FUVEST, UNICAMP, UERJ)
@@ -197,11 +204,18 @@ if ($banca === 'UNESP') {
         . "- C5: Proposta de intervenção completa com os 5 elementos (Agente, Ação, Meio/Modo, Efeito e Detalhamento).\n";
 }
 
+$blocoBanca .= "\nREGRA MANDATÓRIA DE PONTUAÇÃO (PADRÃO ENEM/VESTIBULARES):\n"
+    . "- Cada uma das 5 competências (C1 a C5) DEVE ser pontuada rigorosamente nos níveis oficiais: 0, 40, 80, 120, 160 ou 200 pontos.\n"
+    . "- Não invente notas arredondadas em 200 para todas as competências. Analise os desvios reais do texto.\n"
+    . "- A nota final DEVE ser exatamente a soma das 5 notas individuais (ex: 160 + 160 + 120 + 160 + 120 = 720 pontos; ou 160 + 120 + 120 + 160 + 120 = 680; ou 160 + 200 + 160 + 160 + 80 = 760).\n"
+    . "- Seja criterioso, cirúrgico e aponte os desvios específicos para diferenciar textos médios de textos excelentes.\n";
+
 $prompt = <<<PROMPT
 Você é o Corretor de Redações Oficial de Elite da plataforma HipoGabarito, especialista absoluto nas bancas de vestibulares do Brasil (ENEM, FUVEST, UNESP, UNICAMP e UERJ).
 
 SUA MISSÃO:
 Avaliar minuciosamente a redação do estudante com extremo rigor pedagógico, clareza, empatia e assertividade, fornecendo notas e justificativas específicas para a banca: {$banca}.
+ATENÇÃO AO RIGOR DA NOTA: Não seja complacente e não infle notas. Avalie cada competência com precisão cirúrgica de acordo com os níveis oficiais (0, 40, 80, 120, 160, 200), produzindo totais autênticos (como 560, 640, 680, 720, 760, 840, etc.). Aponte no texto exatamente onde o aluno perdeu pontos.
 
 📝 BANCA: {$banca}
 📝 PROPOSTA / TEMA: "{$tituloTema}"
@@ -209,7 +223,7 @@ Avaliar minuciosamente a redação do estudante com extremo rigor pedagógico, c
 
 {$orientacoesBanca}
 {$instrucaoExtra}
-
+{$blocoTextoAluno}
 ----------------------------------------------------------------------
 {$blocoBanca}
 
@@ -275,13 +289,12 @@ if (!$geminiResponse['success']) {
     $errMessage = $geminiResponse['message'] ?? 'Não foi possível concluir a correção com a IA.';
     $errType = $geminiResponse['error_type'] ?? 'unknown';
     
-    echo json_encode([
+    sendJsonResponse([
         'success'    => false,
         'error_type' => $errType,
         'http_code'  => $geminiResponse['http_code'] ?? 0,
         'message'    => $errMessage
     ]);
-    exit;
 }
 
 $relatorio = $geminiResponse['data'];
@@ -385,7 +398,7 @@ try {
 
     $pdo->commit();
 
-    echo json_encode([
+    sendJsonResponse([
         'success'      => true,
         'redacao_id'   => $redacaoId,
         'nota_final'   => $notaFinal,
@@ -398,7 +411,7 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    echo json_encode([
+    sendJsonResponse([
         'success' => false,
         'message' => 'Erro ao registrar os dados da correção no banco de dados: ' . $e->getMessage()
     ]);

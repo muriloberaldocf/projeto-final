@@ -1,6 +1,6 @@
 <?php
 /**
- * VISUALIZADOR & DOWNLOAD DE PROPOSTA OFICIAL — HIPOGABARITO / VESTILINGO
+ * VISUALIZADOR & DOWNLOAD DE PROPOSTA OFICIAL — HIPOGABARITO
  * - Se for PDF binário real (%PDF), faz o stream ou download nativo com Content-Type: application/pdf.
  * - Se for imagem de proposta (PNG/JPG da Redigir), exibe em alta definição no leitor ou baixa diretamente.
  * - Se for tema de vestibular/ENEM sem anexo gráfico, renderiza a Folha Oficial A4 diagramada no padrão oficial.
@@ -304,7 +304,7 @@ if (!empty($blocoAtual['linhas']) || !empty($blocoAtual['imagem'])) {
             </div>
 
             <div class="w-full flex items-center justify-between pt-3 mt-4 border-t border-slate-200 text-[10px] text-slate-500 font-semibold">
-                <span>Plataforma Oficial • Vestilingo</span>
+                <span>Plataforma Oficial • HipoGabarito</span>
                 <span>Documento Original Autenticado • Eixo: <?= htmlspecialchars($tema['eixo_tematico'] ?? 'Geral') ?></span>
             </div>
         </div>
@@ -328,7 +328,7 @@ if (!empty($blocoAtual['linhas']) || !empty($blocoAtual['imagem'])) {
                         </div>
                         <div>
                             <span class="block text-[11px] font-bold tracking-widest uppercase text-slate-800">
-                                <?= $isPossivel ? 'SIMULAÇÃO PEDAGÓGICA • VESTILINGO' : 'MINISTÉRIO DA EDUCAÇÃO • EXAME NACIONAL' ?>
+                                <?= $isPossivel ? 'SIMULAÇÃO PEDAGÓGICA • HIPOGABARITO' : 'MINISTÉRIO DA EDUCAÇÃO • EXAME NACIONAL' ?>
                             </span>
                             <h1 class="text-base font-black tracking-wider uppercase font-outfit m-0 leading-tight">
                                 <?= htmlspecialchars($bancaExibicao) ?> <?= htmlspecialchars($ano) ?> — <?= $rotuloProva ?>

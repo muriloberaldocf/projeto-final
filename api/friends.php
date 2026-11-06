@@ -241,4 +241,185 @@ if ($action === 'list_friends') {
     }
 }
 
+// 7. Sugestões de Estudantes para Adicionar
+if ($action === 'suggestions') {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT u.id, u.name, u.xp, u.level, u.streak_days, u.avatar, u.avatar_icon, u.avatar_frame
+            FROM users u
+            WHERE u.id != ?
+              AND u.id NOT IN (
+                  SELECT friend_id FROM user_friends WHERE user_id = ?
+                  UNION
+                  SELECT user_id FROM user_friends WHERE friend_id = ?
+              )
+            ORDER BY u.xp DESC, u.level DESC
+            LIMIT 6
+        ");
+        $stmt->execute([$userId, $userId, $userId]);
+        $suggestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode(['success' => true, 'suggestions' => $suggestions]);
+        exit;
+    } catch (Exception $e) {
+        error_log("Erro ao buscar sugestões: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao carregar sugestões.']);
+        exit;
+    }
+}
+
+// 8. Feed do Mural de Conquistas (Usuário + Amigos Aceitos)
+if ($action === 'mural_feed') {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                e.id as event_id,
+                e.user_id,
+                u.name as user_name,
+                u.avatar,
+                u.avatar_icon,
+                u.avatar_frame,
+                u.level as user_level,
+                e.event_type,
+                e.title,
+                e.description,
+                e.icon,
+                e.theme_color,
+                e.created_at,
+                (SELECT COUNT(*) FROM friend_mural_kudos k WHERE k.event_id = e.id) as kudos_count,
+                (SELECT COUNT(*) FROM friend_mural_kudos k WHERE k.event_id = e.id AND k.from_user_id = ?) as user_has_sent_boa
+            FROM friend_mural_events e
+            JOIN users u ON u.id = e.user_id
+            WHERE e.user_id = ?
+               OR e.user_id IN (
+                   SELECT CASE WHEN user_id = ? THEN friend_id ELSE user_id END
+                   FROM user_friends
+                   WHERE (user_id = ? OR friend_id = ?) AND status = 'accepted'
+               )
+            ORDER BY e.created_at DESC
+            LIMIT 30
+        ");
+        $stmt->execute([$userId, $userId, $userId, $userId, $userId]);
+        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Formatar tempo relativo amigável
+        foreach ($events as &$ev) {
+            $ts = strtotime($ev['created_at']);
+            $diff = time() - $ts;
+            if ($diff < 60) {
+                $ev['time_ago'] = 'Agora mesmo';
+            } else if ($diff < 3600) {
+                $ev['time_ago'] = 'Há ' . floor($diff / 60) . ' min';
+            } else if ($diff < 86400) {
+                $ev['time_ago'] = 'Há ' . floor($diff / 3600) . 'h';
+            } else {
+                $ev['time_ago'] = date('d/m', $ts);
+            }
+            $ev['is_me'] = ((int)$ev['user_id'] === $userId);
+            $ev['user_has_sent_boa'] = ((int)$ev['user_has_sent_boa'] > 0);
+        }
+        unset($ev);
+
+        echo json_encode(['success' => true, 'events' => $events]);
+        exit;
+    } catch (Exception $e) {
+        error_log("Erro ao carregar feed do mural: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao carregar mural de conquistas.']);
+        exit;
+    }
+}
+
+// 9. Enviar ou Alternar "Boa! 👊" em uma Conquista
+if ($action === 'send_boa') {
+    $eventId = filter_input(INPUT_POST, 'event_id', FILTER_VALIDATE_INT);
+    if (!$eventId && isset($_POST['event_id'])) {
+        $eventId = (int)$_POST['event_id'];
+    }
+    if (!$eventId) {
+        echo json_encode(['success' => false, 'message' => 'Evento inválido.']);
+        exit;
+    }
+
+    try {
+        // Verificar se já deu boa
+        $stmtCheck = $pdo->prepare("SELECT id FROM friend_mural_kudos WHERE event_id = ? AND from_user_id = ?");
+        $stmtCheck->execute([$eventId, $userId]);
+        $existing = $stmtCheck->fetch();
+
+        if ($existing) {
+            // Remover Boa
+            $del = $pdo->prepare("DELETE FROM friend_mural_kudos WHERE id = ?");
+            $del->execute([$existing['id']]);
+            $sent = false;
+        } else {
+            // Adicionar Boa
+            $ins = $pdo->prepare("INSERT INTO friend_mural_kudos (event_id, from_user_id, created_at) VALUES (?, ?, NOW())");
+            $ins->execute([$eventId, $userId]);
+            $sent = true;
+        }
+
+        // Contar novo total
+        $cntStmt = $pdo->prepare("SELECT COUNT(*) FROM friend_mural_kudos WHERE event_id = ?");
+        $cntStmt->execute([$eventId]);
+        $newCount = (int)$cntStmt->fetchColumn();
+
+        echo json_encode([
+            'success' => true,
+            'sent' => $sent,
+            'kudos_count' => $newCount,
+            'message' => $sent ? 'Você mandou um Boa! 👊' : 'Boa desfeito.'
+        ]);
+        exit;
+    } catch (Exception $e) {
+        error_log("Erro ao processar Boa: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Erro ao processar reação.']);
+        exit;
+    }
+}
+
+// 10. Perfil e Conquistas do Amigo (Mini-Perfil Modal)
+if ($action === 'friend_profile') {
+    $friendId = filter_input(INPUT_GET, 'friend_id', FILTER_VALIDATE_INT);
+    if (!$friendId && isset($_GET['friend_id'])) {
+        $friendId = (int)$_GET['friend_id'];
+    }
+    if (!$friendId) {
+        echo json_encode(['success' => false, 'message' => 'Estudante inválido.']);
+        exit;
+    }
+
+    try {
+        $stmt = $pdo->prepare("SELECT id, name, xp, level, streak_days, last_active_date, avatar, avatar_icon, avatar_frame FROM users WHERE id = ?");
+        $stmt->execute([$friendId]);
+        $friend = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$friend) {
+            echo json_encode(['success' => false, 'message' => 'Estudante não encontrado.']);
+            exit;
+        }
+
+        // Buscar Conquistas deste amigo
+        $stmtAch = $pdo->prepare("
+            SELECT a.title, a.description, a.icon, a.xp_bonus, ua.unlocked_at
+            FROM user_achievements ua
+            JOIN achievements a ON a.id = ua.achievement_id
+            WHERE ua.user_id = ?
+            ORDER BY ua.unlocked_at DESC
+        ");
+        $stmtAch->execute([$friendId]);
+        $achievements = $stmtAch->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            'success' => true,
+            'friend' => $friend,
+            'achievements' => $achievements,
+            'total_achievements' => count($achievements)
+        ]);
+        exit;
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Erro ao carregar perfil do colega.']);
+        exit;
+    }
+}
+
 echo json_encode(['success' => false, 'message' => 'Ação não reconhecida.']);

@@ -72,24 +72,24 @@ require_once __DIR__ . '/includes/header.php';
                     </a>
                 </div>
 
-                <!-- TABS DE NAVEGAÇÃO -->
-                <div class="flex flex-wrap items-center gap-2 p-1.5 bg-slate-200/80 rounded-2xl w-fit">
-                    <button type="button" onclick="switchGuideTab('database', this)" id="tabBtnDatabase" class="px-4 py-2 rounded-xl font-outfit font-black text-xs bg-white text-indigo-900 shadow-sm transition-all flex items-center gap-2">
+                <!-- TABS DE NAVEGAÇÃO COM ROLAGEM HORIZONTAL -->
+                <div class="flex items-center gap-1.5 p-1.5 bg-slate-200/80 rounded-2xl w-full max-w-full overflow-x-auto scrollbar-none whitespace-nowrap">
+                    <button type="button" onclick="switchGuideTab('database', this)" id="tabBtnDatabase" class="px-3.5 py-2 rounded-xl font-outfit font-black text-xs bg-white text-indigo-900 shadow-sm transition-all flex items-center gap-1.5 shrink-0">
                         <i class="bi bi-table text-indigo-600"></i>
-                        <span>Notas de Corte SiSU (+1.350 Cursos)</span>
+                        <span>Notas de Corte SiSU</span>
                     </button>
-                    <a href="provas_oficiais.php" class="px-4 py-2 rounded-xl font-outfit font-black text-xs bg-rose-50 hover:bg-rose-100 text-rose-800 transition-all flex items-center gap-2 border border-rose-200 shadow-2xs">
+                    <a href="provas_oficiais.php" class="px-3.5 py-2 rounded-xl font-outfit font-black text-xs bg-rose-50 hover:bg-rose-100 text-rose-800 transition-all flex items-center gap-1.5 border border-rose-200 shadow-2xs shrink-0">
                         <i class="bi bi-file-earmark-pdf-fill text-rose-600"></i>
-                        <span>Baixar Provas & Gabaritos (USP, UNESP, etc.)</span>
+                        <span>Provas & Gabaritos</span>
                         <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-rose-200 text-rose-900">PDFs</span>
                     </a>
-                    <button type="button" onclick="switchGuideTab('vestibulares', this)" id="tabBtnVestibulares" class="px-4 py-2 rounded-xl font-outfit font-black text-xs text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2">
+                    <button type="button" onclick="switchGuideTab('vestibulares', this)" id="tabBtnVestibulares" class="px-3.5 py-2 rounded-xl font-outfit font-black text-xs text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5 shrink-0">
                         <i class="bi bi-journal-bookmark-fill text-slate-400"></i>
                         <span>Manual das Bancas</span>
                     </button>
-                    <button type="button" onclick="switchGuideTab('google', this)" id="tabBtnGoogle" class="px-4 py-2 rounded-xl font-outfit font-black text-xs text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2">
+                    <button type="button" onclick="switchGuideTab('google', this)" id="tabBtnGoogle" class="px-3.5 py-2 rounded-xl font-outfit font-black text-xs text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5 shrink-0">
                         <i class="bi bi-google text-slate-400"></i>
-                        <span>Pesquisa Externa & Grade Curricular</span>
+                        <span>Grade Curricular</span>
                     </button>
                 </div>
 
@@ -195,8 +195,8 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                     </div>
 
-                    <!-- NAVEGADOR DE BANCAS (SUB-TABS) -->
-                    <div class="flex flex-wrap items-center gap-2 no-print" id="examNavButtons">
+                    <!-- NAVEGADOR DE BANCAS (SUB-TABS COM SCROLL HORIZONTAL NO MOBILE) -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none no-print -mx-2 px-2 sm:mx-0 sm:px-0 sm:flex-wrap" id="examNavButtons">
                         <button type="button" onclick="showExamReport('fuvest', this)" class="exam-btn active px-4 py-2.5 rounded-2xl font-outfit font-black text-xs bg-indigo-600 text-white shadow-[0_3px_0_0_#312e81] flex items-center gap-2 transition-all">
                             <span>🏛️ FUVEST (USP)</span>
                         </button>
@@ -936,8 +936,8 @@ require_once __DIR__ . '/includes/header.php';
             const btnVestibulares = document.getElementById('tabBtnVestibulares');
             const btnGoogle = document.getElementById('tabBtnGoogle');
 
-            const defaultBtnClass = 'px-4 py-2 rounded-xl font-outfit font-black text-xs text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2';
-            const activeBtnClass = 'px-4 py-2 rounded-xl font-outfit font-black text-xs bg-white text-indigo-900 shadow-sm transition-all flex items-center gap-2';
+            const defaultBtnClass = 'px-3.5 py-2 rounded-xl font-outfit font-black text-xs text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5 shrink-0';
+            const activeBtnClass = 'px-3.5 py-2 rounded-xl font-outfit font-black text-xs bg-white text-indigo-900 shadow-sm transition-all flex items-center gap-1.5 shrink-0';
 
             if (secDb) secDb.classList.add('hidden');
             if (secVestibulares) secVestibulares.classList.add('hidden');

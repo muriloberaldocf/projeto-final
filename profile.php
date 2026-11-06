@@ -100,7 +100,7 @@ require_once __DIR__ . '/includes/header.php';
                         <p class="text-xs text-slate-500 font-medium mb-0">Acumule XP na sua trilha para desbloquear e equipar títulos exclusivos que aparecem logo abaixo do seu nome!</p>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
                         <?php foreach ($avatars as $av): ?>
                             <?php 
                                 $isUnlocked = ($userXp >= $av['xp']);
@@ -140,7 +140,7 @@ require_once __DIR__ . '/includes/header.php';
                         <p class="text-xs text-slate-500 font-medium mb-0">Desbloqueie molduras incríveis para sua foto de perfil conforme ganha XP! Atingir <strong>1000 XP</strong> libera a <strong>Arco-Íris Animada</strong> e <strong>1500 XP</strong> libera a <strong>Dourada Suprema</strong>!</p>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
                         <?php foreach ($frames as $fr): ?>
                             <?php 
                                 $isUnlockedFrame = ($userXp >= $fr['xp']);
@@ -171,17 +171,40 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- CONQUISTAS -->
                 <div class="bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-[0_3px_0_0_#e2e8f0]">
-                    <h3 class="font-outfit font-extrabold text-lg text-slate-900 mb-3">Conquistas & Selos</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <h3 class="font-outfit font-extrabold text-lg text-slate-900 mb-0.5">Conquistas & Selos</h3>
+                            <p class="text-xs text-slate-500 font-medium mb-0">Desbloqueie conquistas estudando e compartilhe no mural dos seus amigos!</p>
+                        </div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold bg-amber-50 text-amber-700 border border-amber-200">
+                            <i class="bi bi-trophy-fill text-amber-500"></i> <?= count($myAchIds) ?> / <?= count($achievements) ?>
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
                         <?php foreach ($achievements as $ach): ?>
-                            <?php $unlocked = in_array($ach['id'], $myAchIds); ?>
-                            <div class="p-3 rounded-2xl border-2 flex items-center gap-3 <?= $unlocked ? 'border-amber-300 bg-amber-50/60' : 'border-slate-200 bg-slate-50 opacity-50' ?>">
-                                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xl shrink-0 <?= $unlocked ? 'text-amber-500' : 'text-slate-400' ?>">
-                                    <i class="bi <?= $unlocked ? 'bi-award-fill' : 'bi-lock-fill' ?>"></i>
+                            <?php 
+                                $unlocked = in_array($ach['id'], $myAchIds); 
+                                $iconClass = !empty($ach['icon']) ? $ach['icon'] : 'bi-award-fill';
+                            ?>
+                            <div class="p-3.5 rounded-2xl border-2 flex items-start gap-3 transition-all <?= $unlocked ? 'border-amber-300 bg-amber-50/50 shadow-sm' : 'border-slate-200 bg-slate-50/70 opacity-60' ?>">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 <?= $unlocked ? 'bg-amber-100 text-amber-600 shadow-[0_2px_0_0_#fde68a]' : 'bg-slate-200 text-slate-400' ?>">
+                                    <i class="bi <?= $unlocked ? $iconClass : 'bi-lock-fill' ?>"></i>
                                 </div>
-                                <div>
-                                    <h4 class="font-outfit font-bold text-xs text-slate-900 mb-0.5"><?= htmlspecialchars($ach['title']) ?></h4>
-                                    <p class="text-[11px] text-slate-500 font-medium mb-0"><?= htmlspecialchars($ach['description']) ?></p>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                                        <h4 class="font-outfit font-bold text-xs text-slate-900 truncate"><?= htmlspecialchars($ach['title']) ?></h4>
+                                        <span class="text-[10px] font-extrabold text-amber-600 shrink-0">+<?= (int)$ach['xp_bonus'] ?> XP</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 font-medium leading-snug line-clamp-2 mb-1"><?= htmlspecialchars($ach['description']) ?></p>
+                                    <?php if ($unlocked): ?>
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-600">
+                                            <i class="bi bi-check-circle-fill"></i> Conquistado
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                                            <i class="bi bi-lock-fill"></i> Bloqueado
+                                        </span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>

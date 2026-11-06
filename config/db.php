@@ -17,11 +17,9 @@ if (file_exists($envFile)) {
             list($key, $value) = explode('=', $line, 2);
             $key = trim($key);
             $value = trim($value, " \t\n\r\0\x0B\"'");
-            if (!array_key_exists($key, $_SERVER) && !array_key_exists($key, $_ENV)) {
-                putenv("$key=$value");
-                $_ENV[$key] = $value;
-                $_SERVER[$key] = $value;
-            }
+            putenv("$key=$value");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
         }
     }
 }
@@ -325,4 +323,78 @@ function getAvatarBadgesCatalog() {
         'bi-crown'            => ['name' => 'Rei da Aprovação',      'xp' => 1000],
         'bi-emoji-smile-fill' => ['name' => 'Estudante Lendário',    'xp' => 1500]
     ];
+}
+
+/**
+ * Publicar evento no Mural de Conquistas dos Amigos
+ */
+function recordMuralEvent($pdo, $userId, $eventType, $title, $description, $icon = 'bi-trophy-fill', $themeColor = 'indigo') {
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO friend_mural_events (user_id, event_type, title, description, icon, theme_color, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([$userId, $eventType, $title, $description, $icon, $themeColor]);
+        return $pdo->lastInsertId();
+    } catch (Exception $e) {
+        error_log("Erro ao registrar evento no mural: " . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Desbloquear Conquista para o Usuário se ainda não possuir
+ */
+function unlockAchievement($pdo, $userId, $code) {
+    try {
+        $stmt = $pdo->prepare("SELECT id, title, description, icon, xp_bonus FROM achievements WHERE code = ?");
+        $stmt->execute([$code]);
+        $ach = $stmt->fetch();
+        if (!$ach) return null;
+
+        $stmtCheck = $pdo->prepare("SELECT id FROM user_achievements WHERE user_id = ? AND achievement_id = ?");
+        $stmtCheck->execute([$userId, $ach['id']]);
+        if ($stmtCheck->fetch()) {
+            return null; // Já possui
+        }
+
+        // Registrar desbloqueio
+        $stmtIns = $pdo->prepare("INSERT INTO user_achievements (user_id, achievement_id, unlocked_at) VALUES (?, ?, NOW())");
+        $stmtIns->execute([$userId, $ach['id']]);
+
+        // Conceder XP bônus
+        $bonus = (int)($ach['xp_bonus'] ?? 50);
+        if ($bonus > 0) {
+            $up = $pdo->prepare("UPDATE users SET xp = xp + ?, level = GREATEST(level, FLOOR((xp + ?) / 100) + 1) WHERE id = ?");
+            $up->execute([$bonus, $bonus, $userId]);
+        }
+
+        return $ach;
+    } catch (Exception $e) {
+        error_log("Erro ao desbloquear conquista: " . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * Obter a sequência atual de acertos consecutivos do usuário
+ */
+function getConsecutiveCorrectStreak($pdo, $userId) {
+    try {
+        $stmt = $pdo->prepare("SELECT is_correct FROM user_answers WHERE user_id = ? ORDER BY id DESC LIMIT 50");
+        $stmt->execute([$userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        $streak = 0;
+        foreach ($rows as $isCorrect) {
+            if ((int)$isCorrect === 1) {
+                $streak++;
+            } else {
+                break;
+            }
+        }
+        return $streak;
+    } catch (Exception $e) {
+        return 0;
+    }
 }

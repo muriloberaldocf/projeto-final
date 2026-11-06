@@ -495,8 +495,8 @@ require_once __DIR__ . '/includes/header.php';
                         </span>
                     </div>
 
-                    <!-- BANCAS (PILLS RÁPIDAS) -->
-                    <div class="flex flex-wrap items-center gap-2" id="bancaPills">
+                    <!-- BANCAS (PILLS RÁPIDAS COM SCROLL HORIZONTAL NO MOBILE) -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none -mx-2 px-2 sm:mx-0 sm:px-0 sm:flex-wrap" id="bancaPills">
                         <button type="button" onclick="setBancaFilter('all', this)" class="banca-btn active px-3.5 py-2 rounded-xl font-outfit font-black text-xs bg-indigo-600 text-white shadow-sm transition-all">
                             Todas as Bancas
                         </button>

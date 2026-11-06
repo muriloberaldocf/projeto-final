@@ -3,19 +3,26 @@
  * API PARA CONFIGURAR & TESTAR CHAVE DO GEMINI — HIPOGABARITO
  */
 header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', '0');
+ob_start();
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../config/gemini.php';
 
 $userId = $_SESSION['user_id'] ?? 0;
 if (!$userId) {
+    if (ob_get_length()) ob_clean();
     echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
     exit;
 }
 
 $apiKey = trim($_POST['api_key'] ?? '');
-$model = trim($_POST['model'] ?? 'gemini-2.5-pro');
+$model = trim($_POST['model'] ?? 'gemini-2.5-flash');
+if ($model === 'gemini-3.5-flash') {
+    $model = 'gemini-2.5-flash';
+}
 
 if (empty($apiKey)) {
+    if (ob_get_length()) ob_clean();
     echo json_encode(['success' => false, 'message' => 'Por favor, informe uma chave de API válida do Google AI Studio.']);
     exit;
 }
@@ -44,6 +51,7 @@ $curlError = curl_error($ch);
 curl_close($ch);
 
 if ($curlError) {
+    if (ob_get_length()) ob_clean();
     echo json_encode(['success' => false, 'message' => 'Falha de conexão com a API do Google: ' . $curlError]);
     exit;
 }
@@ -56,8 +64,11 @@ if ($httpCode !== 200) {
         $errMsg = "Créditos pré-pagos esgotados neste projeto do Google (Erro 402). Por favor, crie uma chave gratuita no Google AI Studio (aistudio.google.com/app/apikey) em um projeto sem faturamento pré-pago.";
     } elseif ($httpCode === 400) {
         $errMsg = "Chave de API inválida ou formato incorreto (Erro 400).";
+    } elseif ($httpCode === 403) {
+        $errMsg = "Esta chave de API foi bloqueada pelo Google (ex: reportada como vazada). Por favor, gere uma nova chave em aistudio.google.com/app/apikey.";
     }
     
+    if (ob_get_length()) ob_clean();
     echo json_encode(['success' => false, 'http_code' => $httpCode, 'message' => $errMsg]);
     exit;
 }
@@ -84,6 +95,7 @@ if (file_exists($envPath) && is_writable($envPath)) {
     file_put_contents($envPath, $envContent);
 }
 
+if (ob_get_length()) ob_clean();
 echo json_encode([
     'success' => true,
     'message' => "Chave de API do Gemini testada e salva com sucesso! Modelo ativo: {$model}"

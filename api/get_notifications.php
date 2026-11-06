@@ -80,10 +80,35 @@ try {
         ];
     }
 
+    // 4. Notificações de "Boa! 👊" recebidos no Mural
+    $stmtKudos = $pdo->prepare("
+        SELECT u.id as sender_id, u.name, u.avatar, e.title as event_title, k.created_at
+        FROM friend_mural_kudos k
+        JOIN friend_mural_events e ON e.id = k.event_id
+        JOIN users u ON u.id = k.from_user_id
+        WHERE e.user_id = ? AND k.from_user_id != ?
+        ORDER BY k.created_at DESC
+        LIMIT 5
+    ");
+    $stmtKudos->execute([$userId, $userId]);
+    $kudosReceived = $stmtKudos->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($kudosReceived as $kr) {
+        $notifications[] = [
+            'id' => 'kudo_' . md5($kr['name'] . $kr['event_title'] . $kr['created_at']),
+            'type' => 'mural_kudo',
+            'title' => 'Mandou um Boa! 👊',
+            'message' => "{$kr['name']} parabenizou você pela sua conquista: \"{$kr['event_title']}\"!",
+            'icon' => 'bi-hand-thumbs-up-fill',
+            'badge_color' => 'bg-indigo-100 text-indigo-600',
+            'time' => date('d/m H:i', strtotime($kr['created_at']))
+        ];
+    }
+
     echo json_encode([
         'success' => true,
         'notifications' => $notifications,
-        'unread_count' => count($pendingFriends)
+        'unread_count' => count($pendingFriends) + count($kudosReceived)
     ]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Erro ao buscar notificações: ' . $e->getMessage()]);

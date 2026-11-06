@@ -25,7 +25,7 @@
 }
 
 body.lesson-page {
-    background-color: #f8fafc;
+    background-color: #F1EFF5;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -368,6 +368,13 @@ body.lesson-page {
     border: 1px solid #cbd5e1;
     font-family: 'Outfit', monospace;
     font-size: 11px;
+}
+
+@media (max-width: 767px) {
+    .quiz-shortcut-bar,
+    .quiz-card-aprova .quiz-kbd {
+        display: none !important;
+    }
 }
 
 /* Animações */
